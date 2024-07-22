@@ -11,7 +11,6 @@ import ArticleHome from "./pages/Community/ArticleHome";
 import MyPageHome from "./pages/MyPage/MyPageHome";
 import SoloMode from "./pages/Running/Solo/SoloMode";
 import TeamQR from "./pages/Running/Team/TeamQR";
-import CheckGeo from "./pages/Home/CheckGeo"
 const App = () => {
   return (
     <div>
@@ -23,10 +22,10 @@ const App = () => {
         <Route path="/solo" element={<SoloMode />} />
         <Route path="/team-create" element={<TeamCreate />} />
         <Route path="/team-QR" element={<TeamQR />} />
+        <Route path="/team-join" element={<TeamJoin />} />
         <Route path="/report-home" element={<ReportHome />} />
         <Route path="/article-home" element={<ArticleHome />} />
         <Route path="/my-page-home" element={<MyPageHome />} />
-        <Route path="/check" element={<CheckGeo />} />
       </Routes>
     </div>
   );
