@@ -4,6 +4,7 @@ import SignIn from "./pages/Auth/SignIn";
 import SignUp from "./pages/Auth/SignUp";
 import LogOutHome from "./pages/Home/LogOutHome";
 import LogInHome from "./pages/Home/LogInHome";
+import CheckGeo from "./pages/Home/CheckGeo";
 const App = () => {
   return (
     <div>
@@ -12,6 +13,7 @@ const App = () => {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/" element={<LogOutHome />} />
         <Route path="/home" element={<LogInHome />} />
+        <Route path="/check" element={<CheckGeo />} />
       </Routes>
     </div>
   );
