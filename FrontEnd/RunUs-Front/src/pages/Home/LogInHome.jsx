@@ -29,7 +29,7 @@ const LogInHome = () => {
   };
 
   const handleJoinTeamClick = () => {
-    navigate("/team-join"); // 팀 입장 버튼 클릭 시 /team-join로 이동
+    navigate("/team-QR"); // 팀 입장 버튼 클릭 시 /team-join로 이동
   };
 
   const handleSoloProfilelick = () => {
@@ -72,3 +72,5 @@ const LogInHome = () => {
 };
 
 export default LogInHome;
+
+
