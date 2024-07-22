@@ -1,0 +1,13 @@
+.LoginHome-container {
+  margin-top: 100px;
+}
+
+.Today_item, .Today_km {
+  text-align: center;
+}
+
+.MainButton-container {
+  text-align: center;
+  display: flex;
+  justify-content: space-evenly;
+}
