@@ -1,0 +1,26 @@
+.info-section {
+  position: relative;
+  background-color: white;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  /* 팝업 버튼 가로로 배열 */
+  gap: 20px; /* 버튼 사이의 간격 */
+  margin-bottom: 30px;
+  margin-right: 40px;
+}
+
+.created-date {
+  font-size: 10px;
+}
+
+.article-title {
+  border-bottom: 1px solid rgb(0, 0, 0);
+  font-size: 20px;
+}
+
+.article-content {
+  font-size: 15px;
+}
+

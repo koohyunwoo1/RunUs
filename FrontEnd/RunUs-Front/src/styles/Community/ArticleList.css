@@ -1,0 +1,13 @@
+.ArticleList {
+  margin-top: 100px;
+}
+
+.Article-search-bar {
+  position: fixed;
+  margin-top: 380px;
+  margin-left: 10px;
+}
+
+.write-button {
+  display: flex;
+}
