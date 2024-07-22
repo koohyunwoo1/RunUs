@@ -1,0 +1,122 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.Header-logo {
+  padding-left: 5px;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+}
+
+.header2 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  transition: background-color 0.3s ease;
+  background-color: white;
+}
+
+/* 사이드바가 열렸을 때 헤더를 투명하게 */
+.header.transparent {
+  background-color: rgba(0, 0, 0, 0);
+}
+
+/* 메뉴 버튼 스타일 */
+.menu-button {
+  font-size: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding-left: 300px;
+  margin-left: auto;
+  margin-right: 60px;
+}
+
+/* 드롭다운 스타일 */
+.dropdown {
+  position: fixed;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+  transition: top 0.3s ease;
+  z-index: 1000;
+}
+
+.dropdown.open {
+  top: 60px;
+}
+
+/* 드롭다운 닫기 버튼 스타일 */
+.close-button {
+  z-index: 2;
+  font-size: 30px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+/* 드롭다운 내용 스타일 */
+.dropdown-content {
+  padding: 20px;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.dropdown.open .dropdown-content {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 카테고리 아이템 스타일 */
+.category-item {
+  z-index: 1;
+  padding-top: 20px;
+  /* margin: 15px 0; */
+  font-size: 18px;
+  color: #999;
+  font-family: "Times New Roman", Times, serif;
+  font-weight: 300;
+  cursor: pointer;
+  transition: color 0.3s ease, font-weight 0.3s ease;
+}
+
+.category-item:hover {
+  color: black;
+  font-weight: bold;
+}
+
+/* 오버레이 스타일 */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+  z-index: 999;
+  backdrop-filter: blur(10px);
+}
+
+.overlay.visible {
+  opacity: 1;
+  visibility: visible;
+}
