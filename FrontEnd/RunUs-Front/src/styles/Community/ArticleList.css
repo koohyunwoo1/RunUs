@@ -1,37 +1,44 @@
+/* src/styles/Community/ArticleList.css */
 .ArticleList {
+  padding: 20px;
+}
+
+.filters {
   display: flex;
-  flex-direction: column;
-  margin-top: 100px;
-  position: relative;
+  justify-content: flex-start;
+  gap: 10px; /* 버튼 간격 */
+  margin-bottom: 20px; /* 필터링 버튼과 리스트 간격 */
+}
+
+.filters .Button {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f1f1f1;
+  cursor: pointer;
 }
 
 .article-wrapper {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  overflow-y: auto;
-  padding-bottom: 60px;
+  margin-top: 20px;
 }
 
-.bottom-controls {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  right: 10px;
+.Article-search-bar {
+  width: calc(100% - 60px); /* 버튼의 공간을 고려하여 너비 조정 */
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
 }
 
-.bottom-controls > .search-container {
-  flex: 1;
+.Button {
+  display: inline-block;
+  padding: 10px 20px;
+  border: none;
+  background-color: #007bff;
+  color: black;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
 }
 
-.bottom-controls > .search-container .search-input-wrapper {
-  display: flex;
-}
-
-.bottom-controls > .Button {
-  flex: 0 1 auto;
-  margin-left: 10px; /* Adjust as necessary for spacing */
-}

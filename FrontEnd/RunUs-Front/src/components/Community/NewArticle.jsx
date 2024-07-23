@@ -1,54 +1,51 @@
+// src/components/Community/NewArticle.jsx
 import "../../styles/Community/NewArticle.css"
-import { useState } from "react"
+import { useState } from "react";
+import axios from 'axios';
 import { useNavigate } from "react-router-dom";
-import Button from "../../components/common/Button"
-
-const regions = [
-  "서울", "부산", "대구", "인천", "광주", "대전", "울산",
-  "경기", "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주"
-];
 
 const NewArticle = () => {
-  const [ title, setTitle] = useState('')
-  const [ content, setContent ] = useState('')
-  const [ departureTime, setDepartureTime ] = useState('')
-  const [ region, setRegion ] = useState('')
-  const nav = useNavigate()
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [departureTime, setDepartureTime] = useState('');
+  const [region, setRegion] = useState('');
+  const nav = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-
-    const newArticleId = Math.floor(Math.random()*1000) // 임시 ID 생성
-
-    nav(`/article-detail/${newArticleId}`)
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(`http://localhost:8080/api/v1/boards`, { title, content, departureTime, region });
+      const newArticleId = response.data.id; // 서버로부터 응답으로 받은 새 글 ID
+      nav(`/article-detail/${newArticleId}`); // 새 글의 상세 페이지로 이동
+    } catch (error) {
+      console.error('Error creating article:', error);
+    }
+  };
 
   return (
-    <div className="new-article-container">
-      <h1>새 글 작성</h1>
-      <form onSubmit={handleSubmit} className="new-article-form">
-        <div className="article-form-group">
+    <div className="NewArticle">
+      <h2>새 글 작성하기</h2>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
           <label htmlFor="title">제목</label>
           <input
             id="title"
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="제목을 입력하세요"
             required
           />
         </div>
-        <div className="article-form-group">
+        <div className="form-group">
           <label htmlFor="content">내용</label>
           <textarea
             id="content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="내용을 입력하세요"
             required
           />
         </div>
-        <div className="article-form-group">
+        <div className="form-group">
           <label htmlFor="departureTime">출발 시간</label>
           <input
             id="departureTime"
@@ -58,7 +55,7 @@ const NewArticle = () => {
             required
           />
         </div>
-        <div className="article-form-group">
+        <div className="form-group">
           <label htmlFor="region">사는 지역</label>
           <select
             id="region"
@@ -66,22 +63,30 @@ const NewArticle = () => {
             onChange={(e) => setRegion(e.target.value)}
             required
           >
-            <option value="">지역을 선택하세요</option>
-            {regions.map((region, index) => (
-              <option key={index} value={region}>
-                {region}
-              </option>
-            ))}
+            <option value="">지역 선택</option>
+            <option value="서울">서울</option>
+            <option value="부산">부산</option>
+            <option value="대구">대구</option>
+            <option value="인천">인천</option>
+            <option value="광주">광주</option>
+            <option value="대전">대전</option>
+            <option value="울산">울산</option>
+            <option value="세종">세종</option>
+            <option value="경기">경기</option>
+            <option value="강원">강원</option>
+            <option value="충북">충북</option>
+            <option value="충남">충남</option>
+            <option value="전북">전북</option>
+            <option value="전남">전남</option>
+            <option value="경북">경북</option>
+            <option value="경남">경남</option>
+            <option value="제주">제주</option>
           </select>
         </div>
-        <Button
-          className="new-submit-button" 
-          text="작성 완료" 
-          type="submit" 
-        />
+        <button type="submit">등록</button>
       </form>
     </div>
   );
-}
+};
 
-export default NewArticle
+export default NewArticle;

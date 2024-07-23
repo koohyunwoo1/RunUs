@@ -1,48 +1,59 @@
-.new-article-container {
-  max-width: 800px;
+/* src/styles/Community/NewArticle.css */
+.NewArticle {
+  height: 100vh;
+  max-width: 600px;
   margin: 0 auto;
   padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
 }
 
-.new-article-form {
-  display: flex;
-  flex-direction: column;
+.NewArticle h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
 }
 
-.article-form-group {
-  margin-bottom: 15px;
+.NewArticle .form-group {
+  margin-bottom: 20px;
 }
 
-.article-form-group > label {
+.NewArticle .form-group label {
   display: block;
+  margin-bottom: 8px;
   font-weight: bold;
-  margin-bottom: 5px;
+  color: #555;
 }
 
-.article-form-group > input, textarea, select {
+.NewArticle .form-group input,
+.NewArticle .form-group textarea,
+.NewArticle .form-group select {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
 }
 
-.article-form-group > textarea {
-  height: 200px;
+.NewArticle .form-group textarea {
+  height: 150px;
   resize: vertical;
 }
 
-.new-submit-button {
-  align-self: flex-end;
-  padding: 10px 20px;
-  font-size: 16px;
+.NewArticle button {
+  display: block;
+  width: 100%;
+  padding: 10px;
   border: none;
-  border-radius: 5px;
   background-color: #007bff;
   color: #fff;
+  font-size: 16px;
+  border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.new-submit-button:hover {
+.NewArticle button:hover {
   background-color: #0056b3;
 }

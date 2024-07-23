@@ -11,12 +11,15 @@ import axios from 'axios';
 const ArticleList = () => {
   const [data, setData] = useState([]);
   const [query, setQuery] = useState('');
+  const [completedOnly, setCompletedOnly] = useState(false);
+  const [sortByTime, setSortByTime] = useState(false);
+  const [regionFilter, setRegionFilter] = useState('');
   const nav = useNavigate();
 
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/v1/boards'); // 실제 API 엔드포인트로 변경
+        const response = await axios.get(`http://localhost:8080/api/v1/region/${region-id}`); // 실제 API 엔드포인트로 변경
         setData(response.data);
       } catch (error) {
         console.error('Error fetching articles:', error);
@@ -26,14 +29,31 @@ const ArticleList = () => {
     fetchArticles();
   }, []);
 
-  const filteredData = data.filter(item =>
-    item.title.toLowerCase().includes(query.toLowerCase())
-  );
+  // 필터링 및 정렬 로직
+  let filteredData = data.filter(item => {
+    return (!completedOnly || item.completed) && 
+           (!regionFilter || item.region === regionFilter) &&
+           item.title.toLowerCase().includes(query.toLowerCase());
+  });
+
+  if (sortByTime) {
+    filteredData = filteredData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  }
 
   return (
     <div>
       <Header />
       <div className="ArticleList">
+        <div className="filters">
+          <Button 
+            text={completedOnly ? "모든 글 보기" : "모집 완료된 글만 보기"} 
+            onClick={() => setCompletedOnly(!completedOnly)}
+          />
+          <Button 
+            text={sortByTime ? "시간순" : "최신순"} 
+            onClick={() => setSortByTime(!sortByTime)}
+          />
+        </div>
         <div className="article-wrapper">
           <Search query={query} onQueryChange={setQuery} />
           <ul>
