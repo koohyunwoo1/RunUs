@@ -1,23 +1,30 @@
 package runus.runus.board.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
-@Table(name = "board")
-public class BoardEntity {
+@Table(name = "comment")
+public class CommentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int boardId;
+    private int commentId;
 
-    private String title;
+    private int boardId;
+    private Integer parentId; // 부모 댓글 ID는 NULL일 수 있습니다.
     private String content;
-    private int regionId;
+
+//    @Column(name = "user_id")
+//    private Integer userId;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -31,14 +38,10 @@ public class BoardEntity {
     @Column(name = "is_deleted")
     private char isDeleted;
 
-    @Column(name = "meeting_time")
-    private LocalDateTime meetingTime;
+    @Column(name = "user_id")
+    private int userId;
 
-    @Column(name = "meeting_day")
-    private String meetingDay;
 
-    @Column(name = "nickname")
-    private String nickname;
 
     // Lombok이 자동으로 세터와 게터를 생성합니다.
 }
