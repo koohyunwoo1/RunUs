@@ -1,0 +1,48 @@
+.card {
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: left;
+  color: white;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.tier-unranked {
+  background-color: gray;
+}
+
+.tier-bronze {
+  background-color: #cd7f32;
+}
+
+.tier-silver {
+  background-color: silver;
+}
+
+.tier-gold {
+  background-color: rgb(255, 215, 50);
+}
+
+.tier-platinum {
+  background-color: #3ed4be;
+}
+
+.tier-diamond {
+  background-color: #4ee2ec;
+}
+
+.experience-bar {
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+  width: 100%;
+  height: 20px;
+  margin: 10px 0;
+}
+
+.filler {
+  background-color: white;
+  height: 100%;
+  transition: width 0.5s ease-in-out;
+}
