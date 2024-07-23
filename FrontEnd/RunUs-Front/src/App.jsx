@@ -13,7 +13,8 @@ import SoloMode from "./pages/Running/Solo/SoloMode";
 import TeamQR from "./pages/Running/Team/TeamQR";
 import ArticleCreate from "./pages/Community/ArticleCreate";
 import ArticleDetail from "./pages/Community/ArticleDetail";
-
+import UserList from "./pages/UseList/UserList";
+import MyPageEdit from "./pages/MyPage/MyPageEdit";
 const App = () => {
   return (
     <div>
@@ -31,6 +32,8 @@ const App = () => {
         <Route path="/my-page-home" element={<MyPageHome />} />
         <Route path="/article-create" element={<ArticleCreate />} />
         <Route path="/article-detail/:id" element={<ArticleDetail />} />
+        <Route path="/UserList" element={<UserList />} />
+        <Route path="/my-page-edit" element={<MyPageEdit />} />
       </Routes>
     </div>
   );
