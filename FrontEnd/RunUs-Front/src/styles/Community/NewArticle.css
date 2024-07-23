@@ -1,0 +1,48 @@
+.new-article-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.new-article-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.article-form-group {
+  margin-bottom: 15px;
+}
+
+.article-form-group > label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.article-form-group > input, textarea, select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.article-form-group > textarea {
+  height: 200px;
+  resize: vertical;
+}
+
+.new-submit-button {
+  align-self: flex-end;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+}
+
+.new-submit-button:hover {
+  background-color: #0056b3;
+}

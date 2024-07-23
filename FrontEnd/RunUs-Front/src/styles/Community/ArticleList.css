@@ -1,13 +1,37 @@
 .ArticleList {
-  margin-top: 100px;
-}
-
-.Article-search-bar {
-  position: fixed;
-  margin-top: 380px;
-  margin-left: 10px;
-}
-
-.write-button {
   display: flex;
+  flex-direction: column;
+  margin-top: 100px;
+  position: relative;
+}
+
+.article-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-bottom: 60px;
+}
+
+.bottom-controls {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+}
+
+.bottom-controls > .search-container {
+  flex: 1;
+}
+
+.bottom-controls > .search-container .search-input-wrapper {
+  display: flex;
+}
+
+.bottom-controls > .Button {
+  flex: 0 1 auto;
+  margin-left: 10px; /* Adjust as necessary for spacing */
 }

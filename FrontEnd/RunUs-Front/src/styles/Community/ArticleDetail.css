@@ -1,0 +1,36 @@
+/* src/styles/Community/ArticleDetail.css */
+.article-detail-container {
+  width: 100%;
+  height: 100vh; /* 전체 페이지 높이에 맞추기 */
+  box-sizing: border-box;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* 상단 정렬 */
+}
+
+.article-detail-container h1 {
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
+.article-detail-container p {
+  margin: 10px 0;
+}
+
+.article-detail-container .article-content {
+  margin-top: 20px;
+  padding: 20px;
+  border-top: 1px solid #ddd;
+  width: 100%;
+  height: auto;
+}
+
+.article-detail-content {
+  max-width: 1200px;
+  width: 90%;
+  margin: 0 auto;
+}
