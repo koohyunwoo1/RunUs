@@ -11,6 +11,9 @@ import ArticleHome from "./pages/Community/ArticleHome";
 import MyPageHome from "./pages/MyPage/MyPageHome";
 import SoloMode from "./pages/Running/Solo/SoloMode";
 import TeamQR from "./pages/Running/Team/TeamQR";
+import ArticleCreate from "./pages/Community/ArticleCreate";
+import ArticleDetail from "./pages/Community/ArticleDetail";
+
 const App = () => {
   return (
     <div>
@@ -26,6 +29,8 @@ const App = () => {
         <Route path="/report-home" element={<ReportHome />} />
         <Route path="/article-home" element={<ArticleHome />} />
         <Route path="/my-page-home" element={<MyPageHome />} />
+        <Route path="/article-create" element={<ArticleCreate />} />
+        <Route path="/article-detail/:id" element={<ArticleDetail />} />
       </Routes>
     </div>
   );
