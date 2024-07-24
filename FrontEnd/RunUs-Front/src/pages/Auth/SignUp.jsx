@@ -8,16 +8,16 @@ import axios from "axios";
 const SignUp = () => {
   const [form, setForm] = useState({
     email: "",
+    emailDomain: "",
     nickname: "",
     phoneNumber: "",
     password: "",
     confirmPassword: "",
     weight: "",
-    region: "",
+    regionId: "",
   });
 
   const [errors, setErrors] = useState({});
-  const [ successMessage, setSuccessMessage ] = useState("")
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -43,8 +43,9 @@ const SignUp = () => {
     const errors = {};
     if (!form.nickname) errors.nickname = "닉네임은 필수입니다.";
     if (!form.email) errors.email = "이메일은 필수입니다.";
-    if (!/\S+@\S+\.\S+/.test(form.email))
-      errors.email = "이메일이 유효하지 않습니다.";
+    if (!form.emailDomain) errors.emailDomain = "도메인은 필수입니다."
+    // if (!/\S+@\S+\.\S+/.test(form.email))
+    //   errors.email = "이메일이 유효하지 않습니다.";
     if (!form.password) errors.password = "비밀번호는 필수입니다.";
     if (form.password.length < 8)
       errors.password = "비밀번호는 최소 8자리입니다.";
@@ -55,7 +56,7 @@ const SignUp = () => {
     if (!/^\d{3}-\d{3,4}-\d{4}$/.test(form.phoneNumber))
       errors.phoneNumber =
         "휴대폰 번호는 올바른 형식이어야 합니다 (예: 010-1234-5678).";
-    if (!form.region) errors.region = "사는 지역은 필수입니다."
+    if (!form.regionId) errors.regionId = "사는 지역은 필수입니다."
     return errors;
   };
 
@@ -68,22 +69,21 @@ const SignUp = () => {
       try {
         const response = await axios.post('http://localhost:8080/api/v1/signup', {
           nickname: form.nickname,
-          email: form.email,
+          email: `${form.email}@${form.emailDomain}`,
           password: form.password,
           phoneNumber: form.phoneNumber,
           weight: parseInt(form.weight, 10),
-          regionId: parseInt(form.region, 10),
+          regionId: parseInt(form.regionId, 10),
         });
 
         if (response.data.success) {
-          setSuccessMessage(response.data.message);
+          console.log("회원 가입 성공", response.data)
           navigate("/signin"); // 회원가입 후 로그인 페이지로 이동
         } else {
-          setErrors({ server: response.data.message });
+          console.error("회원 가입 실패", response.data.message)
         }
       } catch (error) {
         console.error('회원가입 오류:', error);
-        setErrors({ server: "회원가입 중 문제가 발생했습니다." });
       }
     }
   };
@@ -96,13 +96,24 @@ const SignUp = () => {
         <div>
           <label className="SignUpLabel">이메일</label>
           <input
-            type="email"
+            type="text"
             name="email"
             className="SignUpInput"
             value={form.email}
             onChange={handleChange}
           />
           {errors.email && <p className="SignUpError">{errors.email}</p>}
+        </div>
+        <div>
+          <label className="SignUpLabel">이메일 도메인</label>
+          <input
+            type="text"
+            name="emailDomain"
+            className="SignUpInput"
+            value={form.emailDomain}
+            onChange={handleChange}
+          />
+          {errors.emailDomain && <p className="SignUpError">{errors.emailDomain}</p>}
         </div>
         <div>
           <label className="SignUpLabel">닉네임</label>
@@ -166,13 +177,13 @@ const SignUp = () => {
         <div>
           <label className="SignUpLabel">사는 지역</label>
           <input
-            type="text"
-            name="region"
+            type="number"
+            name="regionId"
             className="SignUpInput"
-            value={form.region}
+            value={form.regionId}
             onChange={handleChange}
           />
-          {errors.region && <p className="SignUpError">{errors.region}</p>}
+          {errors.regionId && <p className="SignUpError">{errors.regionId}</p>}
         </div>
         <Button text={"회원 가입"} />
       </form>

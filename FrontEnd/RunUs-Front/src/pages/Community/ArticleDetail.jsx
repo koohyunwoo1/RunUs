@@ -23,7 +23,7 @@ const ArticleDetail = () => {
   useEffect(() => {
     const fetchArticle = async () => {
       try {
-        const reponse = await axios.get(`http://localhost:8080/api/v1/boards/${id}`)
+        const reponse = await axios.get(`/api/v1/boards/${id}`)
         setArticle(reponse.data.data)
       } catch (err) {
         setError(err)
@@ -37,7 +37,7 @@ const ArticleDetail = () => {
 
   const handleComplete = async () => {
     try {
-      await axios.put(`http://localhost:8080/api/v1/boards/${id}`)
+      await axios.put(`/api/v1/boards/${id}`)
       setArticle(prevArticle => ({ ...prevArticle, completed: true }))
     } catch (err) {
       console.error('수정 실패: ', error)
