@@ -1,0 +1,18 @@
+.search-bar {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.suggestions-list {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  list-style-type: none;
+  padding: 0;
+}
+
+.suggestions-list li {
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+}
