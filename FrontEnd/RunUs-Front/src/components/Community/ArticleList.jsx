@@ -18,8 +18,10 @@ const ArticleList = () => {
 
   useEffect(() => {
     const fetchArticles = async () => {
+
+      const regionId = 1
       try {
-        const response = await axios.get(`http://localhost:8080/api/v1/region/${region-id}`); // 실제 API 엔드포인트로 변경
+        const response = await axios.get(`http://localhost:8080/api/v1/region/${regionId}`); // 실제 API 엔드포인트로 변경
         setData(response.data);
       } catch (error) {
         console.error('Error fetching articles:', error);
@@ -44,7 +46,7 @@ const ArticleList = () => {
     <div>
       <Header />
       <div className="ArticleList">
-        <div className="filters">
+        <div className="article-filters">
           <Button 
             text={completedOnly ? "모든 글 보기" : "모집 완료된 글만 보기"} 
             onClick={() => setCompletedOnly(!completedOnly)}
@@ -65,7 +67,10 @@ const ArticleList = () => {
               <p>No posts found</p>
             )}
           </ul>
-          <Button text={"글 쓰기"} onClick={() => nav('/article-create')} />
+          <Button
+            className="article-create-button"
+            text={"글 쓰기"} 
+            onClick={() => nav('/article-create')} />
         </div>
       </div>
     </div>
