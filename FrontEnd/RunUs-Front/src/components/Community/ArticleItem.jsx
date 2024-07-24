@@ -3,6 +3,9 @@ import Button from "../common/Button"
 import { useNavigate } from "react-router-dom";
 
 const ArticleItem = ({id, title, content }) => {
+
+  const nav = useNavigate()
+
   return (
     <div className="ArticleItem">
       <div
