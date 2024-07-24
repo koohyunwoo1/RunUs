@@ -1,10 +1,10 @@
 package runus.runus.record.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import runus.runus.record.dto.RecordDTO;
 import runus.runus.record.model.Record;
 import runus.runus.record.model.User;
 import runus.runus.record.service.RecordService;
@@ -13,7 +13,6 @@ import runus.runus.record.service.UserService;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,12 +31,25 @@ public class RecordController {
     }
 
     // 최근 기록
-    @GetMapping("/recent/{user_id}")
     // 전체 record 에서 맨 위에 있는 데이터 2개를 가져온다
     // record_date, party_id, distance, time, kcal 가져옴
+    @GetMapping("/recent/{user_id}")
     public List<Record> getRecentRecords(@PathVariable("user_id") Integer user_id) {
         return recordService.getRecentRecords(user_id, 2);
     }
+
+    // 모든 기록 가져오기
+    @GetMapping("/all/{user_id}")
+    public ResponseEntity<?> getAllRecords(@PathVariable("user_id") Integer user_id) {
+        try {
+            List<Record> records = recordService.getAllRecords(user_id);
+            return new ResponseEntity<>(records, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 
     // 지금까지 달린 총 거리
     @GetMapping("/total_distance/{user_id}")
@@ -56,7 +68,20 @@ public class RecordController {
     // month : 2, totaldistance : 1000, time : 2000
 
 
+    //@GetMapping("/graph/{user_id}/{year}")
     // 년도 별 월 통계
-//    @GetMapping("/graph/{user_id}/{year}")
+    @GetMapping("/graph/{user_id}/{year}")
+    public ResponseEntity<?> getMonthlyStatistics(@PathVariable("user_id") Integer user_id, @PathVariable("year") Integer year) {
+        try {
+            List<Map<String, Object>> stats = recordService.getMonthlyStatistics(user_id, year);
+            return new ResponseEntity<>(stats, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleException(Exception e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

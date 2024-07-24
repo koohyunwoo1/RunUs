@@ -39,4 +39,10 @@ public class Record {
     @Column(name = "record_date", nullable = true, columnDefinition = "timestamp default current_timestamp")
     private LocalDateTime record_date;
 
+
+    // 추가된 메서드
+
+    public LocalDate getRecordDate() {
+        return record_date != null ? record_date.toLocalDate() : null;
+    }
 }

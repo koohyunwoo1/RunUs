@@ -1,5 +1,6 @@
 package runus.runus.record.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
