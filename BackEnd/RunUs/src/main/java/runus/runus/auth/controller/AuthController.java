@@ -1,14 +1,16 @@
 package runus.runus.auth.controller;
 
-import com.example.runus.api.ApiResponse;
-import com.example.runus.auth.service.AuthService;
-import com.example.runus.user.dto.UserDto;
-import com.example.runus.user.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import runus.runus.api.ApiResponse;
+import runus.runus.auth.service.AuthService;
+import runus.runus.user.dto.UserDto;
+import runus.runus.user.entity.User;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController

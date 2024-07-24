@@ -1,4 +1,4 @@
-package com.example.runus.api;
+package runus.runus.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

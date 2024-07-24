@@ -1,7 +1,6 @@
-package com.example.runus.user.service;
+package runus.runus.user.service;
 
-import com.example.runus.user.dto.UserDto;
-import com.example.runus.user.entity.User;
+import runus.runus.user.dto.UserDto;
 
 public interface UserService {
     UserDto updateUser(UserDto userDto);

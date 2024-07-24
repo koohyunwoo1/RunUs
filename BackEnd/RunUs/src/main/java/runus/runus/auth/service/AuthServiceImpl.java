@@ -1,11 +1,11 @@
-package com.example.runus.auth.service;
+package runus.runus.auth.service;
 
-import com.example.runus.user.dto.UserDto;
-import com.example.runus.user.entity.User;
-import com.example.runus.user.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import runus.runus.user.dto.UserDto;
+import runus.runus.user.entity.User;
+import runus.runus.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 

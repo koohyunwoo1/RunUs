@@ -1,11 +1,10 @@
-package com.example.runus.user.controller;
+package runus.runus.user.controller;
 
-import com.example.runus.user.dto.UserDto;
-import com.example.runus.user.entity.User;
-import com.example.runus.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import runus.runus.user.dto.UserDto;
+import runus.runus.user.service.UserService;
 
 import java.util.HashMap;
 import java.util.Map;

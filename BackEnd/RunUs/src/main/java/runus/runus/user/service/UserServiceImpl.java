@@ -1,10 +1,11 @@
-package com.example.runus.user.service;
+package runus.runus.user.service;
 
-import com.example.runus.user.dto.UserDto;
-import com.example.runus.user.entity.User;
-import com.example.runus.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import runus.runus.user.dto.UserDto;
+import runus.runus.user.entity.User;
+import runus.runus.user.repository.UserRepository;
+
 @Service
 public class UserServiceImpl implements UserService {
 

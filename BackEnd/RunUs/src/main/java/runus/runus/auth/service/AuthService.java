@@ -1,7 +1,7 @@
-package com.example.runus.auth.service;
+package runus.runus.auth.service;
 
-import com.example.runus.user.dto.UserDto;
-import com.example.runus.user.entity.User;
+import runus.runus.user.dto.UserDto;
+import runus.runus.user.entity.User;
 
 public interface AuthService {
     //    User signup(User user);

@@ -1,7 +1,8 @@
-package com.example.runus.user.repository;
+package runus.runus.user.repository;
 
-import com.example.runus.user.entity.User;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import runus.runus.user.entity.User;
 
 import java.util.Optional;
 

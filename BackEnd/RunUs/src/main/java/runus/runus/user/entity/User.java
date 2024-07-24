@@ -1,4 +1,4 @@
-package com.example.runus.user.entity;
+package runus.runus.user.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
