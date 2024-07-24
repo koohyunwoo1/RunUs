@@ -1,4 +1,4 @@
-package runus.runus.Entity;
+package runus.runus.webSocket.Entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

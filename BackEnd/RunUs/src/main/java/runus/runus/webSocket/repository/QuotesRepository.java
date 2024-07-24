@@ -1,8 +1,8 @@
-package runus.runus.repository;
+package runus.runus.webSocket.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import runus.runus.Entity.PartyEntity;
+import runus.runus.webSocket.Entity.PartyEntity;
 
 
 import java.util.Optional;

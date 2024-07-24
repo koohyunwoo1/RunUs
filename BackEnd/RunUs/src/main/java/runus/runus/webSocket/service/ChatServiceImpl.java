@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
-import runus.runus.Entity.PartyEntity;
-import runus.runus.repository.PartyRepository;
-import runus.runus.repository.QuotesRepository;
+import runus.runus.webSocket.Entity.PartyEntity;
+import runus.runus.webSocket.repository.PartyRepository;
+import runus.runus.webSocket.repository.QuotesRepository;
 import runus.runus.webSocket.dto.ChatRoom;
 import runus.runus.webSocket.dto.PartyRequestDto;
 

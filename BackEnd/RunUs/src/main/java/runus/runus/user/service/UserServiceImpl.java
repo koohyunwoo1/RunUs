@@ -6,6 +6,8 @@ import runus.runus.user.dto.UserDto;
 import runus.runus.user.entity.User;
 import runus.runus.user.repository.UserRepository;
 
+import java.util.Optional;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -47,6 +49,11 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmailAndPhoneNumber(email, phoneNumber)
                 .map(User::getPassword)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    @Override
+    public Optional<User> getUserById(Integer userId) {
+        return userRepository.findById(userId);
     }
 
     private UserDto convertToDto(User user) {

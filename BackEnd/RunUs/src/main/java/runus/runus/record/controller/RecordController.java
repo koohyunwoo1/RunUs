@@ -4,11 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import runus.runus.record.dto.RecordDTO;
 import runus.runus.record.model.Record;
-import runus.runus.record.model.User;
 import runus.runus.record.service.RecordService;
-import runus.runus.record.service.UserService;
+import runus.runus.user.entity.User;
+import runus.runus.user.service.UserService;
 
 import java.util.List;
 import java.util.Map;
@@ -27,7 +26,7 @@ public class RecordController {
     // user의 tier_id 출력
     public Integer getUserTier(@PathVariable("user_id") Integer user_id) {
         Optional<User> user = userService.getUserById(user_id);
-        return user.map(User::getTier_id).orElse(null);
+        return user.map(User::getTierId).orElse(null);
     }
 
     // 최근 기록

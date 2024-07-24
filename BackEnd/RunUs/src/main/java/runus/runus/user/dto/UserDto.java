@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class UserDto {
-    private Long userId;
+    private Integer userId;
     private String nickname;
     private String email;
     private String emailDomain; //
