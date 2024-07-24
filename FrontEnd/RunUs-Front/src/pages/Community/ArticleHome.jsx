@@ -9,7 +9,7 @@ const ArticleHome = () => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [page, setPage] = useState(1); // 현재 페이지 상태
+  const [page, setPage] = useState(0); // 현재 페이지 상태
   const [totalPages, setTotalPages] = useState(1); // 총 페이지 수
   const [sortByTime, setSortByTime] = useState(false); // 시간 순 정렬
   const [completedOnly, setCompletedOnly] = useState(false); // 완료 필터링
