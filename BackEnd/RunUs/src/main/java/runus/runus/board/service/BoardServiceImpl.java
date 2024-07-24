@@ -34,6 +34,8 @@ public class BoardServiceImpl implements BoardService {
         board.setCreatedAt(LocalDateTime.now());
         board.setMeetingTime(boardRequest.getMeetingTime());  // 새로운 필드 추가
         board.setMeetingDay(boardRequest.getMeetingDay());    // 새로운 필드 추가
+        board.setUserId(boardRequest.getUserId());
+        board.setIsDeleted('N');
         boardRepository.save(board);
     }
 
@@ -75,6 +77,7 @@ public class BoardServiceImpl implements BoardService {
         board.setUpdatedAt(LocalDateTime.now());
         board.setMeetingTime(boardRequest.getMeetingTime());  // 새로운 필드 추가
         board.setMeetingDay(boardRequest.getMeetingDay());    // 새로운 필드 추가
+        board.setUserId(boardRequest.getUserId());
         boardRepository.save(board);
     }
 
