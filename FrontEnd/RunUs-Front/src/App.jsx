@@ -5,7 +5,6 @@ import SignUp from "./pages/Auth/SignUp";
 import LogOutHome from "./pages/Home/LogOutHome";
 import LogInHome from "./pages/Home/LogInHome";
 import TeamCreate from "./pages/Running/Team/TeamCreate";
-import TeamJoin from "./pages/Running/Team/TeamJoin";
 import ReportHome from "./pages/Report/ReportHome";
 import ArticleHome from "./pages/Community/ArticleHome";
 import MyPageHome from "./pages/MyPage/MyPageHome";
@@ -15,6 +14,8 @@ import ArticleCreate from "./pages/Community/ArticleCreate";
 import ArticleDetail from "./pages/Community/ArticleDetail";
 import UserList from "./pages/UseList/UserList";
 import MyPageEdit from "./pages/MyPage/MyPageEdit";
+import CountDown from "./pages/Running/Team/CountDown";
+import TeamCheck from "./pages/Running/Team/TeamCheck";
 const App = () => {
   return (
     <div>
@@ -24,9 +25,9 @@ const App = () => {
         <Route path="/" element={<LogOutHome />} />
         <Route path="/home" element={<LogInHome />} />
         <Route path="/solo" element={<SoloMode />} />
-        <Route path="/team-create" element={<TeamCreate />} />
+        <Route path="/team-create/:id" element={<TeamCreate />} />
+        <Route path="/countdown/:id" element={<CountDown />} />
         <Route path="/team-QR" element={<TeamQR />} />
-        <Route path="/team-join" element={<TeamJoin />} />
         <Route path="/report-home" element={<ReportHome />} />
         <Route path="/article-home" element={<ArticleHome />} />
         <Route path="/my-page-home" element={<MyPageHome />} />
@@ -34,6 +35,7 @@ const App = () => {
         <Route path="/article-detail/:id" element={<ArticleDetail />} />
         <Route path="/UserList" element={<UserList />} />
         <Route path="/my-page-edit" element={<MyPageEdit />} />
+        <Route path="/team-check/:id" element={<TeamCheck />} />
       </Routes>
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom"; // useNavigate 훅을 가져옵니다.
+import { useNavigate } from "react-router-dom";
 import "../../styles/Home/LogInHome.css";
 import Header from "../../components/common/Header";
 import ReportItem from "../../components/Report/ReportItem";
@@ -11,7 +11,7 @@ const LogInHome = () => {
   const [showTeamOptions, setShowTeamOptions] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
   const teamProfileRef = useRef(null);
-  const navigate = useNavigate(); // useNavigate 훅을 사용하여 navigate 함수를 가져옵니다.
+  const navigate = useNavigate();
 
   const handleTeamProfileClick = () => {
     if (teamProfileRef.current) {
@@ -25,14 +25,17 @@ const LogInHome = () => {
   };
 
   const handleCreateTeamClick = () => {
-    navigate("/team-create"); // 팀 생성 버튼 클릭 시 /team-create로 이동
+    const generateRandomId = () => Math.floor(Math.random() * 10000); // 0-9999 사이의 랜덤 숫자
+    const id = generateRandomId();
+    // 대기방 ID를 포함한 URL로 이동
+    navigate(`/team-create/${id}`);
   };
 
   const handleJoinTeamClick = () => {
-    navigate("/team-QR"); // 팀 입장 버튼 클릭 시 /team-join로 이동
+    navigate("/team-QR");
   };
 
-  const handleSoloProfilelick = () => {
+  const handleSoloProfileClick = () => {
     navigate("/solo");
   };
 
@@ -46,7 +49,7 @@ const LogInHome = () => {
         <ReportItem />
         <ReportItem />
         <div className="MainButton-container">
-          <Button2 src={SoloProfile} onClick={handleSoloProfilelick} />
+          <Button2 src={SoloProfile} onClick={handleSoloProfileClick} />
           <Button2
             src={TeamProfile}
             onClick={handleTeamProfileClick}
@@ -72,5 +75,3 @@ const LogInHome = () => {
 };
 
 export default LogInHome;
-
-

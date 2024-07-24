@@ -1,0 +1,8 @@
+.Weather {
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  gap: 10px;
+  font-weight: 100;
+}
