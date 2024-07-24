@@ -3,6 +3,7 @@ import "../../styles/Auth/SignUp.css";
 import LogOutHeader from "../../components/Home/LogOutHeader";
 import Button from "../../components/common/Button";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const SignUp = () => {
   const [form, setForm] = useState({
@@ -16,6 +17,7 @@ const SignUp = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [ successMessage, setSuccessMessage ] = useState("")
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -53,18 +55,36 @@ const SignUp = () => {
     if (!/^\d{3}-\d{3,4}-\d{4}$/.test(form.phoneNumber))
       errors.phoneNumber =
         "휴대폰 번호는 올바른 형식이어야 합니다 (예: 010-1234-5678).";
+    if (!form.region) errors.region = "사는 지역은 필수입니다."
     return errors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      localStorage.setItem("userProfile", JSON.stringify(form));
-      console.log("Form submitted", form);
-      navigate("/signin"); // 회원가입 후 수정 페이지로 이동
+      try {
+        const response = await axios.post('http://localhost:8080/api/v1/signup', {
+          nickname: form.nickname,
+          email: form.email,
+          password: form.password,
+          phoneNumber: form.phoneNumber,
+          weight: parseInt(form.weight, 10),
+          regionId: parseInt(form.region, 10),
+        });
+
+        if (response.data.success) {
+          setSuccessMessage(response.data.message);
+          navigate("/signin"); // 회원가입 후 로그인 페이지로 이동
+        } else {
+          setErrors({ server: response.data.message });
+        }
+      } catch (error) {
+        console.error('회원가입 오류:', error);
+        setErrors({ server: "회원가입 중 문제가 발생했습니다." });
+      }
     }
   };
 
