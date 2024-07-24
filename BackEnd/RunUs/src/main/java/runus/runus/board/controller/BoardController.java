@@ -22,6 +22,7 @@ public class BoardController {
         return new ResponseMessage("글 작성 성공", null);
     }
 
+    // 성공
     @GetMapping("/region/{regionId}")
     public ResponseMessage getBoardsByRegion(@PathVariable("regionId") int regionId,
                                              @RequestParam int size, @RequestParam int page) {
@@ -29,6 +30,7 @@ public class BoardController {
         return new ResponseMessage("성공", boards);
     }
 
+    // 성공
     @GetMapping("/region/{regionId}/time")
     public ResponseMessage getBoardsByTime(@PathVariable("regionId") int regionId,
                                            @RequestParam int size, @RequestParam int page) {
@@ -36,6 +38,7 @@ public class BoardController {
         return new ResponseMessage("성공", boards);
     }
 
+    // 성공
     @GetMapping("/region/{regionId}/incomplete")
     public ResponseMessage getIncompleteBoards(@PathVariable("regionId") int regionId,
                                                @RequestParam int size, @RequestParam int page) {
@@ -43,6 +46,7 @@ public class BoardController {
         return new ResponseMessage("성공", boards);
     }
 
+    // 성공
     @GetMapping("/region/{regionId}/{word}")
     public ResponseMessage searchBoards(@PathVariable("regionId") int regionId,
                                         @PathVariable("word") String word,
@@ -51,6 +55,7 @@ public class BoardController {
         return new ResponseMessage("성공", boards);
     }
 
+    // 성공
     @PutMapping("/{boardId}")
     public ResponseMessage updateBoard(@PathVariable("boardId") int boardId,
                                        @RequestBody BoardRequestDTO boardRequest) {
@@ -58,12 +63,14 @@ public class BoardController {
         return new ResponseMessage("글 수정 성공", null);
     }
 
+    // 성공
     @GetMapping("/{boardId}")
     public ResponseMessage getBoardDetails(@PathVariable("boardId") int boardId) {
         BoardResponseDTO board = boardService.getBoardDetails(boardId);
         return new ResponseMessage("성공", board);
     }
 
+    // 성공
     @DeleteMapping("/{boardId}")
     public ResponseMessage deleteBoard(@PathVariable("boardId") int boardId) {
         boardService.deleteBoard(boardId);
