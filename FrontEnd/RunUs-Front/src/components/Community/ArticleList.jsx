@@ -16,32 +16,29 @@ const ArticleList = () => {
   const [regionFilter, setRegionFilter] = useState('');
   const nav = useNavigate();
 
+  const fetchArticles = async (regionId) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/api/v1/region/${regionId}`)
+      setData(response.data)
+    } catch (error) {
+      console.error('Error fetching articles: ', error)
+    }
+  }
+
   useEffect(() => {
-    const fetchArticles = async () => {
-
-      const regionId = 1
-      try {
-        const response = await axios.get(`http://localhost:8080/api/v1/region/${regionId}`); // 실제 API 엔드포인트로 변경
-        setData(response.data);
-      } catch (error) {
-        console.error('Error fetching articles:', error);
-      }
-    };
-
-    fetchArticles();
-  }, []);
+    const regionId = regionFilter || 1 // 기본값을 설정 또는 다른 논리로 기본값 설정 가능
+    fetchArticles(regionId)
+  }, [regionFilter])
 
   // 필터링 및 정렬 로직
   let filteredData = data.filter(item => {
-    return (!completedOnly || item.completed) && 
-           (!regionFilter || item.region === regionFilter) &&
-           item.title.toLowerCase().includes(query.toLowerCase());
-  });
+    return (!completedOnly || item.completed) &&
+      item.title.toLowerCase().includes(query.toLowerCase())
+  })
 
   if (sortByTime) {
-    filteredData = filteredData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    filteredData = filteredData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
   }
-
   return (
     <div>
       <Header />

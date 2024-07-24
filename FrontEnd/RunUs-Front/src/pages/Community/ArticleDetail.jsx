@@ -5,6 +5,7 @@ import axios from "axios";
 import "../../styles/Community/ArticleDetail.css"
 import CommentSection from "../../components/Community/CommentSection";
 import Button from "../../components/common/Button";
+import { async } from "@babel/runtime/regenerator";
 
 const formatDate = (dateString) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric'}
@@ -34,9 +35,18 @@ const ArticleDetail = () => {
     fetchArticle()
   }, [id])
 
-  if (!article) return <p>로딩 중...</p>
-  if (error) return <p>문제가 발생했습니다: {error.message}</p>;
-  if (!article) return <p>글을 찾을 수 없습니다.</p>;
+  const handleComplete = async () => {
+    try {
+      await axios.put(`http://localhost:8080/api/v1/boards/${id}`)
+      setArticle(prevArticle => ({ ...prevArticle, completed: true }))
+    } catch (err) {
+      console.error('수정 실패: ', error)
+    }
+  }
+
+  if (loading) return <p>로딩 중...</p>
+  if (error) return <p>문제가 발생했습니다: {error.message}</p>
+  if (!article) return <p>글을 찾을 수 없습니다.</p>
 
   return (
     <div className="article-detail-container">
@@ -48,6 +58,13 @@ const ArticleDetail = () => {
       <div className="article-content">
         {article.content}
       </div>
+      {!article.completed && (
+        <Button 
+          text="완료" 
+          onClick={handleComplete}
+          className="article-complete-button" 
+          />
+      )}
       <CommentSection comments={comments} />
       <Button text="목록" onClick={() => nav('/article-home')} />
     </div>
