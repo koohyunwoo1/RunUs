@@ -1,0 +1,21 @@
+.MyPageHome {
+  margin-top: 80px;
+}
+
+.MyPageName {
+  text-align: center;
+}
+
+.MyPageh3 {
+  padding-left: 40px;
+}
+
+.MyPageTier {
+  padding-top: 20px;
+}
+
+.MyPageEditIcon {
+  display: flex;
+  margin-left: auto;
+  width: 120px;
+}

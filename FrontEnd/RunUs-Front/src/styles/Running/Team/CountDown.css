@@ -1,0 +1,35 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.container3 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  transition: background-color 0.3s ease;
+}
+
+.container3.active {
+  background-color: black;
+}
+
+.countdown {
+  position: absolute;
+  font-size: 200px;
+  color: yellow;
+  animation: fade 1s linear;
+}
+
+@keyframes fade {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}

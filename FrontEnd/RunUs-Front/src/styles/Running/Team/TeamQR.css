@@ -1,0 +1,18 @@
+.qr-reader-container {
+  width: 300px;
+  height: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 2px solid #5981b1;
+  border-radius: 10px;
+  margin-top: 100px;
+}
+
+.TeamQR {
+  text-align: center;
+  margin-top: 100px;
+}
+
+.qr-reader-container video {
+  object-fit: cover;
+}

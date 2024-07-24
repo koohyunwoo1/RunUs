@@ -1,0 +1,31 @@
+.report_container {
+  border: 1px solid #ddd;
+  padding: 20px;
+  margin: 35px auto;
+  border-radius: 15px;
+  background-color: white;
+  max-width: 300px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.running_date, .mode, .record_container, .record_name {
+  margin-bottom: 10px;
+}
+
+.mode {
+  font-size: 14px;
+}
+
+.record_container {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 5px;
+}
+
+.record_name {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 5px;
+  color: rgb(236, 236, 236);
+  font-size: 10px;
+}
