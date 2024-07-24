@@ -11,4 +11,6 @@ public interface UserService {
     String searchPassword(String email, String phoneNumber);
 
     Optional<User> getUserById(Integer userId);
+
+
 }
