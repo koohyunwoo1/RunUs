@@ -22,50 +22,50 @@ public class BoardController {
         return new ResponseMessage("글 작성 성공", null);
     }
 
-    @GetMapping("/region/{region-id}")
-    public ResponseMessage getBoardsByRegion(@PathVariable("region-id") int regionId,
+    @GetMapping("/region/{regionId}")
+    public ResponseMessage getBoardsByRegion(@PathVariable("regionId") int regionId,
                                              @RequestParam int size, @RequestParam int page) {
         List<BoardResponseDTO> boards = boardService.getBoardsByRegion(regionId, size, page);
         return new ResponseMessage("성공", boards);
     }
 
-    @GetMapping("/region/{region-id}/time")
-    public ResponseMessage getBoardsByTime(@PathVariable("region-id") int regionId,
+    @GetMapping("/region/{regionId}/time")
+    public ResponseMessage getBoardsByTime(@PathVariable("regionId") int regionId,
                                            @RequestParam int size, @RequestParam int page) {
         List<BoardResponseDTO> boards = boardService.getBoardsByTime(regionId, size, page);
         return new ResponseMessage("성공", boards);
     }
 
-    @GetMapping("/region/{region-id}/incomplete")
-    public ResponseMessage getIncompleteBoards(@PathVariable("region-id") int regionId,
+    @GetMapping("/region/{regionId}/incomplete")
+    public ResponseMessage getIncompleteBoards(@PathVariable("regionId") int regionId,
                                                @RequestParam int size, @RequestParam int page) {
         List<BoardResponseDTO> boards = boardService.getIncompleteBoards(regionId, size, page);
         return new ResponseMessage("성공", boards);
     }
 
-    @GetMapping("/region/{region-id}/{word}")
-    public ResponseMessage searchBoards(@PathVariable("region-id") int regionId,
+    @GetMapping("/region/{regionId}/{word}")
+    public ResponseMessage searchBoards(@PathVariable("regionId") int regionId,
                                         @PathVariable("word") String word,
                                         @RequestParam int size, @RequestParam int page) {
         List<BoardResponseDTO> boards = boardService.searchBoards(regionId, word, size, page);
         return new ResponseMessage("성공", boards);
     }
 
-    @PutMapping("/{board-id}")
-    public ResponseMessage updateBoard(@PathVariable("board-id") int boardId,
+    @PutMapping("/{boardId}")
+    public ResponseMessage updateBoard(@PathVariable("boardId") int boardId,
                                        @RequestBody BoardRequestDTO boardRequest) {
         boardService.updateBoard(boardId, boardRequest);
         return new ResponseMessage("글 수정 성공", null);
     }
 
-    @GetMapping("/{board-id}")
-    public ResponseMessage getBoardDetails(@PathVariable("board-id") int boardId) {
+    @GetMapping("/{boardId}")
+    public ResponseMessage getBoardDetails(@PathVariable("boardId") int boardId) {
         BoardResponseDTO board = boardService.getBoardDetails(boardId);
         return new ResponseMessage("성공", board);
     }
 
-    @DeleteMapping("/{board-id}")
-    public ResponseMessage deleteBoard(@PathVariable("board-id") int boardId) {
+    @DeleteMapping("/{boardId}")
+    public ResponseMessage deleteBoard(@PathVariable("boardId") int boardId) {
         boardService.deleteBoard(boardId);
         return new ResponseMessage("글 삭제 성공", null);
     }
