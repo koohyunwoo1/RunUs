@@ -3,14 +3,14 @@
   padding: 20px;
 }
 
-.filters {
+.article-filters {
   display: flex;
   justify-content: flex-start;
   gap: 10px; /* 버튼 간격 */
   margin-bottom: 20px; /* 필터링 버튼과 리스트 간격 */
 }
 
-.filters .Button {
+.article-filters .article-create-button {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -31,7 +31,7 @@
   box-sizing: border-box;
 }
 
-.Button {
+.article-create-button {
   display: inline-block;
   padding: 10px 20px;
   border: none;
