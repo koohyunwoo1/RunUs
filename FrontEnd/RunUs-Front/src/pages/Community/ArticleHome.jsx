@@ -25,9 +25,9 @@ const ArticleHome = () => {
       } else if (sortByTime) {
         url += "/time";
       }
-      
+
       const response = await axios.get(url, {
-        params: { size, page }
+        params: { size, page },
       });
       setArticles(response.data.data);
       setTotalPages(response.data.totalPages || 1);
@@ -43,11 +43,11 @@ const ArticleHome = () => {
   }, [regionId, page, sortByTime, completedOnly]);
 
   const handleSortByTime = () => {
-    setSortByTime(prev => !prev);
+    setSortByTime((prev) => !prev);
   };
 
   const handleCompletedOnly = () => {
-    setCompletedOnly(prev => !prev);
+    setCompletedOnly((prev) => !prev);
   };
 
   if (loading) return <p>로딩 중...</p>;
@@ -78,7 +78,7 @@ const ArticleHome = () => {
             onClick={() => setPage(prev => prev + 1)} 
             disabled={page === totalPages}
             text="다음"
-            />
+          />
         </div>
       </div>
     </div>

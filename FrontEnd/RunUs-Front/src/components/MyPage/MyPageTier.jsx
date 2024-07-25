@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "../../styles/MyPage/MyPageTier.css";
+import axios from "axios";
+import { UserContext } from "../../hooks/UserContext";
 
 const tiers = [
   { name: "Unranked", min: 0, max: 49, color: "tier-unranked" },
@@ -11,24 +13,27 @@ const tiers = [
 ];
 
 const MyPageTier = () => {
-  const [xp, setXp] = useState(6000);
-  // 임의의 경험치
+  const [xp, setXp] = useState(0);
+  const userId = localStorage.getItem("userId");
   const [currentTier, setCurrentTier] = useState(tiers[0]);
 
   useEffect(() => {
-    const tier = tiers.find((tier) => xp >= tier.min && xp <= tier.max);
-    setCurrentTier(tier);
-  }, [xp]);
+    if (userId) {
+      axios
+        .get(`/api/v1/search-profile?userId=${userId}`)
+        .then((response) => {
+          const xp = response.data.data.exp;
+          setXp(xp);
+          const tier = tiers.find((tier) => xp >= tier.min && xp <= tier.max);
+          setCurrentTier(tier || tiers[tiers.length - 1]); // 기본값으로 최고 티어 설정
+        })
+        .catch((error) => {
+          console.error("Error fetching profile:", error);
+        });
+    }
+  }, [userId]);
 
-  // 사용자가 input창을 통해서 경험치를 변경할때 호출되는 함수
-  // const handleXpChange = (e) => {
-  //   const value = parseInt(e.target.value, 10);
-  //   if (!isNaN(value)) {
-  //     setXp(value);
-  //   }
-  // };
-
-  // 다음 티어까지 남은 경험치 계싼
+  // 다음 티어까지 남은 경험치 계산
   const getNextTierInfo = () => {
     const nextTier = tiers.find((tier) => tier.min > xp);
     const nextTierXp = nextTier ? nextTier.min - xp : 0;
@@ -40,9 +45,6 @@ const MyPageTier = () => {
     <div className={`card ${currentTier.color}`}>
       <h2>{currentTier.name}</h2>
       <p>경험치: {xp}</p>
-      {/* 경험치 */}
-      {/* <input type="number" value={xp} onChange={handleXpChange} min="0" /> */}
-      {/* 경험치 임시로 입력 */}
       <div className="experience-bar">
         <div
           className="filler"

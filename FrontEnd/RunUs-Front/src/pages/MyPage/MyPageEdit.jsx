@@ -18,10 +18,11 @@ const MyPageEdit = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Fetch user data from local storage on component mount
   useEffect(() => {
     const fetchUserData = () => {
+      console.log(localStorage);
       const userData = JSON.parse(localStorage.getItem("userProfile")); // 로컬 스토리지에서 데이터 가져오기
+      console.log(userData);
       if (userData) {
         setForm(userData);
       }

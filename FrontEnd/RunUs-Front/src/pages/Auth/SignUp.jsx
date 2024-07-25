@@ -43,7 +43,7 @@ const SignUp = () => {
     const errors = {};
     if (!form.nickname) errors.nickname = "닉네임은 필수입니다.";
     if (!form.email) errors.email = "이메일은 필수입니다.";
-    if (!form.emailDomain) errors.emailDomain = "도메인은 필수입니다."
+    if (!form.emailDomain) errors.emailDomain = "도메인은 필수입니다.";
     // if (!/\S+@\S+\.\S+/.test(form.email))
     //   errors.email = "이메일이 유효하지 않습니다.";
     if (!form.password) errors.password = "비밀번호는 필수입니다.";
@@ -56,7 +56,7 @@ const SignUp = () => {
     if (!/^\d{3}-\d{3,4}-\d{4}$/.test(form.phoneNumber))
       errors.phoneNumber =
         "휴대폰 번호는 올바른 형식이어야 합니다 (예: 010-1234-5678).";
-    if (!form.regionId) errors.regionId = "사는 지역은 필수입니다."
+    if (!form.regionId) errors.regionId = "사는 지역은 필수입니다.";
     return errors;
   };
 
@@ -67,7 +67,7 @@ const SignUp = () => {
 
     if (Object.keys(validationErrors).length === 0) {
       try {
-        const response = await axios.post('/api/v1/signup', {
+        const response = await axios.post("/api/v1/signup", {
           nickname: form.nickname,
           email: `${form.email}@${form.emailDomain}`,
           password: form.password,
@@ -77,13 +77,13 @@ const SignUp = () => {
         });
 
         if (response.data.success) {
-          console.log("회원 가입 성공", response.data)
+          console.log("회원 가입 성공", response.data);
           navigate("/signin"); // 회원가입 후 로그인 페이지로 이동
         } else {
-          console.error("회원 가입 실패", response.data.message)
+          console.error("회원 가입 실패", response.data.message);
         }
       } catch (error) {
-        console.error('회원가입 오류:', error);
+        console.error("회원가입 오류:", error);
       }
     }
   };
@@ -113,7 +113,9 @@ const SignUp = () => {
             value={form.emailDomain}
             onChange={handleChange}
           />
-          {errors.emailDomain && <p className="SignUpError">{errors.emailDomain}</p>}
+          {errors.emailDomain && (
+            <p className="SignUpError">{errors.emailDomain}</p>
+          )}
         </div>
         <div>
           <label className="SignUpLabel">닉네임</label>
