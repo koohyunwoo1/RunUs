@@ -5,6 +5,7 @@ import MyPageTier from "../../components/MyPage/MyPageTier";
 import EditIcon from "../../assets/editIcon.png";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import axios from "axios";
 
 const MyPageHome = () => {
   const navigate = useNavigate();
@@ -24,9 +25,6 @@ const MyPageHome = () => {
         />
         <div>
           <MyPageProfile />
-        </div>
-        <div className="MyPageName">
-          <h1>user.nickname</h1>
         </div>
         <div className="MyPageTier">
           <h3 className="MyPageh3">러닝 티어</h3>

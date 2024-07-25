@@ -1,12 +1,13 @@
-import { useState } from "react";
-import axios from "axios"
-import { useNavigate } from "react-router-dom";
+import { useState, useContext } from "react";
+import { UserContext } from "../../hooks/UserContext"; // UserContext 파일 경로에 맞게 수정
 
 const Login = () => {
+  const { loginUser, error } = useContext(UserContext);
+  // console.log(loginUser);
+  // const { userId } = useContext(UserContext);
+  // console.log(userId);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -20,29 +21,11 @@ const Login = () => {
     e.preventDefault();
 
     if (!email || !password) {
-      setError("이메일과 비밀번호를 입력하세요");
       return;
     }
 
-    try {
-      const response = await axios.post("/api/v1/signin", { email, password });
-
-      if (response.data.success) {
-        // 로그인 성공 시
-        console.log("로그인 성공", response.data)
-        localStorage.setItem('AuthToken', response.data.token)
-        // 로그인 후 필요한 작업 수행
-        navigate("/home"); // 예: 대시보드로 이동
-      } else {
-        // 로그인 실패 시
-        setError("이메일 또는 비밀번호가 일치하지 않습니다.");
-      }
-    } catch (error) {
-      console.error("로그인 오류:", error);
-      setError("로그인 중 오류가 발생했습니다.");
-    }
+    loginUser(email, password);
   };
-
 
   return (
     <div className="login_container">
