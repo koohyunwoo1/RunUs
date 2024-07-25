@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom"; // useNavigate와 useLocation 훅을 가져옵니다.
 import "../../styles/Common/Header.css";
 import logo from "../../assets/Logo.png";
+import Logout from "../Home/Logout";
 
 const Header = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -64,7 +65,9 @@ const Header = () => {
           X
         </button>
         <div className="dropdown-content">
-          <h1 className="category-item">LogOut</h1>
+          <h1 className="category-item">
+            <Logout />
+          </h1>
           <h1 className="category-item" onClick={handleReportClick}>
             Report
           </h1>
