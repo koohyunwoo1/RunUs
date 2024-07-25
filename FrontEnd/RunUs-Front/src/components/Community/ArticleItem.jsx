@@ -9,7 +9,7 @@ const ArticleItem = ({id, title, content }) => {
   return (
     <div className="ArticleItem">
       <div
-        onClick={()=>nav(`/article-home/${id}`)}  
+        onClick={()=>nav(`/article-detail/${id}`)}  
         className="info-section">
         <div className="article-title">
           {title}
