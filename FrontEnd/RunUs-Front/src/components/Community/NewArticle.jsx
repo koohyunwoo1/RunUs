@@ -4,17 +4,45 @@ import { useState } from "react";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 
+
 const NewArticle = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [departureTime, setDepartureTime] = useState('');
+  const [meetingTime, setMeetingTime] = useState('');
+  const [meetingDay, setMeetingDay] = useState('');
   const [region, setRegion] = useState('');
   const nav = useNavigate();
+
+  const regionOptions = [
+    { label: "서울특별시", value: 11 },
+    { label: "부산광역시", value: 12 },
+    { label: "대구광역시", value: 13 },
+    { label: "인천광역시", value: 14 },
+    { label: "광주광역시", value: 15 },
+    { label: "대전광역시", value: 16 },
+    { label: "울산광역시", value: 17 },
+    { label: "세종특별자치시", value: 18 },
+    { label: "경기도", value: 19 },
+    { label: "충청북도", value: 20 },
+    { label: "충청남도", value: 21 },
+    { label: "전라남도", value: 22 },
+    { label: "경상북도", value: 23 },
+    { label: "경상남도", value: 24 },
+    { label: "제주특별자치도", value: 25 },
+    { label: "강원특별자치도", value: 26 },
+    { label: "전북특별자치도", value: 27 },
+  ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`http://localhost:8080/api/v1/boards`, { title, content, departureTime, region });
+      const response = await axios.post(`/api/v1/boards`, {
+        title,
+        content,
+        region: parseInt(region), // region 값을 숫자로 변환
+        meetingTime,
+        meetingDay
+      });
       const newArticleId = response.data.id; // 서버로부터 응답으로 받은 새 글 ID
       nav(`/article-detail/${newArticleId}`); // 새 글의 상세 페이지로 이동
     } catch (error) {
@@ -46,12 +74,22 @@ const NewArticle = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="departureTime">출발 시간</label>
+          <label htmlFor="meetingTime">출발 시간</label>
           <input
-            id="departureTime"
+            id="meetingTime"
             type="time"
-            value={departureTime}
-            onChange={(e) => setDepartureTime(e.target.value)}
+            value={meetingTime}
+            onChange={(e) => setMeetingTime(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="meetingDay">출발 날짜</label>
+          <input
+            id="meetingDay"
+            type="date"
+            value={meetingDay}
+            onChange={(e) => setMeetingDay(e.target.value)}
             required
           />
         </div>
@@ -64,23 +102,9 @@ const NewArticle = () => {
             required
           >
             <option value="">지역 선택</option>
-            <option value="서울">서울</option>
-            <option value="부산">부산</option>
-            <option value="대구">대구</option>
-            <option value="인천">인천</option>
-            <option value="광주">광주</option>
-            <option value="대전">대전</option>
-            <option value="울산">울산</option>
-            <option value="세종">세종</option>
-            <option value="경기">경기</option>
-            <option value="강원">강원</option>
-            <option value="충북">충북</option>
-            <option value="충남">충남</option>
-            <option value="전북">전북</option>
-            <option value="전남">전남</option>
-            <option value="경북">경북</option>
-            <option value="경남">경남</option>
-            <option value="제주">제주</option>
+            {regionOptions.map(option => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
           </select>
         </div>
         <button type="submit">등록</button>

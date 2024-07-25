@@ -68,16 +68,14 @@ const ArticleHome = () => {
         </div>
         <ArticleList articles={articles} />
         <div className="pagination">
-          <Button
-            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-            disabled={page === 1}
-            text="이전"
-          />
-          <span>
-            Page {page} of {totalPages}
-          </span>
-          <Button
-            onClick={() => setPage((prev) => prev + 1)}
+          <Button 
+            onClick={() => setPage(prev => Math.max(prev - 1, 0))} 
+            disabled={page === 0}
+            text="이전" 
+            />
+          <span>Page {page} of {totalPages}</span>
+          <Button 
+            onClick={() => setPage(prev => prev + 1)} 
             disabled={page === totalPages}
             text="다음"
           />
