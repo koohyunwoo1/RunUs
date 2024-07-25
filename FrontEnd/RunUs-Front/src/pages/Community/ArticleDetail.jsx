@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../styles/Community/ArticleDetail.css";
 import CommentSection from "../../components/Community/CommentSection";
 import Button from "../../components/common/Button";
-import { async } from "@babel/runtime/regenerator";
 
 const formatDate = (dateString) => {
   const options = { year: "numeric", month: "long", day: "numeric" };
@@ -23,8 +21,8 @@ const ArticleDetail = () => {
   useEffect(() => {
     const fetchArticle = async () => {
       try {
-        const reponse = await axios.get(`/api/v1/boards/${id}`);
-        setArticle(reponse.data.data);
+        const response = await axios.get(`/api/v1/boards/${id}`);
+        setArticle(response.data.data);
       } catch (err) {
         setError(err);
       } finally {
@@ -32,12 +30,22 @@ const ArticleDetail = () => {
       }
     };
 
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get(`api/v1/boards/${id}/comments`)
+        setComments(response.data.data)
+      } catch (err) {
+        setError(err)
+      }
+    }
+
     fetchArticle();
+    fetchComments();
   }, [id]);
 
   const handleComplete = async () => {
     try {
-      await axios.put(`/api/v1/boards/${id}`);
+      await axios.put(`/api/v1/boards/${id}`, { completed: true});
       setArticle((prevArticle) => ({ ...prevArticle, completed: true }));
     } catch (err) {
       console.error("수정 실패: ", error);

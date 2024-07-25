@@ -1,64 +1,49 @@
-// src/components/CommentSection.jsx
-import React, { useState } from 'react';
-import Button from '../common/Button';
-import "../../styles/Community/CommentSection.css";
+import { useState } from "react"
+import axios from "axios"
+import "../../styles/Community/CommentSection.css"
 
-const CommentSection = ({ comments }) => {
-  const [commentList, setCommentList] = useState(comments || []);
-  const [newComment, setNewComment] = useState('');
+const CommentSection = ({ comments, articleId }) => {
+  const [ newComment, setNewComment ] = useState("")
+  const [ commentList, setCommentList ] = useState(comments)
 
   const handleCommentChange = (e) => {
-    setNewComment(e.target.value);
-  };
+    setNewComment(e.target.value)
+  }
 
-  const handleCommentSubmit = (e) => {
-    e.preventDefault();
-    if (!newComment.trim()) return; // 빈 댓글은 추가하지 않음
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault()
+    if (!(newComment).trim()) return
 
-    const newCommentObj = {
-      id: commentList.length + 1,
-      author: '작성자', // 실제 작성자를 받아오는 로직으로 대체
-      content: newComment,
-      createdAt: new Date().toISOString()
-    };
-
-    setCommentList([...commentList, newCommentObj]);
-    setNewComment('');
-  };
-
-  const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  };
+    try {
+      const response = await axios.post(`/api/v1/boards/${articleId}/comments`, { content: newComment })
+      setCommentList(prevComments => [...prevComments, response.data.data])
+      setNewComment("")
+    } catch (err) {
+      console.error("댓글 작성 실패: ", err)
+    }
+  }
 
   return (
     <div className="comment-section">
       <h3>댓글</h3>
       <ul>
-        {commentList.length > 0 ? (
-          commentList.map((comment) => (
-            <li key={comment.id}>
-              <div><strong>{comment.author}</strong></div>
-              <div>{formatDate(comment.createdAt)}</div>
-              <div>{comment.content}</div>
-            </li>
-          ))
-        ) : (
-          <p>댓글이 없습니다.</p>
-        )}
+        {commentList.map((comment) => (
+          <li key={comment.id}>
+            <p>{comment.content}</p>
+            <span>{new Date(comment.createdAt).toLocaleString()}</span>
+          </li>
+        ))}
       </ul>
-      <form onSubmit={handleCommentSubmit} className="comment-form">
-        <div className="textarea-container">
-          <textarea
-            value={newComment}
-            onChange={handleCommentChange}
-            placeholder="댓글을 입력하세요"
-          />
-          <Button text="등록" className="comment-submit-button"/>
-        </div>
+      <form onSubmit={handleCommentSubmit}>
+        <textarea
+          value={newComment}
+          onChange={handleCommentChange}
+          placeholder="댓글을 입력하세요..."
+        />
+        <button type="submit">댓글 작성</button>
       </form>
     </div>
   );
-};
+}
 
-export default CommentSection;
+export default CommentSection

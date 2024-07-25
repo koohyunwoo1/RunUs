@@ -1,10 +1,8 @@
-import React from "react";
 import "../../styles/Community/ArticleList.css";
 import Button from "../../components/common/Button";
 import ArticleItem from "../../components/Community/ArticleItem";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/common/Header";
-import Search from "./Search";
 
 const ArticleList = ({ articles }) => {
   const nav = useNavigate();
