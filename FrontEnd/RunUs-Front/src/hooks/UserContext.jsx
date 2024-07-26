@@ -24,7 +24,6 @@ const UserProvider = ({ children }) => {
   const loginUser = async (email, password) => {
     try {
       const response = await axios.post("/api/v1/signin", { email, password });
-
       if (response.data.success) {
         setUserData(response.data.data); // userData 설정
 
@@ -57,8 +56,27 @@ const UserProvider = ({ children }) => {
     }
   };
 
+  const registerUser = async (userData) => {
+    try {
+      const response = await axios.post("/api/v1/signup", userData);
+
+      if (response.data.success) {
+        console.log("회원 가입 성공", response.data);
+        navigate("/signin"); // 회원가입 후 로그인 페이지로 이동
+      } else {
+        console.error("회원 가입 실패", response.data.message);
+        setError(response.data.message);
+      }
+    } catch (error) {
+      console.error("회원가입 오류:", error);
+      setError("회원가입 중 오류가 발생했습니다.");
+    }
+  };
+
   return (
-    <UserContext.Provider value={{ userData, error, loginUser, logoutUser }}>
+    <UserContext.Provider
+      value={{ userData, error, loginUser, logoutUser, registerUser, userId }}
+    >
       {children}
     </UserContext.Provider>
   );

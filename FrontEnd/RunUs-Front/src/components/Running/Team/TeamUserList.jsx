@@ -1,5 +1,6 @@
 import React from "react";
 import "../../../styles/Running/Team/TeamUserList.css";
+import { UserContext } from "../../../hooks/UserContext";
 
 // 임의의 유저를 받자
 const users = [

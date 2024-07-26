@@ -15,6 +15,7 @@ const tiers = [
 const MyPageTier = () => {
   const [xp, setXp] = useState(0);
   const userId = localStorage.getItem("userId");
+  // const { userId } = useContext(UserContext);
   const [currentTier, setCurrentTier] = useState(tiers[0]);
 
   useEffect(() => {

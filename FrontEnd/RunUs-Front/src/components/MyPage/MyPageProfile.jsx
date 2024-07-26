@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect, useContext } from "react";
 import "../../styles/MyPage/MyPageProfile.css";
 import NormalProfile from "../../assets/profile(normal).png";
 import axios from "axios";
-// import { UserContext } from "../../hooks/UserContext";
 import { UserContext } from "../../hooks/UserContext";
 
 const MyPageProfile = () => {
