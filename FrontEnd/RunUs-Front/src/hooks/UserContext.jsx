@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 const UserContext = createContext();
 
 const UserProvider = ({ children }) => {
+  const [userData, setUserData] = useState(null);
   const [userId, setUserId] = useState(null);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -14,6 +15,8 @@ const UserProvider = ({ children }) => {
       const response = await axios.post("/api/v1/signin", { email, password });
       if (response.data.success) {
         setUserId(response.data.data.userId);
+        const data = response.data.data;
+        setUserData(data);
         localStorage.setItem("AuthToken", response.data.token);
         localStorage.setItem("userId", response.data.data.userId);
         navigate("/home");
@@ -34,6 +37,7 @@ const UserProvider = ({ children }) => {
       if (response.data.success) {
         localStorage.removeItem("AuthToken");
         localStorage.removeItem("userId");
+        setUserData(null);
         setUserId(null);
         navigate("/");
       } else {
@@ -60,7 +64,7 @@ const UserProvider = ({ children }) => {
 
   return (
     <UserContext.Provider
-      value={{ userId, error, loginUser, logoutUser, registerUser }}
+      value={{ userData, userId, error, loginUser, logoutUser, registerUser }}
     >
       {children}
     </UserContext.Provider>
