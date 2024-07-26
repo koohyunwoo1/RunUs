@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import "../../styles/Auth/SignUp.css";
 import LogOutHeader from "../../components/Home/LogOutHeader";
 import Button from "../../components/common/Button";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { UserContext } from "../../hooks/UserContext"; // UserContext 경로에 맞게 수정
 
 const SignUp = () => {
+  const { registerUser, error } = useContext(UserContext); // UserContext에서 registerUser와 error 가져오기
   const [form, setForm] = useState({
     email: "",
     emailDomain: "",
@@ -18,7 +18,6 @@ const SignUp = () => {
   });
 
   const [errors, setErrors] = useState({});
-  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,8 +43,6 @@ const SignUp = () => {
     if (!form.nickname) errors.nickname = "닉네임은 필수입니다.";
     if (!form.email) errors.email = "이메일은 필수입니다.";
     if (!form.emailDomain) errors.emailDomain = "도메인은 필수입니다.";
-    // if (!/\S+@\S+\.\S+/.test(form.email))
-    //   errors.email = "이메일이 유효하지 않습니다.";
     if (!form.password) errors.password = "비밀번호는 필수입니다.";
     if (form.password.length < 8)
       errors.password = "비밀번호는 최소 8자리입니다.";
@@ -66,25 +63,16 @@ const SignUp = () => {
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      try {
-        const response = await axios.post("/api/v1/signup", {
-          nickname: form.nickname,
-          email: `${form.email}@${form.emailDomain}`,
-          password: form.password,
-          phoneNumber: form.phoneNumber,
-          weight: parseInt(form.weight, 10),
-          regionId: parseInt(form.regionId, 10),
-        });
+      const userData = {
+        nickname: form.nickname,
+        email: `${form.email}@${form.emailDomain}`,
+        password: form.password,
+        phoneNumber: form.phoneNumber,
+        weight: parseInt(form.weight, 10),
+        regionId: parseInt(form.regionId, 10),
+      };
 
-        if (response.data.success) {
-          console.log("회원 가입 성공", response.data);
-          navigate("/signin"); // 회원가입 후 로그인 페이지로 이동
-        } else {
-          console.error("회원 가입 실패", response.data.message);
-        }
-      } catch (error) {
-        console.error("회원가입 오류:", error);
-      }
+      await registerUser(userData); // registerUser 호출
     }
   };
 
@@ -188,6 +176,8 @@ const SignUp = () => {
           {errors.regionId && <p className="SignUpError">{errors.regionId}</p>}
         </div>
         <Button text={"회원 가입"} />
+        {error && <p className="SignUpError">{error}</p>}{" "}
+        {/* 오류 메시지 출력 */}
       </form>
     </div>
   );

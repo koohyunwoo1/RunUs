@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import React, { createContext, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../utils/auth"; // 로그아웃 관련 유틸리티 함수 경로에 맞게 수정
@@ -14,16 +14,13 @@ const UserProvider = ({ children }) => {
   const loginUser = async (email, password) => {
     try {
       const response = await axios.post("/api/v1/signin", { email, password });
-
       if (response.data.success) {
+        console.log(response.data);
         // 로그인 성공 시
-        // console.log("로그인 성공", response.data);
         setUserId(response.data.data.userId); // userId 설정
-
-        console.log(response.data.data.userId);
         localStorage.setItem("AuthToken", response.data.token);
+        console.log("TOken", response.data.token);
         localStorage.setItem("userId", response.data.data.userId);
-        // 로그인 후 필요한 작업 수행
         navigate("/home"); // 예: 대시보드로 이동
       } else {
         // 로그인 실패 시
@@ -37,15 +34,11 @@ const UserProvider = ({ children }) => {
 
   const logoutUser = async () => {
     try {
-      // 로그아웃 요청을 서버로 보냄
       const response = await axios.post("/api/v1/signout");
 
       if (response.data.success) {
         // 로그아웃 성공
-        console.log("로그아웃 성공", response.data);
-        // 클라이언트 측에서 필요한 로그아웃 후처리
         logout(); // 로컬 스토리지에서 사용자 정보 삭제 등
-        // 로그아웃된 홈으로 이동
         navigate("/");
         setUserId(null); // userId 초기화
       } else {
@@ -56,9 +49,26 @@ const UserProvider = ({ children }) => {
     }
   };
 
+  const registerUser = async (userData) => {
+    try {
+      const response = await axios.post("/api/v1/signup", userData);
+
+      if (response.data.success) {
+        console.log("회원 가입 성공", response.data);
+        navigate("/signin"); // 회원가입 후 로그인 페이지로 이동
+      } else {
+        console.error("회원 가입 실패", response.data.message);
+        setError(response.data.message);
+      }
+    } catch (error) {
+      console.error("회원가입 오류:", error);
+      setError("회원가입 중 오류가 발생했습니다.");
+    }
+  };
+
   return (
     <UserContext.Provider
-      value={{ userData, error, loginUser, logoutUser, userId }}
+      value={{ userData, error, loginUser, logoutUser, registerUser, userId }}
     >
       {children}
     </UserContext.Provider>
