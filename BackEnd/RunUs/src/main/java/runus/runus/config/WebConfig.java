@@ -15,7 +15,7 @@ public class WebConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // 모든 경로에 대해
                         .allowedOrigins("*") // 모든 도메인에서의 요청 허용
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 모든 HTTP 메서드 허용
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH") // 모든 HTTP 메서드 허용
                         .allowedHeaders("*"); // 모든 헤더 허용
             }
         };
