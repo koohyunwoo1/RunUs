@@ -5,6 +5,26 @@ import Button from "../../components/common/Button";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+const regionOptions = [
+  { label: "서울특별시", value: 11 },
+  { label: "부산광역시", value: 12 },
+  { label: "대구광역시", value: 13 },
+  { label: "인천광역시", value: 14 },
+  { label: "광주광역시", value: 15 },
+  { label: "대전광역시", value: 16 },
+  { label: "울산광역시", value: 17 },
+  { label: "세종특별자치시", value: 18 },
+  { label: "경기도", value: 19 },
+  { label: "충청북도", value: 20 },
+  { label: "충청남도", value: 21 },
+  { label: "전라남도", value: 22 },
+  { label: "경상북도", value: 23 },
+  { label: "경상남도", value: 24 },
+  { label: "제주특별자치도", value: 25 },
+  { label: "강원특별자치도", value: 26 },
+  { label: "전북특별자치도", value: 27 },
+];
+
 const SignUp = () => {
   const [form, setForm] = useState({
     email: "",
@@ -14,7 +34,7 @@ const SignUp = () => {
     password: "",
     confirmPassword: "",
     weight: "",
-    regionId: "",
+    regionId: "", // regionId를 select로 변경
   });
 
   const [errors, setErrors] = useState({});
@@ -38,6 +58,13 @@ const SignUp = () => {
       });
     }
   };
+
+  const handleSelectChange = (e) => {
+    setForm({
+      ...form,
+      regionId: e.target.value
+    })
+  }
 
   const validate = () => {
     const errors = {};
@@ -177,14 +204,20 @@ const SignUp = () => {
           {errors.weight && <p className="SignUpError">{errors.weight}</p>}
         </div>
         <div>
-          <label className="SignUpLabel">사는 지역</label>
-          <input
-            type="number"
+        <label className="SignUpLabel">사는 지역</label>
+          <select
             name="regionId"
             className="SignUpInput"
             value={form.regionId}
-            onChange={handleChange}
-          />
+            onChange={handleSelectChange}
+          >
+            <option value="">지역 선택</option>
+            {regionOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
           {errors.regionId && <p className="SignUpError">{errors.regionId}</p>}
         </div>
         <Button text={"회원 가입"} />
