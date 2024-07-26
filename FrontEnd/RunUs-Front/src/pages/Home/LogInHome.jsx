@@ -47,7 +47,6 @@ const LogInHome = () => {
         <h1 className="Today_km">2.3km</h1>
         <ReportItem />
         <ReportItem />
-        <ReportItem />
         <div className="MainButton-container">
           <Button2 src={SoloProfile} onClick={handleSoloProfileClick} />
           <Button2

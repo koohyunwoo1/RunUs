@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Header from "../../components/common/Header";
 import "../../styles/MyPage/MyPageEdit.css";
 import Button from "../../components/common/Button";
