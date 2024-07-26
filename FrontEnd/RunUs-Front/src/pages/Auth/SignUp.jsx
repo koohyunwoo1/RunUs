@@ -26,6 +26,7 @@ const regionOptions = [
 
 const SignUp = () => {
   const { registerUser, error } = useContext(UserContext); // UserContext에서 registerUser와 error 가져오기
+
   const [form, setForm] = useState({
     email: "",
     emailDomain: "",
@@ -61,9 +62,9 @@ const SignUp = () => {
   const handleSelectChange = (e) => {
     setForm({
       ...form,
-      regionId: e.target.value
-    })
-  }
+      regionId: e.target.value,
+    });
+  };
 
   const validate = () => {
     const errors = {};
@@ -192,7 +193,7 @@ const SignUp = () => {
           {errors.weight && <p className="SignUpError">{errors.weight}</p>}
         </div>
         <div>
-        <label className="SignUpLabel">사는 지역</label>
+          <label className="SignUpLabel">사는 지역</label>
           <select
             name="regionId"
             className="SignUpInput"
@@ -206,11 +207,11 @@ const SignUp = () => {
               </option>
             ))}
           </select>
+
           {errors.regionId && <p className="SignUpError">{errors.regionId}</p>}
         </div>
         <Button text={"회원 가입"} />
         {error && <p className="SignUpError">{error}</p>}{" "}
-        {/* 오류 메시지 출력 */}
       </form>
     </div>
   );

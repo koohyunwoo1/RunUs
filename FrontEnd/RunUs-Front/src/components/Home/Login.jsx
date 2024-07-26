@@ -3,9 +3,6 @@ import { UserContext } from "../../hooks/UserContext"; // UserContext 파일 경
 
 const Login = () => {
   const { loginUser, error } = useContext(UserContext);
-  // console.log(loginUser);
-  // const { userId } = useContext(UserContext);
-  // console.log(userId);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
