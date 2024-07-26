@@ -1,7 +1,7 @@
 // ReverseGeolocation.jsx
 
-import React, { useState, useCallback } from 'react';
-import axios from 'axios';
+import React, { useState, useCallback } from "react";
+import axios from "axios";
 
 // Haversine formula to calculate distance between two coordinates
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
@@ -12,8 +12,10 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
   const dLon = toRad(lon2 - lon1);
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    Math.cos(toRad(lat1)) *
+      Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
   return R * c; // Distance in kilometers
@@ -25,7 +27,7 @@ const fetchReverseGeocoded = async (latitude, longitude) => {
     `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
   );
   return reverseGeocoded.data;
-}
+};
 
 // 위치 데이터를 가져오고 화면에 표시하는 React 컴포넌트
 const ReverseGeolocation = () => {
@@ -52,6 +54,12 @@ const ReverseGeolocation = () => {
           latitude,
           longitude
         );
+
+        console.log(lastPosition.latitude);
+        console.log(lastPosition.longitude);
+        console.log(latitude);
+        console.log(longitude);
+
         setTotalDistance((prevDistance) => prevDistance + distance);
       }
       return newPositions;
@@ -64,12 +72,12 @@ const ReverseGeolocation = () => {
   // 위치 정보 요청이 실패했을 때 호출되는 함수
   const onError = (e) => {
     if (e.code === 1) {
-      alert('서비스 이용을 위해 위치 정보 제공에 동의해주세요!');
+      alert("서비스 이용을 위해 위치 정보 제공에 동의해주세요!");
       return;
     }
     if (e.code === 2) {
       // 위치 정보를 사용할 수 없습니다. 다시 시도합니다...
-      console.warn('위치 정보를 사용할 수 없습니다. 다시 시도합니다...');
+      console.warn("위치 정보를 사용할 수 없습니다. 다시 시도합니다...");
       startWatchingPosition(); // 위치 추적을 다시 시작
       return;
     }
@@ -80,14 +88,14 @@ const ReverseGeolocation = () => {
   // 위치 정보 요청 옵션
   const options = {
     enableHighAccuracy: true, // 정확한 위치 정보 제공 - 기본값은 false
-    maximumAge: 30000,        // 캐시된 위치 정보의 유효 시간 - 밀리초
-    timeout: 27000            // 위치 정보를 얻기까지 대기 시간 - 밀리초
+    maximumAge: 30000, // 캐시된 위치 정보의 유효 시간 - 밀리초
+    timeout: 27000, // 위치 정보를 얻기까지 대기 시간 - 밀리초
   };
 
   // 위치 추적을 시작하는 함수
   const startWatchingPosition = useCallback(() => {
     if (!navigator.geolocation) {
-      alert('지원하지 않는 브라우저 입니다!');
+      alert("지원하지 않는 브라우저 입니다!");
       return;
     }
 

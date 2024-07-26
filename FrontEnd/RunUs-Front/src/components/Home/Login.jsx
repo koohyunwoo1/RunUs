@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { UserContext } from "../../hooks/UserContext"; // UserContext 파일 경로에 맞게 수정
 
 const Login = () => {
+  const { loginUser, error } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -13,13 +14,14 @@ const Login = () => {
     setPassword(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!email || !password) {
-      setError("이메일과 비밀번호를 입력하세요");
       return;
     }
+
+    loginUser(email, password);
   };
 
   return (

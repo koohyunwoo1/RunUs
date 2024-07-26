@@ -14,11 +14,12 @@ const Button2 = forwardRef(({ src, onClick }, ref) => {
   );
 });
 
+// displayName을 추가하여 디버깅 및 개발 도구에서 쉽게 식별할 수 있도록 합니다.
+Button2.displayName = "Button2";
+
 Button2.propTypes = {
   src: PropTypes.string.isRequired,
   onClick: PropTypes.func,
 };
-// 코드의 안정성을 높이고, 컴포넌트의 사용방법을 문서화하는 데 도움을 준다.
-// 권장사항
 
 export default Button2;

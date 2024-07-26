@@ -21,7 +21,7 @@ body {
 .countdown {
   position: absolute;
   font-size: 200px;
-  color: yellow;
+  color: #98bae3;
   animation: fade 1s linear;
 }
 

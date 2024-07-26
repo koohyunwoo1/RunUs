@@ -1,10 +1,28 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import "../../styles/MyPage/MyPageProfile.css";
 import NormalProfile from "../../assets/profile(normal).png";
+import axios from "axios";
+import { UserContext } from "../../hooks/UserContext";
 
 const MyPageProfile = () => {
   const [profileImage, setProfileImage] = useState(null);
   const fileInputRef = useRef(null);
+  const [nickname, setNickname] = useState("");
+  // const { userId } = useContext(UserContext);
+  const userId = localStorage.getItem("userId");
+  console.log(userId);
+  useEffect(() => {
+    if (userId) {
+      axios
+        .get(`/api/v1/search-profile?userId=${userId}`)
+        .then((response) => {
+          setNickname(response.data.data.nickname);
+        })
+        .catch((error) => {
+          console.error("Error fetching profile:", error);
+        });
+    }
+  }, [userId]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -20,14 +38,11 @@ const MyPageProfile = () => {
   const handleImageClick = () => {
     fileInputRef.current.click();
   };
-  // 프로필 이미지 클릭하면 파일 선택 창 오픈
 
   return (
     <div className="profile-container">
-      <h1>user.nickname Profile</h1>
       <img
         src={profileImage || NormalProfile}
-        // placeholder url을 사용하여 기본 이미지를 설정
         className="profile-image"
         onClick={handleImageClick}
       />
@@ -39,6 +54,7 @@ const MyPageProfile = () => {
         onChange={handleImageChange}
         ref={fileInputRef}
       />
+      <h1>{nickname}</h1>
     </div>
   );
 };

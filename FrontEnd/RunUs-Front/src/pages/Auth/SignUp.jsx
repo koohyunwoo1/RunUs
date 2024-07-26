@@ -1,24 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import "../../styles/Auth/SignUp.css";
 import LogOutHeader from "../../components/Home/LogOutHeader";
 import Button from "../../components/common/Button";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { UserContext } from "../../hooks/UserContext"; // UserContext 경로에 맞게 수정
+
+const regionOptions = [
+  { label: "서울특별시", value: 11 },
+  { label: "부산광역시", value: 12 },
+  { label: "대구광역시", value: 13 },
+  { label: "인천광역시", value: 14 },
+  { label: "광주광역시", value: 15 },
+  { label: "대전광역시", value: 16 },
+  { label: "울산광역시", value: 17 },
+  { label: "세종특별자치시", value: 18 },
+  { label: "경기도", value: 19 },
+  { label: "충청북도", value: 20 },
+  { label: "충청남도", value: 21 },
+  { label: "전라남도", value: 22 },
+  { label: "경상북도", value: 23 },
+  { label: "경상남도", value: 24 },
+  { label: "제주특별자치도", value: 25 },
+  { label: "강원특별자치도", value: 26 },
+  { label: "전북특별자치도", value: 27 },
+];
 
 const SignUp = () => {
+  const { registerUser, error } = useContext(UserContext); // UserContext에서 registerUser와 error 가져오기
+
   const [form, setForm] = useState({
     email: "",
+    emailDomain: "",
     nickname: "",
     phoneNumber: "",
     password: "",
     confirmPassword: "",
     weight: "",
-    region: "",
+    regionId: "", // regionId를 select로 변경
   });
 
   const [errors, setErrors] = useState({});
-  const [ successMessage, setSuccessMessage ] = useState("")
-  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,12 +59,18 @@ const SignUp = () => {
     }
   };
 
+  const handleSelectChange = (e) => {
+    setForm({
+      ...form,
+      regionId: e.target.value,
+    });
+  };
+
   const validate = () => {
     const errors = {};
     if (!form.nickname) errors.nickname = "닉네임은 필수입니다.";
     if (!form.email) errors.email = "이메일은 필수입니다.";
-    if (!/\S+@\S+\.\S+/.test(form.email))
-      errors.email = "이메일이 유효하지 않습니다.";
+    if (!form.emailDomain) errors.emailDomain = "도메인은 필수입니다.";
     if (!form.password) errors.password = "비밀번호는 필수입니다.";
     if (form.password.length < 8)
       errors.password = "비밀번호는 최소 8자리입니다.";
@@ -55,7 +81,7 @@ const SignUp = () => {
     if (!/^\d{3}-\d{3,4}-\d{4}$/.test(form.phoneNumber))
       errors.phoneNumber =
         "휴대폰 번호는 올바른 형식이어야 합니다 (예: 010-1234-5678).";
-    if (!form.region) errors.region = "사는 지역은 필수입니다."
+    if (!form.regionId) errors.regionId = "사는 지역은 필수입니다.";
     return errors;
   };
 
@@ -65,26 +91,16 @@ const SignUp = () => {
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      try {
-        const response = await axios.post('http://localhost:8080/api/v1/signup', {
-          nickname: form.nickname,
-          email: form.email,
-          password: form.password,
-          phoneNumber: form.phoneNumber,
-          weight: parseInt(form.weight, 10),
-          regionId: parseInt(form.region, 10),
-        });
+      const userData = {
+        nickname: form.nickname,
+        email: `${form.email}@${form.emailDomain}`,
+        password: form.password,
+        phoneNumber: form.phoneNumber,
+        weight: parseInt(form.weight, 10),
+        regionId: parseInt(form.regionId, 10),
+      };
 
-        if (response.data.success) {
-          setSuccessMessage(response.data.message);
-          navigate("/signin"); // 회원가입 후 로그인 페이지로 이동
-        } else {
-          setErrors({ server: response.data.message });
-        }
-      } catch (error) {
-        console.error('회원가입 오류:', error);
-        setErrors({ server: "회원가입 중 문제가 발생했습니다." });
-      }
+      await registerUser(userData); // registerUser 호출
     }
   };
 
@@ -96,13 +112,26 @@ const SignUp = () => {
         <div>
           <label className="SignUpLabel">이메일</label>
           <input
-            type="email"
+            type="text"
             name="email"
             className="SignUpInput"
             value={form.email}
             onChange={handleChange}
           />
           {errors.email && <p className="SignUpError">{errors.email}</p>}
+        </div>
+        <div>
+          <label className="SignUpLabel">이메일 도메인</label>
+          <input
+            type="text"
+            name="emailDomain"
+            className="SignUpInput"
+            value={form.emailDomain}
+            onChange={handleChange}
+          />
+          {errors.emailDomain && (
+            <p className="SignUpError">{errors.emailDomain}</p>
+          )}
         </div>
         <div>
           <label className="SignUpLabel">닉네임</label>
@@ -165,16 +194,24 @@ const SignUp = () => {
         </div>
         <div>
           <label className="SignUpLabel">사는 지역</label>
-          <input
-            type="text"
-            name="region"
+          <select
+            name="regionId"
             className="SignUpInput"
-            value={form.region}
-            onChange={handleChange}
-          />
-          {errors.region && <p className="SignUpError">{errors.region}</p>}
+            value={form.regionId}
+            onChange={handleSelectChange}
+          >
+            <option value="">지역 선택</option>
+            {regionOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+
+          {errors.regionId && <p className="SignUpError">{errors.regionId}</p>}
         </div>
         <Button text={"회원 가입"} />
+        {error && <p className="SignUpError">{error}</p>}{" "}
       </form>
     </div>
   );

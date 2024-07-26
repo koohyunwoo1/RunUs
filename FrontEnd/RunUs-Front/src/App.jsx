@@ -16,28 +16,125 @@ import UserList from "./pages/UseList/UserList";
 import MyPageEdit from "./pages/MyPage/MyPageEdit";
 import CountDown from "./pages/Running/Team/CountDown";
 import TeamCheck from "./pages/Running/Team/TeamCheck";
+import ProtectedRoute from "./components/common/ProtectedRoute";
+import { UserProvider } from "./hooks/UserContext";
 const App = () => {
   return (
-    <div>
-      <Routes>
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/" element={<LogOutHome />} />
-        <Route path="/home" element={<LogInHome />} />
-        <Route path="/solo" element={<SoloMode />} />
-        <Route path="/team-create/:id" element={<TeamCreate />} />
-        <Route path="/countdown/:id" element={<CountDown />} />
-        <Route path="/team-QR" element={<TeamQR />} />
-        <Route path="/report-home" element={<ReportHome />} />
-        <Route path="/article-home" element={<ArticleHome />} />
-        <Route path="/my-page-home" element={<MyPageHome />} />
-        <Route path="/article-create" element={<ArticleCreate />} />
-        <Route path="/article-detail/:id" element={<ArticleDetail />} />
-        <Route path="/UserList" element={<UserList />} />
-        <Route path="/my-page-edit" element={<MyPageEdit />} />
-        <Route path="/team-check/:id" element={<TeamCheck />} />
-      </Routes>
-    </div>
+    <UserProvider>
+      {/* UserProvider로 App을 감싸서 UserContext를 앱 전역에서 사용 */}
+      <div>
+        <Routes>
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/" element={<LogOutHome />} />
+          {/* 인증이 필요한 경로 */}
+          <Route
+            path="/home"
+            element={
+              <ProtectedRoute>
+                <LogInHome />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/solo"
+            element={
+              <ProtectedRoute>
+                <SoloMode />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/team-create/:id"
+            element={
+              <ProtectedRoute>
+                <TeamCreate />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/countdown/:id"
+            element={
+              <ProtectedRoute>
+                <CountDown />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/team-QR"
+            element={
+              <ProtectedRoute>
+                <TeamQR />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/report-home"
+            element={
+              <ProtectedRoute>
+                <ReportHome />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/article-home"
+            element={
+              <ProtectedRoute>
+                <ArticleHome />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-page-home"
+            element={
+              <ProtectedRoute>
+                <MyPageHome />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/article-create"
+            element={
+              <ProtectedRoute>
+                <ArticleCreate />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/article-detail/:id"
+            element={
+              <ProtectedRoute>
+                <ArticleDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/UserList"
+            element={
+              <ProtectedRoute>
+                <UserList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-page-edit"
+            element={
+              <ProtectedRoute>
+                <MyPageEdit />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/team-check/:id"
+            element={
+              <ProtectedRoute>
+                <TeamCheck />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </div>
+    </UserProvider>
   );
 };
 
