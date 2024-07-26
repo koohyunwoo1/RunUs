@@ -4,11 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import runus.runus.api.ApiResponse;
 import runus.runus.record.model.Record;
 import runus.runus.record.service.RecordService;
 import runus.runus.user.entity.User;
 import runus.runus.user.service.UserService;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -22,40 +24,41 @@ public class RecordController {
     private final UserService userService;
 
     // 티어 정보 보기
-    @GetMapping("/tier/{user_id}")
+    @GetMapping("/tier")
     // user의 tier_id 출력
-    public Integer getUserTier(@PathVariable("user_id") Integer user_id) {
+    public ResponseEntity<?> getUserTier(@RequestParam("user_id") Integer user_id) {
         Optional<User> user = userService.getUserById(user_id);
-        return user.map(User::getTierId).orElse(null);
+        Map<String, Object> data = new HashMap<>();
+        data.put("tier_id", user.map(User::getTierId).orElse(null));
+        return ResponseEntity.ok(new ApiResponse<>(true, data, "티어 조회 성공"));
     }
 
     // 최근 기록
     // 전체 record 에서 맨 위에 있는 데이터 2개를 가져온다
     // record_date, party_id, distance, time, kcal 가져옴
-    @GetMapping("/recent/{user_id}")
-    public List<Record> getRecentRecords(@PathVariable("user_id") Integer user_id) {
-        return recordService.getRecentRecords(user_id, 2);
+    @GetMapping("/recent")
+    public ResponseEntity<?> getRecentRecords(@RequestParam("user_id") Integer user_id) {
+        List<Record> records = recordService.getRecentRecords(user_id, 2);
+        return ResponseEntity.ok(new ApiResponse<>(true, records, "최근 기록 조회 성공"));
     }
 
     // 모든 기록 가져오기
-    @GetMapping("/all/{user_id}")
-    public ResponseEntity<?> getAllRecords(@PathVariable("user_id") Integer user_id) {
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllRecords(@RequestParam("user_id") Integer user_id) {
         try {
             List<Record> records = recordService.getAllRecords(user_id);
-            return new ResponseEntity<>(records, HttpStatus.OK);
+            return ResponseEntity.ok(new ApiResponse<>(true, records, "모든 기록 가져오기 성공"));
         } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.ok(new ApiResponse<>(false, e.getMessage(), "기록 가져오기 실패"));
         }
     }
 
-
-
     // 지금까지 달린 총 거리
-    @GetMapping("/total_distance/{user_id}")
+    @GetMapping("/total_distance")
     // record에서 모든 데이터의 distance를 합한 것 출력
     // == total_distance
-    public Integer getTotalDistance(@PathVariable("user_id") Integer user_id) {
-        return recordService.getTotalDistance(user_id);
+    public ResponseEntity<?> getTotalDistance(@RequestParam("user_id") Integer user_id) {
+        return ResponseEntity.ok(new ApiResponse<>(true, recordService.getTotalDistance(user_id), "러닝 총 거리 조회 성공"));
     }
 
     // 년도 별 월 통계
@@ -66,16 +69,14 @@ public class RecordController {
     // month : 1, totaldistance : 10000, time : 20000
     // month : 2, totaldistance : 1000, time : 2000
 
-
-    //@GetMapping("/graph/{user_id}/{year}")
     // 년도 별 월 통계
-    @GetMapping("/graph/{user_id}/{year}")
-    public ResponseEntity<?> getMonthlyStatistics(@PathVariable("user_id") Integer user_id, @PathVariable("year") Integer year) {
+    @GetMapping("/graph/{year}")
+    public ResponseEntity<?> getMonthlyStatistics(@RequestParam("user_id") Integer user_id, @PathVariable("year") Integer year) {
         try {
             List<Map<String, Object>> stats = recordService.getMonthlyStatistics(user_id, year);
-            return new ResponseEntity<>(stats, HttpStatus.OK);
+            return ResponseEntity.ok(new ApiResponse<>(true,stats,"년도 별 월 통계 조회 성공"));
         } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.ok(new ApiResponse<>(false, e.getMessage(), "년도 별 월 통계 조회 실패"));
         }
     }
 

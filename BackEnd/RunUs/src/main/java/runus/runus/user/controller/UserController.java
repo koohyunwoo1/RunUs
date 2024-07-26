@@ -42,6 +42,12 @@ public class UserController {
         return createResponse(true, data, "성공");
     }
 
+    @GetMapping("/search-profile")
+    public ResponseEntity<?> searchProfile(@RequestParam Integer userId) {
+        UserDto userProfile = userService.getUserProfile(userId);
+        return createResponse(true, userProfile, "조회 성공");
+    }
+
     private ResponseEntity<?> createResponse(boolean success, Object data, String message) {
         Map<String, Object> response = new HashMap<>();
         response.put("success", success);

@@ -22,9 +22,9 @@ public class RoomController {
 //    }
 
     @PostMapping("/create_room")
-    public ResponseEntity<ApiResponse<ChatRoom>> createRoom(@RequestBody PartyRequestDto partyRequestDto){
+    public ResponseEntity<ApiResponse<ChatRoom>> createRoom(@RequestBody PartyRequestDto partyRequestDto, String userName){
         try {
-            ChatRoom chatRoom = chatService.createRoom(partyRequestDto);
+            ChatRoom chatRoom = chatService.createRoom(partyRequestDto, userName);
             ApiResponse<ChatRoom> response = new ApiResponse<>(true, chatRoom, "방 생성 성공");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
