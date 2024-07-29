@@ -5,9 +5,25 @@ import "../../styles/Community/ArticleDetail.css";
 import CommentSection from "../../components/Community/CommentSection";
 import Button from "../../components/common/Button";
 
+// 날짜와 시간을 포맷하는 함수
 const formatDate = (dateString) => {
-  const options = { year: "numeric", month: "long", day: "numeric" };
-  return new Date(dateString).toLocaleDateString(undefined, options);
+  if (!dateString) return "미정"; // dateString이 없는 경우 처리
+
+  try {
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false // 24시간제 사용
+    };
+    return new Date(dateString).toLocaleString(undefined, options);
+  } catch (error) {
+    console.error('Date formatting error:', error);
+    return "형식 오류";
+  }
 };
 
 const ArticleDetail = () => {
@@ -19,11 +35,21 @@ const ArticleDetail = () => {
   const [comments, setComments] = useState([]);
 
   useEffect(() => {
+    if (!id) {
+      console.error('Article ID is missing');
+      setError(new Error('Article ID is missing'));
+      setLoading(false);
+      return;
+    }
+
     const fetchArticle = async () => {
+      console.log('Fetching article with ID:', id);
       try {
         const response = await axios.get(`/api/v1/boards/${id}`);
+        console.log('Article response:', response.data);
         setArticle(response.data.data);
       } catch (err) {
+        console.error('Error fetching article:', err.response ? err.response.data : err.message);
         setError(err);
       } finally {
         setLoading(false);
@@ -31,13 +57,16 @@ const ArticleDetail = () => {
     };
 
     const fetchComments = async () => {
+      console.log('Fetching comments for article ID:', id);
       try {
-        const response = await axios.get(`api/v1/boards/${id}/comments`)
-        setComments(response.data.data)
+        const response = await axios.get(`/api/v1/boards/${id}/comments`);
+        console.log('Comments response:', response.data);
+        setComments(response.data.data);
       } catch (err) {
-        setError(err)
+        console.error('Error fetching comments:', err.response ? err.response.data : err.message);
+        setError(err);
       }
-    }
+    };
 
     fetchArticle();
     fetchComments();
@@ -45,10 +74,10 @@ const ArticleDetail = () => {
 
   const handleComplete = async () => {
     try {
-      await axios.put(`/api/v1/boards/${id}`, { completed: true});
+      await axios.put(`/api/v1/boards/${id}`, { completed: true });
       setArticle((prevArticle) => ({ ...prevArticle, completed: true }));
     } catch (err) {
-      console.error("수정 실패: ", error);
+      console.error("Update failed: ", err.response ? err.response.data : err.message);
     }
   };
 
@@ -63,7 +92,7 @@ const ArticleDetail = () => {
         <strong>작성 시간:</strong> {formatDate(article.createdAt)}
       </p>
       <p>
-        <strong>출발 시간:</strong> {article.meetingTime || "미정"}
+        <strong>출발 시간:</strong> {article.meetingTime ? formatDate(article.meetingTime) : "미정"}
       </p>
       <p>
         <strong>사는 지역:</strong> {article.region}

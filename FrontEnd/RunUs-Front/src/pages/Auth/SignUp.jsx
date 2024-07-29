@@ -240,7 +240,7 @@ const SignUp = () => {
           >
             <option value="">시/군/구 선택</option>
             {regionMinorOptions.map((option) => (
-              <option key={option.id} value={option.value}>
+              <option key={option.id} value={option.id}>
                 {option.name}
               </option>
             ))}

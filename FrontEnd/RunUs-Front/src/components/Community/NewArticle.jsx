@@ -1,73 +1,93 @@
-// src/components/Community/NewArticle.jsx
-import "../../styles/Community/NewArticle.css"
-import { useState, useContext, useEffect } from "react";
-import axios from 'axios';
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
+import axios from "axios";
 import { UserContext } from "../../hooks/UserContext";
-
-
-const regionOptions = [
-  { label: "서울특별시", value: 11 },
-  { label: "부산광역시", value: 12 },
-  { label: "대구광역시", value: 13 },
-  { label: "인천광역시", value: 14 },
-  { label: "광주광역시", value: 15 },
-  { label: "대전광역시", value: 16 },
-  { label: "울산광역시", value: 17 },
-  { label: "세종특별자치시", value: 18 },
-  { label: "경기도", value: 19 },
-  { label: "충청북도", value: 20 },
-  { label: "충청남도", value: 21 },
-  { label: "전라남도", value: 22 },
-  { label: "경상북도", value: 23 },
-  { label: "경상남도", value: 24 },
-  { label: "제주특별자치도", value: 25 },
-  { label: "강원특별자치도", value: 26 },
-  { label: "전북특별자치도", value: 27 },
-];
+import "../../styles/Community/NewArticle.css";
+import { useNavigate } from "react-router-dom";
 
 const NewArticle = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [meetingTime, setMeetingTime] = useState('');
   const [meetingDay, setMeetingDay] = useState('');
-  const [region, setRegion] = useState('');
+  const [regionMinor, setRegionMinor] = useState('');
+  const [regionMinorOptions, setRegionMinorOptions] = useState([]);
+  const [regionMajor, setRegionMajor] = useState(null);
   const { userData } = useContext(UserContext);
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   useEffect(() => {
-    if (!userData) {
-      navigate("/signin")
-    } else {
-      console.log("User data:", userData);
+    if (userData && userData.regionId) {
+      // console.log("User Data in NewArticle:", userData);
+      // console.log("User Region ID:", userData.regionId);
+      const fetchRegionData = async () => {
+        try {
+          // 시/군/구의 정보를 가져옴
+          const minorResponse = await axios.get(`/api/v1/region-minor/${userData.regionId}`);
+          const minorData = minorResponse.data.data;
+
+          // minorData가 배열이 아니라 단일 값이라면
+          const parentId = Array.isArray(minorData) ? minorData[0].parentId : minorData;
+
+          console.log("Parent ID (Major ID):", parentId);
+
+          if (!parentId) {
+            console.error('Parent ID not found');
+            return;
+          }
+
+          // parentId를 사용하여 시/도 정보를 가져옵니다.
+          const majorResponse = await axios.get(`/api/v1/region-major/${parentId}`);
+          const majorData = majorResponse.data.data;
+          // console.log("Major Data:", majorData);
+
+          if (majorData) {
+            setRegionMajor(majorData);
+
+            // 시/도 목록을 시/군/구 선택 옵션으로 설정
+            setRegionMinorOptions(majorData);
+          } else {
+            console.error('Major data not found for the given parentId');
+          }
+        } catch (error) {
+          console.error('Error fetching region data:', error);
+        }
+      };
+
+      fetchRegionData();
     }
-  }, [userData, navigate]);
+  }, [userData]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!userData || !userData.userId) {
-      console.error("User not logged in");
-      return;
-    }
-
+  
+    // meetingTime과 meetingDay를 적절한 형식으로 변환
+    const formattedMeetingTime = `${meetingDay}T${meetingTime}`; // 예: "2024-07-03T18:10:00"
+  
     try {
-
-      const response = await axios.post(`/api/v1/boards`, {
+      const response = await axios.post('/api/v1/boards', {
         title,
         content,
-        region,
-        meetingTime,
-        meetingDay,
+        regionId: parseInt(regionMinor, 10), // Ensure regionMinor is an integer
+        meetingTime: formattedMeetingTime, // Send as formatted string
+        meetingDay, // Send as it is
         userId: userData.userId
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
-
-      const newArticleId = response.data.id; // 서버로부터 응답으로 받은 새 글 ID
-      navigate(`/article-detail/${newArticleId}`); // 새 글의 상세 페이지로 이동
+  
+      const newArticleId = response.data.id;
+      navigate(`/article-detail/${newArticleId}`); // Redirect to the article detail page
     } catch (error) {
       console.error('Error creating article:', error);
     }
   };
+  
+  
 
+  
+  
 
   return (
     <div className="NewArticle">
@@ -113,17 +133,17 @@ const NewArticle = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="region">사는 지역</label>
+          <label htmlFor="regionMinor">시/군/구</label>
           <select
-            id="region"
-            value={region}
-            onChange={(e) => setRegion(e.target.value)}
+            id="regionMinor"
+            value={regionMinor}
+            onChange={(e) => setRegionMinor(e.target.value)}
             required
           >
-            <option value="">지역 선택</option>
-            {regionOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
+            <option value="">시/군/구 선택</option>
+            {regionMinorOptions.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.name}
               </option>
             ))}
           </select>
