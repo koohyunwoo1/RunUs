@@ -56,17 +56,29 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(userId);
     }
 
+    @Override
+    public UserDto getUserProfile(Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return convertToDto(user);
+    }
+
     private UserDto convertToDto(User user) {
         UserDto dto = new UserDto();
-
+        dto.setUserId(user.getUserId());
         dto.setNickname(user.getNickname());
         dto.setEmail(user.getEmail());
-        dto.setEmailDomain(user.getEmail()); //
+        dto.setEmailDomain(user.getEmailDomain());
         dto.setPhoneNumber(user.getPhoneNumber());
         dto.setWeight(user.getWeight());
         dto.setRegionId(user.getRegionId());
+        dto.setTierId(user.getTierId());
+        dto.setIsDeleted(user.getIsDeleted());
+        dto.setExp(user.getExp());
+        dto.setRegisteredAt(user.getRegisteredAt());
+        dto.setWithdrawalAt(user.getWithdrawalAt());
         dto.setProfileUrl(user.getProfileUrl());
-        dto.setPassword(user.getPassword());
         return dto;
     }
+
 }
