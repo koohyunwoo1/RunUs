@@ -1,5 +1,5 @@
 
-penJDK 17을 사용하여 베이스 이미지를 설정합니다.
+#openJDK 17을 사용하여 베이스 이미지를 설정합니다.
 FROM eclipse-temurin:17-jdk
 
 # 필요한 파일들을 복사합니다.
