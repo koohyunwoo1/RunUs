@@ -39,7 +39,6 @@ public class RecordController {
     @GetMapping("/recent")
     public ResponseEntity<?> getRecentRecords(@RequestParam("user_id") Integer user_id) {
         List<Record> records = recordService.getRecentRecords(user_id, 2);
-        System.out.println(records);
         return ResponseEntity.ok(new ApiResponse<>(true, records, "최근 기록 조회 성공"));
     }
 
