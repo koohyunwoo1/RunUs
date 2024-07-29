@@ -36,8 +36,7 @@ const UserProvider = ({ children }) => {
         );
       }
     } catch (error) {
-      console.error("로그인 오류:", error);
-      setError("로그인 중 오류가 발생했습니다.");
+      console.error(error);
     }
   };
 

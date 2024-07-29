@@ -2,7 +2,7 @@ import "../../styles/Report/ReportItem.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-const ReportItem = ({ onDistanceChange }) => {
+const ReportItem = () => {
   // API에서 가져온 데이터를 저장할 상태
   const [reportData, setReportData] = useState([]);
   const [error, setError] = useState(null);
@@ -14,32 +14,30 @@ const ReportItem = ({ onDistanceChange }) => {
     // 비동기 함수 정의
     const fetchData = async () => {
       try {
-        const response = await axios.get("api/v1/record/recent", {
+        const response = await axios.get("api/v1/record/all", {
           params: { user_id: 1 }, // userId를 파라미터로 전달
         });
 
-        console.log(response.data); // 응답 데이터 구조 확인
+        // console.log(response.data); // 응답 데이터 구조 확인
 
         // 응답 데이터에서 배열 추출 (응답 데이터 구조에 맞게 수정)
-        setReportData(response.data.data || []);
-        setError(null); // 오류 초기화
+        const data = response.data.data || [];
 
-        // 가장 최근 데이터에서 거리 값을 가져와서 부모 컴포넌트에 전달
-        if (response.data.data && response.data.data.length > 0) {
-          const latestDistance = response.data.data[0].distance;
-          const convertedDistance = (latestDistance / 1000).toFixed(2) + " km";
-          if (onDistanceChange) {
-            onDistanceChange(convertedDistance);
-          }
-        }
+        // 날짜별로 오름차순 정렬
+        const sortedData = data.sort(
+          (a, b) => new Date(b.recordDate) - new Date(a.recordDate)
+        );
+
+        setReportData(sortedData);
+        setError(null); // 오류 초기화
       } catch (err) {
         setError(err.message);
-        setReportData([]);
+        setReportData([]); // 오류 발생 시 빈 배열로 설정
       }
     };
 
     fetchData();
-  }, [userId, onDistanceChange]);
+  }, [userId]);
 
   const convertDistance = (meters) => {
     return (meters / 1000).toFixed(2);
@@ -59,6 +57,7 @@ const ReportItem = ({ onDistanceChange }) => {
 
   return (
     <div>
+      <h3 style={{ marginLeft: "35px" }}>최근 활동</h3>
       {Array.isArray(reportData) && reportData.length > 0 ? (
         reportData.map((item, index) => (
           <div className="report_container" key={index}>
@@ -80,7 +79,6 @@ const ReportItem = ({ onDistanceChange }) => {
       ) : (
         <div>데이터가 없습니다.</div>
       )}
-      <div className="pagination"></div>
     </div>
   );
 };
