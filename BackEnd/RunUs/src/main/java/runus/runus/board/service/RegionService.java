@@ -33,4 +33,11 @@ public class RegionService {
                 .map(region -> new RegionMinorDTO(region.getRegionMinorId(), region.getRegionMinorName()))
                 .collect(Collectors.toList());
     }
+
+    // 새로운 메서드 추가
+    public int getMajorRegionByMinorId(int minorId) {
+        RegionMinor regionMinor = regionMinorRepository.findById(minorId)
+                .orElseThrow(() -> new RuntimeException("Region not found"));
+        return regionMinor.getParentId();
+    }
 }

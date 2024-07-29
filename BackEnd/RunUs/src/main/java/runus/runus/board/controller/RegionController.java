@@ -23,9 +23,17 @@ public class RegionController {
         return ResponseEntity.ok(new ApiResponse<>(true, regions, "성공"));
     }
 
+    // 안쓰긴함
     @GetMapping("/region-major/{majorId}")
     public ResponseEntity<?> getMinorRegions(@PathVariable int majorId) {
         List<RegionMinorDTO> regions = regionService.getMinorRegionsByMajorId(majorId);
         return ResponseEntity.ok(new ApiResponse<>(true, regions, "성공"));
+    }
+
+    // 새로운 엔드포인트 추가
+    @GetMapping("/region-minor/{minorId}")
+    public ResponseEntity<?> getMajorRegionByMinorId(@PathVariable int minorId) {
+        int parentId = regionService.getMajorRegionByMinorId(minorId);
+        return ResponseEntity.ok(new ApiResponse<>(true, parentId, "성공"));
     }
 }
