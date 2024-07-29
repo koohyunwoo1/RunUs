@@ -10,6 +10,7 @@ import TeamProfile from "../../assets/TeamProfile.png";
 const LogInHome = () => {
   const [showTeamOptions, setShowTeamOptions] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
+  const [distance, setDistance] = useState("0km"); // 기본값
   const teamProfileRef = useRef(null);
   const navigate = useNavigate();
 
@@ -27,7 +28,6 @@ const LogInHome = () => {
   const handleCreateTeamClick = () => {
     const generateRandomId = () => Math.floor(Math.random() * 10000); // 0-9999 사이의 랜덤 숫자
     const id = generateRandomId();
-    // 대기방 ID를 포함한 URL로 이동
     navigate(`/team-create/${id}`);
   };
 
@@ -39,14 +39,17 @@ const LogInHome = () => {
     navigate("/solo");
   };
 
+  const updateDistance = (newDistance) => {
+    setDistance(newDistance);
+  };
+
   return (
     <div>
       <Header />
       <div className="LoginHome-container">
         <h3 className="Today_item">Today</h3>
-        <h1 className="Today_km">2.3km</h1>
-        <ReportItem />
-        <ReportItem />
+        <h1 className="Today_km">{distance}</h1>
+        <ReportItem onDistanceChange={updateDistance} />
         <div className="MainButton-container">
           <Button2 src={SoloProfile} onClick={handleSoloProfileClick} />
           <Button2

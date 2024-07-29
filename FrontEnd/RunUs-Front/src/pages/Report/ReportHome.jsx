@@ -1,7 +1,7 @@
 import Header from "../../components/common/Header";
 import "../../styles/Report/ReportHome.css";
-import ReportItem from "../../components/Report/ReportItem";
 import ReportGraph from "../../components/Report/ReportGraph";
+import ReportItemAll from "../../components/Report/ReportItemAll";
 const ReportHome = () => {
   return (
     <div>
@@ -10,7 +10,7 @@ const ReportHome = () => {
         <ReportGraph />
       </div>
       <div>
-        <ReportItem />
+        <ReportItemAll />
       </div>
     </div>
   );
