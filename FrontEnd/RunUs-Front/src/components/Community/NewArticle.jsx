@@ -23,12 +23,13 @@ const NewArticle = () => {
         try {
           // 시/군/구의 정보를 가져옴
           const minorResponse = await axios.get(`/api/v1/region-minor/${userData.regionId}`);
+          console.log(minorResponse.data)
           const minorData = minorResponse.data.data;
 
           // minorData가 배열이 아니라 단일 값이라면
-          const parentId = Array.isArray(minorData) ? minorData[0].parentId : minorData;
-
-          console.log("Parent ID (Major ID):", parentId);
+          // const parentId = Array.isArray(minorData) ? minorData[0].parentId : minorData;
+          const parentId = minorData.parentId
+          // console.log("Parent ID (Major ID):", parentId);
 
           if (!parentId) {
             console.error('Parent ID not found');
@@ -70,15 +71,24 @@ const NewArticle = () => {
         regionId: parseInt(regionMinor, 10), // Ensure regionMinor is an integer
         meetingTime: formattedMeetingTime, // Send as formatted string
         meetingDay, // Send as it is
-        userId: userData.userId
+        userId: userData.userId,
+        nickname: userData.nickname
       }, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
   
-      const newArticleId = response.data.id;
+      // 로그를 통해 응답 데이터 확인
+    console.log('API Response:', response.data);
+
+    const newArticleId = response.data.data
+
+    if (newArticleId) {
       navigate(`/article-detail/${newArticleId}`); // Redirect to the article detail page
+      } else {
+        console.error('Article ID is missing in the response.');
+      }
     } catch (error) {
       console.error('Error creating article:', error);
     }
