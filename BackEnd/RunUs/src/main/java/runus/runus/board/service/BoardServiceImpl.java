@@ -35,6 +35,7 @@ public class BoardServiceImpl implements BoardService {
         board.setMeetingTime(boardRequest.getMeetingTime());  // 새로운 필드 추가
         board.setMeetingDay(boardRequest.getMeetingDay());    // 새로운 필드 추가
         board.setUserId(boardRequest.getUserId());
+        board.setNickname(boardRequest.getNickname());
         board.setIsDeleted('N');
         BoardEntity saveBoard = boardRepository.save(board);
         return saveBoard.getBoardId();
@@ -133,6 +134,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     private BoardResponseDTO convertToDTO(BoardEntity board) {
+        System.out.println("Converting BoardEntity to DTO: " + board.getTitle());
         return new BoardResponseDTO(
                 board.getBoardId(), board.getTitle(), board.getContent(),
                 board.getNickname(), board.getCreatedAt(), board.getUpdatedAt(),
