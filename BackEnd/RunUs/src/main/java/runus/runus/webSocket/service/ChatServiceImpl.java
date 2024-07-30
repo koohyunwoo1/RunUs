@@ -77,7 +77,7 @@ public class ChatServiceImpl implements ChatService {
 
         chatRoom.setPartyId(savedParty.getPartyId());
         chatRoom.setUserName(userName); //유저 이름
-        chatRoom.setuserId(partyRequestDto.getOwnerUserId());
+        chatRoom.setUserId(partyRequestDto.getOwnerUserId());
         System.out.println(partyRequestDto.getOwnerUserId());
         return chatRoom;
     }
@@ -114,14 +114,26 @@ public class ChatServiceImpl implements ChatService {
         partyRepository.save(party);
     }
 
-    public <T> void sendMessage(WebSocketSession session, T message){
-        try{
-            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(message)));
-        }catch(IOException e){
-            log.error(e.getMessage(),e);
+//    public <T> void sendMessage(WebSocketSession session, T message){
+//        try{
+//            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(message)));
+//        }catch(IOException e){
+//            log.error(e.getMessage(),e);
+//        }
+//    }
+
+
+    public <T> void sendMessage(WebSocketSession session, T message) {
+        try {
+            synchronized (session) {
+                session.sendMessage(new TextMessage(objectMapper.writeValueAsString(message)));
+            }
+        } catch (IOException e) {
+            log.error("IOException while sending message to session: " + session.getId(), e);
+        } catch (IllegalStateException e) {
+            log.error("IllegalStateException while sending message to session: " + session.getId(), e);
         }
     }
-
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
