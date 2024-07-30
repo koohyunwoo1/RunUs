@@ -8,7 +8,7 @@ import runus.runus.board.dto.CommentResponseDTO;
 import java.util.List;
 
 public interface BoardService {
-    void createBoard(BoardRequestDTO boardRequest);
+    int createBoard(BoardRequestDTO boardRequest);
     List<BoardResponseDTO> getBoardsByRegion(int regionId, int size, int page);
     List<BoardResponseDTO> getBoardsByTime(int regionId, int size, int page);
     List<BoardResponseDTO> getIncompleteBoards(int regionId, int size, int page);

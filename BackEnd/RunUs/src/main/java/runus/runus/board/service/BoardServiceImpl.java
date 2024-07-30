@@ -26,7 +26,7 @@ public class BoardServiceImpl implements BoardService {
     private CommentRepository commentRepository;
 
     @Override
-    public void createBoard(BoardRequestDTO boardRequest) {
+    public int createBoard(BoardRequestDTO boardRequest) {
         BoardEntity board = new BoardEntity();
         board.setTitle(boardRequest.getTitle());
         board.setContent(boardRequest.getContent());
@@ -36,7 +36,8 @@ public class BoardServiceImpl implements BoardService {
         board.setMeetingDay(boardRequest.getMeetingDay());    // 새로운 필드 추가
         board.setUserId(boardRequest.getUserId());
         board.setIsDeleted('N');
-        boardRepository.save(board);
+        BoardEntity saveBoard = boardRepository.save(board);
+        return saveBoard.getBoardId();
     }
 
     @Override
