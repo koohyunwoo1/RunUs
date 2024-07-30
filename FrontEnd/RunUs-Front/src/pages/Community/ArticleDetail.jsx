@@ -30,6 +30,7 @@ const ArticleDetail = () => {
   const { id } = useParams();
   const nav = useNavigate();
   const [article, setArticle] = useState(null);
+  const [regionName, setRegionName] = useState('미정');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [comments, setComments] = useState([]);
@@ -48,37 +49,38 @@ const ArticleDetail = () => {
         const response = await axios.get(`/api/v1/boards/${id}`);
         console.log('Article response:', response.data);
         setArticle(response.data.data);
+
+        // Fetch region name
+        const regionResponse = await axios.get(`/api/v1/region-minor/${response.data.data.regionId}`);
+        if (regionResponse.data.success) {
+          setRegionName(regionResponse.data.data.name || '미정');
+        }
       } catch (err) {
-        console.error('Error fetching article:', err.response ? err.response.data : err.message);
+        console.error('Error fetching article or region:', err.response ? err.response.data : err.message);
         setError(err);
       } finally {
         setLoading(false);
       }
     };
 
-    const fetchComments = async () => {
-      console.log('Fetching comments for article ID:', id);
-      try {
-        const response = await axios.get(`/api/v1/boards/${id}/comments`);
-        console.log('Comments response:', response.data);
-        setComments(response.data.data);
-      } catch (err) {
-        console.error('Error fetching comments:', err.response ? err.response.data : err.message);
-        setError(err);
-      }
-    };
+    // const fetchComments = async () => {
+    //   console.log('Fetching comments for article ID:', id);
+    //   try {
+    //     const response = await axios.get(`/api/v1/boards/${id}/comments`);
+    //     console.log('Comments response:', response.data);
+    //     setComments(response.data.data);
+    //   } catch (err) {
+    //     console.error('Error fetching comments:', err.response ? err.response.data : err.message);
+    //     setError(err);
+    //   }
+    // };
 
     fetchArticle();
-    fetchComments();
+    // fetchComments();
   }, [id]);
 
-  const handleComplete = async () => {
-    try {
-      await axios.put(`/api/v1/boards/${id}`, { completed: true });
-      setArticle((prevArticle) => ({ ...prevArticle, completed: true }));
-    } catch (err) {
-      console.error("Update failed: ", err.response ? err.response.data : err.message);
-    }
+  const handleEdit = () => {
+    nav(`/article-edit/${id}`);
   };
 
   if (loading) return <p>로딩 중...</p>;
@@ -95,19 +97,17 @@ const ArticleDetail = () => {
         <strong>출발 시간:</strong> {article.meetingTime ? formatDate(article.meetingTime) : "미정"}
       </p>
       <p>
-        <strong>사는 지역:</strong> {article.region}
+        <strong>사는 지역:</strong> {regionName}
       </p>
       <p>
         <strong>작성자:</strong> {article.nickname || "익명"}
       </p>
       <div className="article-content">{article.content}</div>
-      {!article.completed && (
-        <Button
-          text="완료"
-          onClick={handleComplete}
-          className="article-complete-button"
-        />
-      )}
+      <Button
+        text="수정"
+        onClick={handleEdit}
+        className="article-edit-button"
+      />
       <CommentSection comments={comments} />
       <Button text="목록" onClick={() => nav("/article-home")} />
     </div>
