@@ -7,6 +7,7 @@ import LogInHome from "./pages/Home/LogInHome";
 import TeamCreate from "./pages/Running/Team/TeamCreate";
 import ReportHome from "./pages/Report/ReportHome";
 import ArticleHome from "./pages/Community/ArticleHome";
+import ArticleEdit from "./pages/Community/ArticleEdit";
 import MyPageHome from "./pages/MyPage/MyPageHome";
 import SoloMode from "./pages/Running/Solo/SoloMode";
 import TeamQR from "./pages/Running/Team/TeamQR";
@@ -81,6 +82,14 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <ArticleHome />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/article-edit/:id"
+            element={
+              <ProtectedRoute>
+                <ArticleEdit />
               </ProtectedRoute>
             }
           />
