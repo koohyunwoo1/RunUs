@@ -30,14 +30,14 @@ public class RegionService {
     public List<RegionMinorDTO> getMinorRegionsByMajorId(int majorId) {
         List<RegionMinor> minorRegions = regionMinorRepository.findByParentId(majorId);
         return minorRegions.stream()
-                .map(region -> new RegionMinorDTO(region.getRegionMinorId(), region.getRegionMinorName()))
+                .map(region -> new RegionMinorDTO(region.getRegionMinorId(), region.getRegionMinorName(), region.getParentId()))
                 .collect(Collectors.toList());
     }
 
-    // 새로운 메서드 추가
-    public int getMajorRegionByMinorId(int minorId) {
+    // 기존 메서드를 수정
+    public RegionMinorDTO getMajorRegionByMinorId(int minorId) {
         RegionMinor regionMinor = regionMinorRepository.findById(minorId)
                 .orElseThrow(() -> new RuntimeException("Region not found"));
-        return regionMinor.getParentId();
+        return new RegionMinorDTO(regionMinor.getRegionMinorId(), regionMinor.getRegionMinorName(), regionMinor.getParentId());
     }
 }

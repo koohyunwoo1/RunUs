@@ -30,10 +30,9 @@ public class RegionController {
         return ResponseEntity.ok(new ApiResponse<>(true, regions, "성공"));
     }
 
-    // 새로운 엔드포인트 추가
     @GetMapping("/region-minor/{minorId}")
     public ResponseEntity<?> getMajorRegionByMinorId(@PathVariable int minorId) {
-        int parentId = regionService.getMajorRegionByMinorId(minorId);
-        return ResponseEntity.ok(new ApiResponse<>(true, parentId, "성공"));
+        RegionMinorDTO regionMinorDTO = regionService.getMajorRegionByMinorId(minorId);
+        return ResponseEntity.ok(new ApiResponse<>(true, regionMinorDTO, "성공"));
     }
 }
