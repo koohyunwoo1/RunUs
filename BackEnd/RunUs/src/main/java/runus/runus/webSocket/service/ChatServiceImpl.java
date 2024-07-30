@@ -1,6 +1,5 @@
 package runus.runus.webSocket.service;
 
-import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Point;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
@@ -9,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.data.redis.core.GeoOperations;
-import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -17,13 +15,11 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import runus.runus.webSocket.Entity.PartyEntity;
 import runus.runus.webSocket.Entity.PartyMemberEntity;
-import runus.runus.webSocket.dto.PartyDto;
-import runus.runus.webSocket.dto.PartyMemberDto;
+import runus.runus.webSocket.dto.PartyRequestDto;
 import runus.runus.webSocket.repository.PartyMemberRepository;
 import runus.runus.webSocket.repository.PartyRepository;
 import runus.runus.webSocket.repository.QuotesRepository;
 import runus.runus.webSocket.dto.ChatRoom;
-import runus.runus.webSocket.dto.PartyRequestDto;
 
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -53,7 +49,6 @@ public class ChatServiceImpl implements ChatService {
         chatRooms = new LinkedHashMap<>();
     }
 
-
     public ChatRoom findRoomById(String roomId){
         return chatRooms.get(roomId);
     }
@@ -76,7 +71,7 @@ public class ChatServiceImpl implements ChatService {
         PartyEntity savedParty = partyRepository.save(party);
 
         chatRoom.setPartyId(savedParty.getPartyId());
-        chatRoom.setUserName(userName); //유저 이름
+        chatRoom.setUserName(userName); // 유저 이름
         chatRoom.setUserId(partyRequestDto.getOwnerUserId());
         System.out.println(partyRequestDto.getOwnerUserId());
         return chatRoom;
@@ -113,15 +108,6 @@ public class ChatServiceImpl implements ChatService {
         party.setPartyStatus(status);
         partyRepository.save(party);
     }
-
-//    public <T> void sendMessage(WebSocketSession session, T message){
-//        try{
-//            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(message)));
-//        }catch(IOException e){
-//            log.error(e.getMessage(),e);
-//        }
-//    }
-
 
     public <T> void sendMessage(WebSocketSession session, T message) {
         try {
@@ -174,15 +160,21 @@ public class ChatServiceImpl implements ChatService {
 
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-        return earthRadius * c;
+        double distance = earthRadius * c;
+
+        // 소수점 5째 자리까지 포맷팅
+        return Math.round(distance * 100000.0) / 100000.0;
     }
 
     // 누적 거리 업데이트 메서드
     private void updateTotalDistance(String distanceKey, String memberName, double distanceValue) {
         Double currentDistance = (Double) redisTemplate.opsForHash().get(distanceKey, memberName);
         double newTotalDistance = (currentDistance != null ? currentDistance : 0.0) + distanceValue;
+        newTotalDistance = Math.round(newTotalDistance * 100000.0) / 100000.0; // 소수점 5째 자리까지 포맷팅
         redisTemplate.opsForHash().put(distanceKey, memberName, newTotalDistance);
     }
+
+    // 한번만 주석해봄
 
     // 특정 partyId의 모든 멤버의 누적 거리 반환
     public Map<String, Double> getTotalDistances(int partyId) {
@@ -191,10 +183,16 @@ public class ChatServiceImpl implements ChatService {
 
         Map<String, Double> distances = new HashMap<>();
         for (Map.Entry<Object, Object> entry : entries.entrySet()) {
-            distances.put((String) entry.getKey(), (Double) entry.getValue());
+            double distance = (Double) entry.getValue();
+            distances.put((String) entry.getKey(), Math.round(distance * 100000.0) / 100000.0); // 소수점 5째 자리까지 포맷팅
         }
         return distances;
     }
 
-
+    // 특정 멤버의 누적 거리 반환
+    public double getTotalDistanceForMember(int partyId, String memberName) {
+        String distanceKey = "team:" + partyId + ":distances";
+        Double distance = (Double) redisTemplate.opsForHash().get(distanceKey, memberName);
+        return (distance != null) ? Math.round(distance * 100000.0) / 100000.0 : 0.0; // 소수점 5째 자리까지 포맷팅
+    }
 }

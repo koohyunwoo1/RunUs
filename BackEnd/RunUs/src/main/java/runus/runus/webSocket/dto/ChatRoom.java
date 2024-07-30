@@ -39,7 +39,6 @@ public class ChatRoom {
         return (roomOwnerId == userId) ? '1' : '0';
     }
 
-    // ChatRoom 클래스의 calculateDistance 메서드 수정
     private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
         final int R = 6371; // 지구의 반지름, km로 계산
 
@@ -55,11 +54,11 @@ public class ChatRoom {
 
         double distance = R * c;
 
-        // 디버깅을 위한 로그
+        // 디버깅을 위한 로그 (거리 값 포맷팅)
         log.debug("lat1: " + lat1 + ", lon1: " + lon1 + ", lat2: " + lat2 + ", lon2: " + lon2);
         log.debug("latDistance: " + latDistance + ", lonDistance: " + lonDistance);
         log.debug("a: " + a + ", c: " + c);
-        log.debug("Calculated distance: " + distance);
+        log.debug("Calculated distance: " + String.format("%.5f", distance));
 
         return distance;
     }
@@ -102,16 +101,24 @@ public class ChatRoom {
                 log.info("방장 위치 업데이트: 위도=" + ownerLatitude + ", 경도=" + ownerLongitude);
                 chatMessage.setMessage(userName + "의 위치가 업데이트되었습니다. 방장으로서의 위치: 위도=" + latitude + ", 경도=" + longitude);
 
+                chatServiceImpl.updateMemberLocation(partyId, userName, longitude, latitude);
+                double totalDistance = chatServiceImpl.getTotalDistanceForMember(partyId, userName);
+                log.info(userName + "의 총 이동 거리: " + String.format("%.5f", totalDistance) + " km");
+                chatMessage.setMessage(userName + "의 총 이동 거리: " + String.format("%.5f", totalDistance) + " km");
+
             } else {
                 // 방장과 팀원 간 거리 계산
                 double distance = calculateDistance(ownerLatitude, ownerLongitude, latitude, longitude);
                 log.info(userName + " 위치 업데이트: 위도=" + latitude + ", 경도=" + longitude);
-                log.info(userName + "님과 방장의 거리: " + distance + " km");
-                chatMessage.setMessage(userName + "의 위치가 업데이트되었습니다. 방장과의 거리: " + distance + " km");
-            }
+                log.info(userName + "님과 방장의 거리: " + String.format("%.5f", distance) + " km");
+                chatMessage.setMessage(userName + "의 위치가 업데이트되었습니다. 방장과의 거리: " + String.format("%.5f", distance) + " km");
 
-            // Redis에 위치 정보를 저장합니다.
-            chatServiceImpl.updateMemberLocation(partyId, userName, longitude, latitude);
+                // 사용자 이동 거리 계산
+                chatServiceImpl.updateMemberLocation(partyId, userName, longitude, latitude);
+                double totalDistance = chatServiceImpl.getTotalDistanceForMember(partyId, userName);
+                log.info(userName + "의 총 이동 거리: " + String.format("%.5f", totalDistance) + " km");
+                chatMessage.setMessage(userName + "의 총 이동 거리: " + String.format("%.5f", totalDistance) + " km");
+            }
         }
 
         // Send message to all users
@@ -127,9 +134,6 @@ public class ChatRoom {
             sendMessage(userListUpdate, chatServiceImpl);
         }
     }
-
-
-
 
     public <T> void sendMessage(T message, ChatServiceImpl chatServiceImpl) {
         sessions.forEach(session -> {
