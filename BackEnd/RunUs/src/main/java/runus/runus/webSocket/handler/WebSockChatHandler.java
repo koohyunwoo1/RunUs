@@ -31,10 +31,12 @@ public class WebSockChatHandler extends TextWebSocketHandler {
         }
         catch (NullPointerException e){
             log.error("Room ID {}에 대한 ChatRoom을 찾을 수 없습니다.", chatMessage.getRoomId(), e);
-            session.sendMessage(new TextMessage("채팅방을 찾을 수 없습니다. 방 ID: " + chatMessage.getRoomId()));
+            //session.sendMessage(new TextMessage("채팅방을 찾을 수 없습니다. 방 ID: " + chatMessage.getRoomId()));
         }catch (Exception e) {
             log.error("메시지를 처리하는 중 오류가 발생했습니다.", e);
-            session.sendMessage(new TextMessage("메시지를 처리하는 중 오류가 발생했습니다."));
+            //session.sendMessage(new TextMessage("메시지를 처리하는 중 오류가 발생했습니다."));
         }
     }
+
+
 }

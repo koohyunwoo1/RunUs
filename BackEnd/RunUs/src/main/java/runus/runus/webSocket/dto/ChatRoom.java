@@ -68,6 +68,17 @@ public class ChatRoom {
             }
         }else if (chatMessage.getType().equals(ChatMessage.MessageType.TALK)) {
             chatMessage.setMessage(chatMessage.getSender() + ": " + chatMessage.getMessage());
+        } else if (chatMessage.getType().equals(ChatMessage.MessageType.LOCATION)) {
+            // LOCATION 메시지를 처리합니다.
+            String userName = chatMessage.getSender(); // 사용자 이름
+            double longitude = chatMessage.getLongitude();
+            double latitude = chatMessage.getLatitude();
+
+            // Redis에 위치 정보를 저장합니다.
+            chatServiceImpl.updateMemberLocation(partyId, userName, longitude, latitude);
+
+            chatMessage.setMessage(userName + "의 위치가 업데이트되었습니다.");
+
         }
 
         // Send message to all users
