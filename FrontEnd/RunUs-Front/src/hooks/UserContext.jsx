@@ -8,15 +8,16 @@ const UserProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
   const [userId, setUserId] = useState(null);
   const [error, setError] = useState("");
+  const [roomUsers, setRoomUsers] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     // 페이지 로드 시 로컬에서 사용자 데이터 가져옴
-    const storedUserData = localStorage.getItem("userData")
+    const storedUserData = localStorage.getItem("userData");
     if (storedUserData) {
-      setUserData(JSON.parse(storedUserData))
+      setUserData(JSON.parse(storedUserData));
     }
-  }, [])
+  }, []);
 
   const loginUser = async (email, password) => {
     try {
@@ -25,11 +26,11 @@ const UserProvider = ({ children }) => {
         setUserId(response.data.data.userId);
         const data = response.data.data;
         setUserData(data);
+        navigate("/home");
         localStorage.setItem("AuthToken", response.data.token);
         localStorage.setItem("userId", response.data.data.userId);
-        localStorage.setItem("userData", JSON.stringify(data))
+        localStorage.setItem("userData", JSON.stringify(data));
         console.log("Logged in userData:", data); // 로그인 후 userData 확인
-        navigate("/home");
       } else {
         setError(
           response.data.message || "이메일 또는 비밀번호가 일치하지 않습니다."
@@ -48,6 +49,7 @@ const UserProvider = ({ children }) => {
         localStorage.removeItem("userId");
         setUserData(null);
         setUserId(null);
+        setRoomUsers([]);
         navigate("/");
       } else {
         console.error("로그아웃 실패", response.data.message);
@@ -71,9 +73,27 @@ const UserProvider = ({ children }) => {
     }
   };
 
+  // 임의로 짜놓은거임
+  const addUserToRoom = (user) => {
+    setRoomUsers((prevUsers) => {
+      const newUsers = prevUsers.slice();
+      newUsers.push(user);
+      return newUsers;
+    });
+  };
+
   return (
     <UserContext.Provider
-      value={{ userData, userId, error, loginUser, logoutUser, registerUser }}
+      value={{
+        userData,
+        userId,
+        error,
+        roomUsers,
+        addUserToRoom,
+        loginUser,
+        logoutUser,
+        registerUser,
+      }}
     >
       {children}
     </UserContext.Provider>
