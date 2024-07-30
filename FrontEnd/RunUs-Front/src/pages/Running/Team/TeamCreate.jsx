@@ -8,7 +8,6 @@ import TeamUserList from "../../../components/Running/Team/TeamUserList";
 import TeamSaying from "../../../components/Running/Team/TeamSaying";
 import Modal from "react-modal";
 
-// Modal의 루트 엘리먼트를 설정합니다
 Modal.setAppElement("#root");
 
 const TeamCreate = () => {
@@ -16,17 +15,38 @@ const TeamCreate = () => {
   const { id } = useParams(); // URL 파라미터에서 대기방 ID를 가져옵니다
   const [waitingRoomId, setWaitingRoomId] = useState(id || null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  // const [webSocket, setWebSocket] = useState(null);
 
-  useEffect(() => {
-    if (!id) {
-      // 대기방 ID가 URL에 없으면 랜덤 생성 및 URL 업데이트
-      const generateWaitingRoomId = () => {
-        return Math.floor(Math.random() * 10000);
-      };
-      const newId = generateWaitingRoomId();
-      setWaitingRoomId(newId);
-    }
-  }, [id]);
+  // useEffect(() => {
+  //   const ws = new WebSocket(
+  //     `ws://localhost:8080/ws/chat?roomId=${waitingRoomId}`
+  //   ); // 웹소켓 서버 URL
+
+  //   ws.onopen = () => {
+  //     console.log("WebSocket connection opened");
+  //     ws.send(JSON.stringify({ type: "message", content: "ㅎㅇㅎㅇ" })); // 메시지 전송
+  //   };
+
+  //   ws.onmessage = (event) => {
+  //     const receivedData = event.data;
+  //     console.log("Received message:", receivedData);
+  //   };
+
+  //   ws.onclose = () => {
+  //     console.log("WebSocket connection closed");
+  //   };
+
+  //   ws.onerror = (error) => {
+  //     console.error("WebSocket error:", error);
+  //   };
+
+  //   setWebSocket(ws);
+
+  //   return () => {
+  //     ws.close();
+  //   };
+  // }, []);
+  // 의존성 배열
 
   const teamCreatePageUrl = `http://localhost:5173/team-create/${waitingRoomId}`;
 
