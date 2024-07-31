@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import QrScanner from "react-qr-scanner";
 import "../../../styles/Running/Team/TeamQR.css";
 import Header from "../../../components/common/Header";
+import { UserContext } from "../../../hooks/UserContext";
 
 const TeamQR = () => {
   const [data, setData] = useState("No result");
+  const { addUserToRoom } = useContext(UserContext);
 
   const handleScan = (result) => {
     if (result && result.text) {
@@ -13,6 +15,7 @@ const TeamQR = () => {
 
       if (isValidURL(resultData)) {
         window.location.href = resultData; // URL로 이동
+        addUserToRoom();
       } else {
         console.log("Scanned result is not a valid URL:", resultData);
       }

@@ -5,15 +5,15 @@ import "../../styles/Community/NewArticle.css";
 import { useNavigate } from "react-router-dom";
 
 const NewArticle = () => {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [meetingTime, setMeetingTime] = useState('');
-  const [meetingDay, setMeetingDay] = useState('');
-  const [regionMinor, setRegionMinor] = useState('');
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [meetingTime, setMeetingTime] = useState("");
+  const [meetingDay, setMeetingDay] = useState("");
+  const [regionMinor, setRegionMinor] = useState("");
   const [regionMinorOptions, setRegionMinorOptions] = useState([]);
   const [regionMajor, setRegionMajor] = useState(null);
   const { userData } = useContext(UserContext);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (userData && userData.regionId) {
@@ -22,22 +22,26 @@ const NewArticle = () => {
       const fetchRegionData = async () => {
         try {
           // 시/군/구의 정보를 가져옴
-          const minorResponse = await axios.get(`/api/v1/region-minor/${userData.regionId}`);
-          console.log(minorResponse.data)
+          const minorResponse = await axios.get(
+            `/api/v1/region-minor/${userData.regionId}`
+          );
+          console.log(minorResponse.data);
           const minorData = minorResponse.data.data;
 
           // minorData가 배열이 아니라 단일 값이라면
           // const parentId = Array.isArray(minorData) ? minorData[0].parentId : minorData;
-          const parentId = minorData.parentId
+          const parentId = minorData.parentId;
           // console.log("Parent ID (Major ID):", parentId);
 
           if (!parentId) {
-            console.error('Parent ID not found');
+            console.error("Parent ID not found");
             return;
           }
 
           // parentId를 사용하여 시/도 정보를 가져옵니다.
-          const majorResponse = await axios.get(`/api/v1/region-major/${parentId}`);
+          const majorResponse = await axios.get(
+            `/api/v1/region-major/${parentId}`
+          );
           const majorData = majorResponse.data.data;
           // console.log("Major Data:", majorData);
 
@@ -47,10 +51,10 @@ const NewArticle = () => {
             // 시/도 목록을 시/군/구 선택 옵션으로 설정
             setRegionMinorOptions(majorData);
           } else {
-            console.error('Major data not found for the given parentId');
+            console.error("Major data not found for the given parentId");
           }
         } catch (error) {
-          console.error('Error fetching region data:', error);
+          console.error("Error fetching region data:", error);
         }
       };
 
@@ -60,10 +64,10 @@ const NewArticle = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     // meetingTime과 meetingDay를 적절한 형식으로 변환
     const formattedMeetingTime = `${meetingDay}T${meetingTime}`; // 예: "2024-07-03T18:10:00"
-  
+
     try {
       const response = await axios.post('/api/v1/boards', {
         title,
@@ -77,24 +81,26 @@ const NewArticle = () => {
       }, {
         headers: {
           'Content-Type': 'application/json'
-        }
-      });
-  
+        },
+      }
+    );
+
       // 로그를 통해 응답 데이터 확인
-    console.log('API Response:', response.data);
+      console.log("API Response:", response.data);
 
-    const newArticleId = response.data.data
+      const newArticleId = response.data.data;
 
-    if (newArticleId) {
-      navigate(`/article-detail/${newArticleId}`); // Redirect to the article detail page
+      if (newArticleId) {
+        navigate(`/article-detail/${newArticleId}`); // Redirect to the article detail page
       } else {
-        console.error('Article ID is missing in the response.');
+        console.error("Article ID is missing in the response.");
       }
     } catch (error) {
-      console.error('Error creating article:', error);
+      console.error("Error creating article:", error);
     }
   };
   
+
   return (
     <div className="NewArticle">
       <h2>새 글 작성하기</h2>
