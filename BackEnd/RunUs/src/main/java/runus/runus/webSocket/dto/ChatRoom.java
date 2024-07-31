@@ -42,23 +42,15 @@ public class ChatRoom {
     private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
         final int R = 6371; // 지구의 반지름, km로 계산
 
-        // 위도와 경도를 라디안 단위로 변환
         double latDistance = Math.toRadians(lat2 - lat1);
         double lonDistance = Math.toRadians(lon2 - lon1);
 
-        // 거리 계산을 위한 하버사인 공식
         double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
                 + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
         double distance = R * c;
-
-        // 디버깅을 위한 로그 (거리 값 포맷팅)
-        log.debug("lat1: " + lat1 + ", lon1: " + lon1 + ", lat2: " + lat2 + ", lon2: " + lon2);
-        log.debug("latDistance: " + latDistance + ", lonDistance: " + lonDistance);
-        log.debug("a: " + a + ", c: " + c);
-        log.debug("Calculated distance: " + String.format("%.5f", distance));
 
         return distance;
     }
@@ -87,7 +79,16 @@ public class ChatRoom {
         } else if (chatMessage.getType().equals(ChatMessage.MessageType.START)) {
             if (userId == roomOwnerId) {
                 chatServiceImpl.updatePartyStatus(partyId, '1'); // Update status to 'running'
-                chatMessage.setMessage("시작 버튼을 눌렀습니다."); // 나중에 WEBRTC로 넘어가는 로직 추가 필요
+                chatMessage.setMessage("시작 버튼을 눌렀습니다.");
+
+                // 모든 사용자에게 START 메시지 브로드캐스트
+                ChatMessage startBroadcastMessage = new ChatMessage();
+                startBroadcastMessage.setType(ChatMessage.MessageType.START);
+                startBroadcastMessage.setRoomId(chatMessage.getRoomId());
+                startBroadcastMessage.setSender("SYSTEM");
+                startBroadcastMessage.setMessage("세션이 시작되었습니다.");
+
+                sendMessage(startBroadcastMessage, chatServiceImpl);
             }
 
         } else if (chatMessage.getType().equals(ChatMessage.MessageType.TALK)) {
@@ -107,7 +108,7 @@ public class ChatRoom {
                 chatMessage.setMessage(userName + "의 총 이동 거리: " + String.format("%.5f", totalDistance) + " km");
 
             } else {
-                // 방장과 팀원 간 거리 계산
+                // 방장이 아닌 경우 거리 계산
                 double distance = calculateDistance(ownerLatitude, ownerLongitude, latitude, longitude);
                 log.info(userName + " 위치 업데이트: 위도=" + latitude + ", 경도=" + longitude);
                 log.info(userName + "님과 방장의 거리: " + String.format("%.5f", distance) + " km");
@@ -118,7 +119,18 @@ public class ChatRoom {
                 double totalDistance = chatServiceImpl.getTotalDistanceForMember(partyId, userName);
                 log.info(userName + "의 총 이동 거리: " + String.format("%.5f", totalDistance) + " km");
                 chatMessage.setMessage(userName + "의 총 이동 거리: " + String.format("%.5f", totalDistance) + " km");
+                sendMessage(chatMessage, chatServiceImpl);
             }
+
+        } else if (chatMessage.getType().equals(ChatMessage.MessageType.WAIT_EXIT)) { //대기방에서 나가는 경우
+            chatServiceImpl.ChangePartyMemberStatus(partyId, userId, '1');
+            users.remove(userName);
+            chatMessage.setMessage(userName + "님이 퇴장했습니다.(대기방)");
+
+        } else if (chatMessage.getType().equals(ChatMessage.MessageType.RUN_EXIT)) { //달리는 중에 나가는 경우
+            chatServiceImpl.ChangePartyMemberStatus(partyId, userId, '2');
+            users.remove(userName);
+            chatMessage.setMessage(userName + "님이 퇴장했습니다.");
         }
 
         // Send message to all users
@@ -142,7 +154,6 @@ public class ChatRoom {
                     chatServiceImpl.sendMessage(session, message);
                 }
             } catch (IllegalStateException e) {
-                // 세션이 잘못된 상태일 때 처리 로직
                 log.error("Failed to send message to session: " + session.getId(), e);
             }
         });

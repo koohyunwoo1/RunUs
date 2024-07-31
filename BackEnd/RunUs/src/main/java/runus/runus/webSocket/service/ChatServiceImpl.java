@@ -109,6 +109,14 @@ public class ChatServiceImpl implements ChatService {
         partyRepository.save(party);
     }
 
+    public void ChangePartyMemberStatus(int partyId, int userId, Character status) {
+        PartyMemberEntity member = partyMemberRepository.findByPartyIdAndUserId(partyId, userId)
+                .orElseThrow(() -> new RuntimeException("Party member not found for partyId: " + partyId + " and userId: " + userId));
+
+        member.setPartyMemberStatus(status);
+        partyMemberRepository.save(member);
+    }
+
     public <T> void sendMessage(WebSocketSession session, T message) {
         try {
             synchronized (session) {

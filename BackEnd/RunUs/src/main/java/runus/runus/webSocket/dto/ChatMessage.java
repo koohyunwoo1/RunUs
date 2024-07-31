@@ -8,7 +8,7 @@ import lombok.Setter;
 public class ChatMessage {
     //메시지 타입 : 입장, 채팅
     public enum MessageType{
-        ENTER, TALK, QUIT, USERLIST_UPDATE, START, LOCATION
+        ENTER, TALK, QUIT, USERLIST_UPDATE, START, LOCATION, WAIT_EXIT, RUN_EXIT
 
     }
 
@@ -20,4 +20,5 @@ public class ChatMessage {
 
     private double longitude;
     private double latitude;
+
 }
