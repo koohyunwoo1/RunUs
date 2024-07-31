@@ -1,169 +1,143 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import "../../styles/Community/CommentSection.css";
 import { UserContext } from "../../hooks/UserContext";
-import "../../styles/Community/NewArticle.css";
-import { useNavigate } from "react-router-dom";
 
-const NewArticle = () => {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [meetingTime, setMeetingTime] = useState("");
-  const [meetingDay, setMeetingDay] = useState("");
-  const [regionMinor, setRegionMinor] = useState("");
-  const [regionMinorOptions, setRegionMinorOptions] = useState([]);
-  const [regionMajor, setRegionMajor] = useState(null);
+const CommentSection = ({ articleId }) => {
   const { userData } = useContext(UserContext);
-  const navigate = useNavigate();
+  const [newComment, setNewComment] = useState("");
+  const [commentList, setCommentList] = useState([]);
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editingContent, setEditingContent] = useState("");
+  const [page, setPage] = useState(0);
+  const [size] = useState(10);
+  const [hasMoreComments, setHasMoreComments] = useState(true);
 
-  useEffect(() => {
-    if (userData && userData.regionId) {
-      // console.log("User Data in NewArticle:", userData);
-      // console.log("User Region ID:", userData.regionId);
-      const fetchRegionData = async () => {
-        try {
-          // 시/군/구의 정보를 가져옴
-          const minorResponse = await axios.get(
-            `/api/v1/region-minor/${userData.regionId}`
-          );
-          console.log(minorResponse.data);
-          const minorData = minorResponse.data.data;
-
-          // minorData가 배열이 아니라 단일 값이라면
-          // const parentId = Array.isArray(minorData) ? minorData[0].parentId : minorData;
-          const parentId = minorData.parentId;
-          // console.log("Parent ID (Major ID):", parentId);
-
-          if (!parentId) {
-            console.error("Parent ID not found");
-            return;
-          }
-
-          // parentId를 사용하여 시/도 정보를 가져옵니다.
-          const majorResponse = await axios.get(
-            `/api/v1/region-major/${parentId}`
-          );
-          const majorData = majorResponse.data.data;
-          // console.log("Major Data:", majorData);
-
-          if (majorData) {
-            setRegionMajor(majorData);
-
-            // 시/도 목록을 시/군/구 선택 옵션으로 설정
-            setRegionMinorOptions(majorData);
-          } else {
-            console.error("Major data not found for the given parentId");
-          }
-        } catch (error) {
-          console.error("Error fetching region data:", error);
-        }
-      };
-
-      fetchRegionData();
-    }
-  }, [userData]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // meetingTime과 meetingDay를 적절한 형식으로 변환
-    const formattedMeetingTime = `${meetingDay}T${meetingTime}`; // 예: "2024-07-03T18:10:00"
-
+  // 댓글 목록을 가져오는 함수
+  const fetchComments = async (pageNumber = 0) => {
     try {
-      const response = await axios.post('/api/v1/boards', {
-        title,
-        content,
-        regionId: parseInt(regionMinor, 10), // Ensure regionMinor is an integer
-        meetingTime: formattedMeetingTime, // Send as formatted string
-        meetingDay, // Send as it is
-        userId: userData.userId,
-        nickname: userData.nickname,
-        is_deleted: '0'
-      }, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-      }
-    );
-
-      // 로그를 통해 응답 데이터 확인
-      console.log("API Response:", response.data);
-
-      const newArticleId = response.data.data;
-
-      if (newArticleId) {
-        navigate(`/article-detail/${newArticleId}`); // Redirect to the article detail page
+      const response = await axios.get(`/api/v1/boards/${articleId}/comments`, {
+        params: { size, page: pageNumber }
+      });
+      if (response.data && response.data.data) {
+        if (response.data.data.length < size) {
+          setHasMoreComments(false);
+        }
+        setCommentList((prevComments) => [...prevComments, ...response.data.data]);
       } else {
-        console.error("Article ID is missing in the response.");
+        console.error("댓글 데이터가 없습니다.");
       }
-    } catch (error) {
-      console.error("Error creating article:", error);
+    } catch (err) {
+      console.error("댓글 로드 실패: ", err);
     }
   };
-  
+
+  useEffect(() => {
+    fetchComments(page);
+  }, [articleId, page]);
+
+  const handleCommentChange = (e) => {
+    setNewComment(e.target.value);
+  };
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    if (!newComment.trim()) return;
+
+    try {
+      await axios.post(`/api/v1/boards/${articleId}/comments`, {
+        content: newComment,
+        userId: userData.userId
+      });
+      setNewComment("");
+      setPage(0); // 댓글 작성 후 페이지 초기화
+      setCommentList([]); // 댓글 작성 후 목록을 초기화하여 재로딩
+      await fetchComments(); // 작성 후 최신 댓글 목록을 가져옵니다.
+    } catch (err) {
+      console.error("댓글 작성 실패: ", err);
+    }
+  };
+
+  const handleEditComment = (commentId, content) => {
+    setEditingCommentId(commentId);
+    setEditingContent(content);
+  };
+
+  const handleUpdateComment = async (commentId) => {
+    try {
+      await axios.put(`/api/v1/boards/${articleId}/comments/${commentId}`, {
+        content: editingContent,
+        userId: userData.userId
+      });
+      setEditingCommentId(null);
+      setEditingContent("");
+      setPage(0); // 댓글 수정 후 페이지 초기화
+      setCommentList([]); // 댓글 수정 후 목록을 초기화하여 재로딩
+      await fetchComments(); // 수정 후 최신 댓글 목록을 가져옵니다.
+    } catch (err) {
+      console.error("댓글 수정 실패: ", err);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      await axios.delete(`/api/v1/boards/${articleId}/comments/${commentId}`);
+      setPage(0); // 댓글 삭제 후 페이지 초기화
+      setCommentList([]); // 댓글 삭제 후 목록을 초기화하여 재로딩
+      await fetchComments(); // 삭제 후 최신 댓글 목록을 가져옵니다.
+    } catch (err) {
+      console.error("댓글 삭제 실패: ", err);
+    }
+  };
+
+  const loadMoreComments = () => {
+    if (hasMoreComments) {
+      setPage((prevPage) => prevPage + 1);
+    }
+  };
 
   return (
-    <div className="NewArticle">
-      <h2>새 글 작성하기</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="title">제목</label>
-          <input
-            id="title"
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="content">내용</label>
-          <textarea
-            id="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="meetingDay">날짜</label>
-          <input
-            id="meetingDay"
-            type="date"
-            value={meetingDay}
-            onChange={(e) => setMeetingDay(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="meetingTime">출발 시간</label>
-          <input
-            id="meetingTime"
-            type="time"
-            value={meetingTime}
-            onChange={(e) => setMeetingTime(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="regionMinor">시/군/구</label>
-          <select
-            id="regionMinor"
-            value={regionMinor}
-            onChange={(e) => setRegionMinor(e.target.value)}
-            required
-          >
-            <option value="">시/군/구 선택</option>
-            {regionMinorOptions.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <button type="submit">등록</button>
+    <div className="comment-section">
+      <h3>댓글</h3>
+      <ul>
+        {commentList.map((comment) => (
+          <li key={comment.commentId}>
+            {editingCommentId === comment.commentId ? (
+              <div>
+                <textarea
+                  value={editingContent}
+                  onChange={(e) => setEditingContent(e.target.value)}
+                />
+                <button onClick={() => handleUpdateComment(comment.commentId)}>수정 완료</button>
+              </div>
+            ) : (
+              <div>
+                <p><strong>{comment.user.nickname}</strong>: {comment.content}</p>
+                <span>{new Date(comment.createdAt).toLocaleString()}</span>
+                {userData.userId === comment.userId && (
+                  <div>
+                    <button onClick={() => handleEditComment(comment.commentId, comment.content)}>수정</button>
+                    <button onClick={() => handleDeleteComment(comment.commentId)}>삭제</button>
+                  </div>
+                )}
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+      <form onSubmit={handleCommentSubmit}>
+        <textarea
+          value={newComment}
+          onChange={handleCommentChange}
+          placeholder="댓글을 입력하세요..."
+        />
+        <button type="submit">댓글 작성</button>
       </form>
+      {hasMoreComments && (
+        <button onClick={loadMoreComments}>더 보기</button>
+      )}
     </div>
   );
 };
 
-export default NewArticle;
+export default CommentSection;
