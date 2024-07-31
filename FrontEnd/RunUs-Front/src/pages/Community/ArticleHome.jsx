@@ -14,62 +14,20 @@ const ArticleHome = () => {
   const [totalPages, setTotalPages] = useState(1); // 총 페이지 수
   const [sortByTime, setSortByTime] = useState(false); // 시간 순 정렬
   const [completedOnly, setCompletedOnly] = useState(false); // 완료 필터링
-  const [regionId, setRegionId] = useState(null); // regionId 상태
-
-  const size = 10; // 페이지당 게시글 수
   const { userData } = useContext(UserContext); // UserContext에서 사용자 정보 가져오기
 
+  const size = 10; // 페이지당 게시글 수
+
   console.log('UserData:', userData); // 사용자 데이터 로그 확인
-
-  // 지역 ID를 가져오는 함수
-  const fetchRegionId = async () => {
-    console.log('Fetching Region ID...');
-    if (!userData || !userData.regionId) {
-      console.error('User or regionId is not available');
-      setError(new Error('User or regionId is not available'));
-      setLoading(false);
-      return;
-    }
-
-    try {
-      // 시/군/구의 정보를 가져옴
-      const minorResponse = await axios.get(`/api/v1/region-minor/${userData.regionId}`);
-      const minorData = minorResponse.data.data;
-      console.log(minorData )
-      const parentId = minorData.parentId;
-
-      if (!parentId) {
-        console.error('Parent ID not found');
-        setError(new Error('Parent ID not found'));
-        setLoading(false);
-        return;
-      }
-
-      // parentId를 사용하여 시/도 정보를 가져옵니다.
-      const majorResponse = await axios.get(`/api/v1/region-major/${parentId}`);
-      const majorData = majorResponse.data.data;
-      
-      console.log('MinorData:', minorData); // minorData의 구조 확인
-      console.log('MajorData:', majorData); // majorData의 구조 확인
-
-      // majorData에서 실제 사용해야 할 regionId를 추출합니다.
-      const fetchedRegionId = majorData[0].parentId;
-      setRegionId(fetchedRegionId);
-    } catch (err) {
-      console.error('Error fetching region ID:', err);
-      setError(err);
-    }
-    
-  };
 
   // 게시글을 가져오는 함수
   const fetchArticles = async () => {
     console.log('Fetching Articles...');
-    if (regionId === null) return; // regionId가 설정되기 전에 호출되지 않도록
+    if (!userData || !userData.regionId) return; // userData나 regionId가 없으면 종료
 
     setLoading(true);
     try {
-      let url = `/api/v1/boards/region/${regionId}`;
+      let url = `/api/v1/boards/region/${userData.regionId}`;
       if (completedOnly) {
         url += "/incomplete";
       } else if (sortByTime) {
@@ -79,8 +37,14 @@ const ArticleHome = () => {
       const response = await axios.get(url, {
         params: { size, page },
       });
-      setArticles(response.data.data);
-      setTotalPages(response.data.totalPages || 1);
+
+      // 삭제된 게시글 필터링
+      const filteredArticles = response.data.data.filter(article => !article.isDeleted);
+
+      setArticles(filteredArticles);
+      setTotalPages(response.data.totalPages || 1); // 총 페이지 수 설정
+      console.log('Articles Response:', response);
+      console.log('Articles Data:', filteredArticles);
     } catch (err) {
       console.error('Error fetching articles:', err);
       setError(err);
@@ -89,17 +53,12 @@ const ArticleHome = () => {
     }
   };
 
-  // 사용자 데이터가 변경될 때 지역 ID를 가져옵니다.
+  // 사용자 데이터가 변경될 때 게시글을 가져옵니다.
   useEffect(() => {
-    fetchRegionId();
-  }, [userData]);
-
-  // 지역 ID가 설정되면 게시글을 가져옵니다.
-  useEffect(() => {
-    if (regionId !== null) {
+    if (userData && userData.regionId) {
       fetchArticles();
     }
-  }, [regionId, page, sortByTime, completedOnly]);
+  }, [userData, page, sortByTime, completedOnly]);
 
   const handleSortByTime = () => {
     setSortByTime(prev => !prev);

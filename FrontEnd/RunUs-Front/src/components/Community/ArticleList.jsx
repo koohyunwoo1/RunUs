@@ -1,7 +1,7 @@
 import React from "react";
 import "../../styles/Community/ArticleList.css";
-import Button from "../../components/common/Button";
-import ArticleItem from "../../components/Community/ArticleItem";
+import Button from "../common/Button";
+import ArticleItem from "./ArticleItem";
 import { useNavigate } from "react-router-dom";
 
 const ArticleList = ({ articles }) => {
@@ -13,7 +13,12 @@ const ArticleList = ({ articles }) => {
         <ul>
           {articles.length > 0 ? (
             articles.map(post => (
-              <ArticleItem key={post.id} {...post} />
+              <ArticleItem
+                key={post.boardId}
+                id={post.boardId} // 이 부분 확인
+                title={post.title}
+                content={post.content}
+              />
             ))
           ) : (
             <p>게시글이 없습니다.</p>
