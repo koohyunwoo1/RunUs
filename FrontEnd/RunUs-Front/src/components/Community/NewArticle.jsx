@@ -79,6 +79,7 @@ const NewArticle = () => {
           meetingDay, // Send as it is
           userId: userData.userId,
           nickname: userData.nickname,
+          is_deleted: "0",
         },
         {
           headers: {

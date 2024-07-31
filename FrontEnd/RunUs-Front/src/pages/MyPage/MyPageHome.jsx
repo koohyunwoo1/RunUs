@@ -6,6 +6,7 @@ import EditIcon from "../../assets/editIcon.png";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
+import Logout from "../../components/Home/Logout";
 
 const MyPageHome = () => {
   const navigate = useNavigate();
@@ -29,6 +30,15 @@ const MyPageHome = () => {
         <div className="MyPageTier">
           <h3 className="MyPageh3">러닝 티어</h3>
           <MyPageTier />
+        </div>
+        <div
+          style={{
+            marginTop: "100px",
+            marginRight: "20px",
+            textAlign: "right",
+          }}
+        >
+          <Logout />
         </div>
       </div>
     </div>

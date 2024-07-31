@@ -1,15 +1,6 @@
 .LogoutButton {
-  z-index: 1;
   padding-top: 20px;
-  font-size: 18px;
   color: #999;
   font-family: "Times New Roman", Times, serif;
-  font-weight: 300;
   cursor: pointer;
-  transition: color 0.3s ease, font-weight 0.3s ease;
-}
-
-.LogoutButton:hover {
-  color: black;
-  font-weight: bold;
 }
