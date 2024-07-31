@@ -74,15 +74,17 @@ const UserProvider = ({ children }) => {
     }
   };
 
-  // 임의로 짜놓은거임
   const addUserToRoom = (user) => {
     setRoomUsers((prevUsers) => {
-      const newUsers = prevUsers.slice();
-      newUsers.push(user);
-      return newUsers;
+      const exists = prevUsers.some((u) => u.userId === user.userId);
+      if (!exists) {
+        return [...prevUsers, user];
+      }
+      return prevUsers;
     });
   };
 
+  console.log(roomUsers);
   return (
     <UserContext.Provider
       value={{

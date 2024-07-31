@@ -6,16 +6,20 @@ import { UserContext } from "../../../hooks/UserContext";
 
 const TeamQR = () => {
   const [data, setData] = useState("No result");
-  const { addUserToRoom } = useContext(UserContext);
+  const { addUserToRoom, userData, roomUsers } = useContext(UserContext);
 
   const handleScan = (result) => {
     if (result && result.text) {
       const resultData = result.text;
+      addUserToRoom({
+        userId: userData.userId,
+        nickname: userData.nickname,
+      });
+      console.log(roomUsers);
       setData(resultData);
 
       if (isValidURL(resultData)) {
         window.location.href = resultData; // URL로 이동
-        addUserToRoom();
       } else {
         console.log("Scanned result is not a valid URL:", resultData);
       }

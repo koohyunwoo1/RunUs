@@ -65,9 +65,9 @@ const Header = () => {
           X
         </button>
         <div className="dropdown-content">
-          <h1 className="category-item">
+          {/* <h1 className="category-item">
             <Logout />
-          </h1>
+          </h1> */}
           <h1 className="category-item" onClick={handleReportClick}>
             Report
           </h1>
