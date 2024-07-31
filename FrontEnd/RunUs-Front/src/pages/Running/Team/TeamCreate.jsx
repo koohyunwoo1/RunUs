@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Header from "../../../components/common/Header";
 import QRCode from "qrcode.react";
 import "../../../styles/Running/Team/TeamCreate.css";
-import Weather from "../../../components/common/Weather";
+// import Weather from "../../../components/common/Weather";
 import { useNavigate, useParams } from "react-router-dom";
 import TeamUserList from "../../../components/Running/Team/TeamUserList";
 import TeamSaying from "../../../components/Running/Team/TeamSaying";
@@ -69,9 +69,9 @@ const TeamCreate = () => {
     <div>
       <Header />
       <div className="TeamCreate">
-        <div>
+        {/* <div>
           <Weather />
-        </div>
+        </div> */}
         <div>
           <TeamSaying />
         </div>

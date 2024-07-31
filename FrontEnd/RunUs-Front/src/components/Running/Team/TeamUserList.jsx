@@ -4,7 +4,7 @@ import { UserContext } from "../../../hooks/UserContext";
 
 const TeamUserList = () => {
   const { roomUsers } = useContext(UserContext);
-  console.log(roomUsers);
+
   return (
     <div className="TeamUserList">
       <div className="user-list">

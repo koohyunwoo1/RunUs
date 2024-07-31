@@ -8,6 +8,7 @@ import SoloProfile from "../../assets/SoloProfile.png";
 import TeamProfile from "../../assets/TeamProfile.png";
 import axios from "axios";
 import { UserContext } from "../../hooks/UserContext";
+import Weather from "../../components/common/Weather";
 
 const LogInHome = () => {
   const [showTeamOptions, setShowTeamOptions] = useState(false);
@@ -64,7 +65,10 @@ const LogInHome = () => {
       <div className="LoginHome-container">
         <h3 className="Today_item">Today</h3>
         <h1 className="Today_km">{distance}</h1>
-        <ReportItem onDistanceChange={updateDistance} />
+        <Weather />
+        <div className="LoginHomeReportItem">
+          <ReportItem onDistanceChange={updateDistance} />
+        </div>
         <div className="MainButton-container">
           <Button2 src={SoloProfile} onClick={handleSoloProfileClick} />
           <Button2

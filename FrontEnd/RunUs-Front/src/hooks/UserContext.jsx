@@ -22,6 +22,7 @@ const UserProvider = ({ children }) => {
   const loginUser = async (email, password) => {
     try {
       const response = await axios.post("/api/v1/signin", { email, password });
+      console.log(response);
       if (response.data.success) {
         setUserId(response.data.data.userId);
         const data = response.data.data;
