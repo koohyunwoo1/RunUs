@@ -39,8 +39,8 @@ const ArticleHome = () => {
       });
 
       // 삭제된 게시글 필터링
-      const filteredArticles = response.data.data.filter(article => !article.isDeleted);
-
+      const filteredArticles = response.data.data.filter(article => article.isDeleted !== 1);
+      console.log("filtered : ", filteredArticles)
       setArticles(filteredArticles);
       setTotalPages(response.data.totalPages || 1); // 총 페이지 수 설정
       console.log('Articles Response:', response);

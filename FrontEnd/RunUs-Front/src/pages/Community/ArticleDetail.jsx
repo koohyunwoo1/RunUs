@@ -55,6 +55,7 @@ const ArticleDetail = () => {
 
         // Fetch region name
         const regionResponse = await axios.get(`/api/v1/region-minor/${response.data.data.regionId}`);
+        console.log('Region response:', regionResponse.data);
         if (regionResponse.data.success) {
           setRegionName(regionResponse.data.data.name || '미정');
         }
@@ -124,7 +125,7 @@ const ArticleDetail = () => {
           />
         </>
       )}
-      <CommentSection comments={comments} />
+      <CommentSection comments={comments} articleId={id} />
       <Button text="목록" onClick={() => nav("/article-home")} />
     </div>
   );

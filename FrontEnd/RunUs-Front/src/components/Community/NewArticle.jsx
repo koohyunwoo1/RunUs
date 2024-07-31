@@ -69,24 +69,21 @@ const NewArticle = () => {
     const formattedMeetingTime = `${meetingDay}T${meetingTime}`; // 예: "2024-07-03T18:10:00"
 
     try {
-      const response = await axios.post(
-        "/api/v1/boards",
-        {
-          title,
-          content,
-          regionId: parseInt(regionMinor, 10), // Ensure regionMinor is an integer
-          meetingTime: formattedMeetingTime, // Send as formatted string
-          meetingDay, // Send as it is
-          userId: userData.userId,
-          nickname: userData.nickname,
-          is_deleted: "0",
+      const response = await axios.post('/api/v1/boards', {
+        title,
+        content,
+        regionId: parseInt(regionMinor, 10), // Ensure regionMinor is an integer
+        meetingTime: formattedMeetingTime, // Send as formatted string
+        meetingDay, // Send as it is
+        userId: userData.userId,
+        nickname: userData.nickname,
+        is_deleted: '0'
+      }, {
+        headers: {
+          "Content-Type": "application/json"
         },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      }
+    );
 
       // 로그를 통해 응답 데이터 확인
       console.log("API Response:", response.data);
@@ -102,6 +99,7 @@ const NewArticle = () => {
       console.error("Error creating article:", error);
     }
   };
+  
 
   return (
     <div className="NewArticle">
