@@ -20,4 +20,5 @@ public class ChatMessage {
 
     private double longitude;
     private double latitude;
+
 }

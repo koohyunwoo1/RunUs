@@ -3,7 +3,9 @@ package runus.runus.webSocket.dto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.WebSocketSession;
+import runus.runus.record.service.RecordService;
 import runus.runus.webSocket.service.ChatServiceImpl;
 
 import java.util.HashSet;
@@ -22,6 +24,9 @@ public class ChatRoom {
     private int roomOwnerId = -1; // 방 생성자의 ID
     private double ownerLatitude; // 방 생성자의 위도
     private double ownerLongitude; // 방 생성자의 경도
+
+    private RecordService recordService;
+
 
     @Builder
     public ChatRoom(String roomId, String userName, int roomOwnerId) {
@@ -69,6 +74,7 @@ public class ChatRoom {
         double latitude = chatMessage.getLatitude();
         int userId = chatMessage.getUserId(); // 사용자 ID
 
+
         if (chatMessage.getType().equals(ChatMessage.MessageType.ENTER)) {
             sessions.add(session);
             users.add(userName);
@@ -78,11 +84,17 @@ public class ChatRoom {
             chatServiceImpl.saveUserEntry(partyId, userId, role);
 
         } else if (chatMessage.getType().equals(ChatMessage.MessageType.QUIT)) {
+            sendMessage(chatMessage, chatServiceImpl);
             sessions.remove(session);
             users.remove(userName);
             chatMessage.setMessage(userName + "님이 퇴장했습니다.");
 
-            chatServiceImpl.exitUserStatus(partyId, userId, '1');
+            chatServiceImpl.exitUserStatus(partyId, userId, '3');
+            log.info(userId + " ststus 3으로 변경 끝");
+            chatServiceImpl.exitPartyStatus(partyId, '3');
+            log.info(partyId + " party status 3으로 변경 끝");
+
+
 
         } else if (chatMessage.getType().equals(ChatMessage.MessageType.START)) {
             if (userId == roomOwnerId) {
