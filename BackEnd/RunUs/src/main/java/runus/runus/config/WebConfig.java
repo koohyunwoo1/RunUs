@@ -1,3 +1,4 @@
+
 package runus.runus.config;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -24,11 +25,14 @@ public class WebConfig implements WebMvcConfigurer {
                         .allowedHeaders("*"); // 모든 헤더 허용
             }
 
+            @Value("${file.upload-dir}")
+            private String uploadDir;
+
             @Override
             public void addResourceHandlers(ResourceHandlerRegistry registry) {
-                // 파일 업로드 디렉토리 제공 설정
+                // File upload directory 설정
                 registry.addResourceHandler("/uploads/**")
-                        .addResourceLocations("classpath:/static/uploads/");
+                        .addResourceLocations("file:" + uploadDir + "/profile-pictures/");
             }
         };
     }
