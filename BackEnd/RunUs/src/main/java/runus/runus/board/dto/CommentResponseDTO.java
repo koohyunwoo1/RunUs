@@ -16,6 +16,7 @@ public class CommentResponseDTO {
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String nickname;
 
     // constructor, getters and setters
 }

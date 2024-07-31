@@ -27,6 +27,7 @@ public class CommentServiceImpl implements CommentService {
         comment.setCreatedAt(LocalDateTime.now());
         comment.setUserId(commentRequest.getUserId());
         comment.setParentId(commentRequest.getParentId());
+        comment.setNickname(commentRequest.getNickname());
         comment.setIsDeleted('0');
         commentRepository.save(comment);
     }
@@ -62,6 +63,7 @@ public class CommentServiceImpl implements CommentService {
     private CommentResponseDTO convertToDTO(CommentEntity comment) {
         return new CommentResponseDTO(
                 comment.getCommentId(), comment.getBoardId(), comment.getParentId(),
-                comment.getUserId(), comment.getContent(), comment.getCreatedAt(), comment.getUpdatedAt());
+                comment.getUserId(), comment.getContent(), comment.getCreatedAt(), comment.getUpdatedAt(),
+                comment.getNickname());
     }
 }

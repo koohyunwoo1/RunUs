@@ -154,6 +154,7 @@ public class BoardServiceImpl implements BoardService {
     private CommentResponseDTO convertToDTO(CommentEntity comment) {
         return new CommentResponseDTO(
                 comment.getCommentId(), comment.getBoardId(), comment.getParentId(),
-                comment.getUserId(), comment.getContent(), comment.getCreatedAt(), comment.getUpdatedAt());
+                comment.getUserId(), comment.getContent(), comment.getCreatedAt(), comment.getUpdatedAt(),
+                comment.getNickname());
     }
 }
