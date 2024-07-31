@@ -27,6 +27,7 @@ public class CommentServiceImpl implements CommentService {
         comment.setCreatedAt(LocalDateTime.now());
         comment.setUserId(commentRequest.getUserId());
         comment.setParentId(commentRequest.getParentId());
+        comment.setIsDeleted('0');
         commentRepository.save(comment);
     }
 

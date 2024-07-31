@@ -36,6 +36,7 @@ public class BoardServiceImpl implements BoardService {
         board.setMeetingDay(boardRequest.getMeetingDay());
         board.setUserId(boardRequest.getUserId());
         board.setNickname(boardRequest.getNickname());
+        board.setIsDeleted('0');
         BoardEntity saveBoard = boardRepository.save(board);
         return saveBoard.getBoardId();
     }
