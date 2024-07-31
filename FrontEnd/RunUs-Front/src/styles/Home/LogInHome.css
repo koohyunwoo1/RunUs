@@ -1,5 +1,7 @@
 .LoginHome-container {
   margin-top: 100px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .Today_item,
@@ -57,4 +59,8 @@
 /* 버튼 hover 상태 */
 .team-options-popup button:hover {
   background-color: #0056b3;
+}
+
+.LoginHomeReportItem {
+  margin-top: 50px;
 }

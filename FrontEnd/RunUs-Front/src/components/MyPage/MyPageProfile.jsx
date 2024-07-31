@@ -2,24 +2,25 @@ import React, { useState, useRef, useEffect } from "react";
 import "../../styles/MyPage/MyPageProfile.css";
 import NormalProfile from "../../assets/profile(normal).png";
 import axios from "axios";
+
+const BASE_URL = "http://localhost:8080"; // 서버의 베이스 URL
+
 const MyPageProfile = () => {
-  const [profileImage, setProfileImage] = useState(null);
+  const [profileImage, setProfileImage] = useState(NormalProfile);
   const fileInputRef = useRef(null);
   const [nickname, setNickname] = useState("");
 
   useEffect(() => {
-    // 로컬 스토리지에서 저장된 프로필 이미지를 가져옵니다.
-    const storedProfileImage = localStorage.getItem("profileImage");
-    if (storedProfileImage) {
-      setProfileImage(storedProfileImage);
-    }
-    // 여기서 userId를 사용하여 닉네임을 가져올 수 있습니다.
     const userId = localStorage.getItem("userId");
     if (userId) {
       axios
         .get(`/api/v1/search-profile?userId=${userId}`)
         .then((response) => {
-          setNickname(response.data.data.nickname);
+          const { profileUrl, nickname } = response.data.data;
+          if (profileUrl) {
+            setProfileImage(`${BASE_URL}${profileUrl}`);
+          }
+          setNickname(nickname);
         })
         .catch((error) => {
           console.error("Error fetching profile:", error);
@@ -27,18 +28,42 @@ const MyPageProfile = () => {
     }
   }, []);
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
+    const userId = localStorage.getItem("userId");
     const file = e.target.files[0];
+
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const imageData = reader.result;
-        setProfileImage(imageData);
-        localStorage.setItem("profileImage", imageData);
-        // api 안만들어줘서 로컬에 저장함
-        // 만들어주던가
-      };
-      reader.readAsDataURL(file);
+      const supportedTypes = ["image/jpeg", "image/png", "image/gif"];
+      const maxSize = 5 * 1024 * 1024;
+
+      if (!supportedTypes.includes(file.type)) {
+        alert("이미지 형식이 맞지 않습니다.");
+        return;
+      }
+
+      if (file.size > maxSize) {
+        alert("이미지 용량을 줄여주세요 !");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("userId", userId);
+      formData.append("file", file);
+
+      try {
+        const response = await axios.post("/api/v1/profile", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        const profileUrl = response.data.body.data.profileUrl;
+        if (profileUrl) {
+          setProfileImage(`${BASE_URL}${profileUrl}`);
+        }
+      } catch (error) {
+        console.error("Image upload error:", error);
+        setProfileImage(NormalProfile);
+      }
     }
   };
 
@@ -52,7 +77,6 @@ const MyPageProfile = () => {
         src={profileImage || NormalProfile}
         className="profile-image"
         onClick={handleImageClick}
-        alt="Profile"
       />
       <input
         type="file"

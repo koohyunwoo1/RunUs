@@ -13,7 +13,6 @@ import SoloMode from "./pages/Running/Solo/SoloMode";
 import TeamQR from "./pages/Running/Team/TeamQR";
 import ArticleCreate from "./pages/Community/ArticleCreate";
 import ArticleDetail from "./pages/Community/ArticleDetail";
-import UserList from "./pages/UseList/UserList";
 import MyPageEdit from "./pages/MyPage/MyPageEdit";
 import CountDown from "./pages/Running/Team/CountDown";
 import TeamCheck from "./pages/Running/Team/TeamCheck";
@@ -117,14 +116,7 @@ const App = () => {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/UserList"
-            element={
-              <ProtectedRoute>
-                <UserList />
-              </ProtectedRoute>
-            }
-          />
+
           <Route
             path="/my-page-edit"
             element={
