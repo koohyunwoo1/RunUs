@@ -45,18 +45,24 @@ const CommentSection = ({ articleId }) => {
     if (!newComment.trim()) return;
 
     try {
-      await axios.post(`/api/v1/boards/${articleId}/comments`, {
-        content: newComment,
-        userId: userData.userId
-      });
-      setNewComment("");
-      setPage(0); // 댓글 작성 후 페이지 초기화
-      setCommentList([]); // 댓글 작성 후 목록을 초기화하여 재로딩
-      await fetchComments(); // 작성 후 최신 댓글 목록을 가져옵니다.
-    } catch (err) {
-      console.error("댓글 작성 실패: ", err);
-    }
-  };
+      const response = await axios.post(
+        "/api/v1/boards",
+        {
+          title,
+          content,
+          regionId: parseInt(regionMinor, 10), // Ensure regionMinor is an integer
+          meetingTime: formattedMeetingTime, // Send as formatted string
+          meetingDay, // Send as it is
+          userId: userData.userId,
+          nickname: userData.nickname,
+          is_deleted: "0",
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
   const handleEditComment = (commentId, content) => {
     setEditingCommentId(commentId);

@@ -6,7 +6,6 @@ const FindEmailModalContent = ({ onClose }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add logic to handle email submission
     console.log("Email submitted:", email);
     onClose();
   };

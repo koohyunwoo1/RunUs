@@ -27,14 +27,14 @@ const Weather = () => {
   };
 
   const cityNameMap = {
-    Busan: "부산",
-    Seoul: "서울",
-    Incheon: "인천",
-    Daegu: "대구",
-    Gwangju: "광주",
-    Daejeon: "대전",
-    Ulsan: "울산",
-    Jeju: "제주",
+    Busan: "부산광역시",
+    Seoul: "서울특별시",
+    Incheon: "인천광역시",
+    Daegu: "대구광역시",
+    Gwangju: "광주광역시",
+    Daejeon: "대전광역시",
+    Ulsan: "울산광역시",
+    Jeju: "제주특별자치도",
   };
 
   useEffect(() => {
