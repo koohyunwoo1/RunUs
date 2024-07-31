@@ -140,7 +140,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public List<CommentResponseDTO> getComments(int boardId, int size, int page) {
         Pageable pageable = PageRequest.of(page, size);
-        List<CommentEntity> comments = commentRepository.findByBoardIdAndIsDeleted(boardId, 'N', pageable);
+        List<CommentEntity> comments = commentRepository.findByBoardIdAndIsDeleted(boardId, '0', pageable);
         return comments.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
