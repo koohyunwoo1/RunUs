@@ -23,6 +23,7 @@ public interface RecordRepository extends JpaRepository<Record, Integer> {
     @Query(value = "SELECT SUM(r.distance) FROM Record r WHERE r.user_id =?1")
     Integer sumDistanceByUser_id(Integer user_id);
 
+    // 사용자 ID와 기간으로 기록 조회
     @Query("SELECT r FROM Record r WHERE r.user_id = :userId AND r.record_date BETWEEN :startOfYear AND :endOfYear")
     List<Record> findByUserIdAndDateRange(@Param("userId") Integer userId, @Param("startOfYear") LocalDateTime startOfYear, @Param("endOfYear") LocalDateTime endOfYear);
 

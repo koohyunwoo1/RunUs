@@ -78,5 +78,17 @@ public class RecordService {
         return monthlyStats.values().stream().collect(Collectors.toList());
     }
 
+    // 러닝한 데이터를 저장
+    public Record saveRecord(int userId, int partyId, Integer distance, Integer time, Integer kcal) {
+        Record record = new Record();
+        record.setUser_id(userId);
+        record.setParty_id(partyId);
+        record.setDistance(distance != null ? distance : 0);
+        record.setTime(time != null ? time : 0);
+        record.setKcal(kcal != null ? kcal : 0);
+        record.setRecord_date(LocalDateTime.now());
+
+        return recordRepository.save(record);
+    }
 
 }

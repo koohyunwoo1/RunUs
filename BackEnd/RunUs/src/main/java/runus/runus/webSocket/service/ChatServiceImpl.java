@@ -203,4 +203,12 @@ public class ChatServiceImpl implements ChatService {
         Double distance = (Double) redisTemplate.opsForHash().get(distanceKey, memberName);
         return (distance != null) ? Math.round(distance * 100000.0) / 100000.0 : 0.0; // 소수점 5째 자리까지 포맷팅
     }
+
+    public void exitPartyStatus(int partyId, Character status) {
+        PartyEntity party = partyRepository.findByPartyId(partyId).orElseThrow(()-> new RuntimeException("Party not found"));
+        party.setPartyStatus(status);
+        partyRepository.save(party);
+    }
+
+
 }
