@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../styles/Community/ArticleDetail.css";
 import CommentSection from "../../components/Community/CommentSection";
 import Button from "../../components/common/Button";
+import { UserContext } from "../../hooks/UserContext";
 
 // 날짜와 시간을 포맷하는 함수
 const formatDate = (dateString) => {
@@ -29,11 +30,13 @@ const formatDate = (dateString) => {
 const ArticleDetail = () => {
   const { id } = useParams();
   const nav = useNavigate();
+  const { userData } = useContext(UserContext); // UserContext에서 사용자 데이터 가져오기
   const [article, setArticle] = useState(null);
   const [regionName, setRegionName] = useState('미정');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [comments, setComments] = useState([]);
+  const [isAuthor, setIsAuthor] = useState(false); // 현재 사용자가 글 작성자인지 여부
 
   useEffect(() => {
     if (!id) {
@@ -55,6 +58,11 @@ const ArticleDetail = () => {
         if (regionResponse.data.success) {
           setRegionName(regionResponse.data.data.name || '미정');
         }
+
+        // Check if the current user is the author of the article
+        if (userData && response.data.data.nickname) {
+          setIsAuthor(response.data.data.nickname === userData.nickname);
+        }
       } catch (err) {
         console.error('Error fetching article or region:', err.response ? err.response.data : err.message);
         setError(err);
@@ -63,24 +71,23 @@ const ArticleDetail = () => {
       }
     };
 
-    // const fetchComments = async () => {
-    //   console.log('Fetching comments for article ID:', id);
-    //   try {
-    //     const response = await axios.get(`/api/v1/boards/${id}/comments`);
-    //     console.log('Comments response:', response.data);
-    //     setComments(response.data.data);
-    //   } catch (err) {
-    //     console.error('Error fetching comments:', err.response ? err.response.data : err.message);
-    //     setError(err);
-    //   }
-    // };
-
     fetchArticle();
-    // fetchComments();
-  }, [id]);
+  }, [id, userData]);
 
   const handleEdit = () => {
     nav(`/article-edit/${id}`);
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm('정말로 이 글을 삭제하시겠습니까?')) {
+      try {
+        await axios.delete(`/api/v1/boards/${id}`);
+        nav("/article-home");
+      } catch (err) {
+        console.error('Error deleting article:', err.response ? err.response.data : err.message);
+        setError(err);
+      }
+    }
   };
 
   if (loading) return <p>로딩 중...</p>;
@@ -103,11 +110,20 @@ const ArticleDetail = () => {
         <strong>작성자:</strong> {article.nickname || "익명"}
       </p>
       <div className="article-content">{article.content}</div>
-      <Button
-        text="수정"
-        onClick={handleEdit}
-        className="article-edit-button"
-      />
+      {isAuthor && (
+        <>
+          <Button
+            text="수정"
+            onClick={handleEdit}
+            className="article-edit-button"
+          />
+          <Button
+            text="삭제"
+            onClick={handleDelete}
+            className="article-delete-button"
+          />
+        </>
+      )}
       <CommentSection comments={comments} />
       <Button text="목록" onClick={() => nav("/article-home")} />
     </div>

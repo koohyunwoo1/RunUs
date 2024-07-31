@@ -116,7 +116,6 @@ const App = () => {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/my-page-edit"
             element={

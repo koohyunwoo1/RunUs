@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import Header from "../../components/common/Header";
 import "../../styles/Community/ArticleHome.css";
 import ArticleList from "../../components/Community/ArticleList";
 import axios from "axios";
 import Button from "../../components/common/Button";
+import { UserContext } from "../../hooks/UserContext";
 
 const ArticleHome = () => {
   const [articles, setArticles] = useState([]);
@@ -13,13 +14,20 @@ const ArticleHome = () => {
   const [totalPages, setTotalPages] = useState(1); // 총 페이지 수
   const [sortByTime, setSortByTime] = useState(false); // 시간 순 정렬
   const [completedOnly, setCompletedOnly] = useState(false); // 완료 필터링
-  const regionId = 1; // 예시로 고정된 값
+  const { userData } = useContext(UserContext); // UserContext에서 사용자 정보 가져오기
+
   const size = 10; // 페이지당 게시글 수
 
+  console.log('UserData:', userData); // 사용자 데이터 로그 확인
+
+  // 게시글을 가져오는 함수
   const fetchArticles = async () => {
+    console.log('Fetching Articles...');
+    if (!userData || !userData.regionId) return; // userData나 regionId가 없으면 종료
+
     setLoading(true);
     try {
-      let url = `/api/v1/boards/region/${regionId}`;
+      let url = `/api/v1/boards/region/${userData.regionId}`;
       if (completedOnly) {
         url += "/incomplete";
       } else if (sortByTime) {
@@ -29,25 +37,35 @@ const ArticleHome = () => {
       const response = await axios.get(url, {
         params: { size, page },
       });
-      setArticles(response.data.data);
-      setTotalPages(response.data.totalPages || 1);
+
+      // 삭제된 게시글 필터링
+      const filteredArticles = response.data.data.filter(article => !article.isDeleted);
+
+      setArticles(filteredArticles);
+      setTotalPages(response.data.totalPages || 1); // 총 페이지 수 설정
+      console.log('Articles Response:', response);
+      console.log('Articles Data:', filteredArticles);
     } catch (err) {
+      console.error('Error fetching articles:', err);
       setError(err);
     } finally {
       setLoading(false);
     }
   };
 
+  // 사용자 데이터가 변경될 때 게시글을 가져옵니다.
   useEffect(() => {
-    fetchArticles();
-  }, [regionId, page, sortByTime, completedOnly]);
+    if (userData && userData.regionId) {
+      fetchArticles();
+    }
+  }, [userData, page, sortByTime, completedOnly]);
 
   const handleSortByTime = () => {
-    setSortByTime((prev) => !prev);
+    setSortByTime(prev => !prev);
   };
 
   const handleCompletedOnly = () => {
-    setCompletedOnly((prev) => !prev);
+    setCompletedOnly(prev => !prev);
   };
 
   if (loading) return <p>로딩 중...</p>;
@@ -72,11 +90,11 @@ const ArticleHome = () => {
             onClick={() => setPage(prev => Math.max(prev - 1, 0))} 
             disabled={page === 0}
             text="이전" 
-            />
-          <span>Page {page} of {totalPages}</span>
+          />
+          <span>Page {page + 1} of {totalPages}</span>
           <Button 
             onClick={() => setPage(prev => prev + 1)} 
-            disabled={page === totalPages}
+            disabled={page >= totalPages - 1}
             text="다음"
           />
         </div>
