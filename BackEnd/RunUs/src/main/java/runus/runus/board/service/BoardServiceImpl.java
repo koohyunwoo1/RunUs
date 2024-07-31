@@ -32,11 +32,10 @@ public class BoardServiceImpl implements BoardService {
         board.setContent(boardRequest.getContent());
         board.setRegionId(boardRequest.getRegionId());
         board.setCreatedAt(LocalDateTime.now());
-        board.setMeetingTime(boardRequest.getMeetingTime());  // 새로운 필드 추가
-        board.setMeetingDay(boardRequest.getMeetingDay());    // 새로운 필드 추가
+        board.setMeetingTime(boardRequest.getMeetingTime());
+        board.setMeetingDay(boardRequest.getMeetingDay());
         board.setUserId(boardRequest.getUserId());
         board.setNickname(boardRequest.getNickname());
-        board.setIsDeleted('N');
         BoardEntity saveBoard = boardRepository.save(board);
         return saveBoard.getBoardId();
     }
@@ -44,14 +43,14 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public List<BoardResponseDTO> getBoardsByRegion(int regionId, int size, int page) {
         Pageable pageable = PageRequest.of(page, size);
-        List<BoardEntity> boards = boardRepository.findByRegionId(regionId, pageable);
+        List<BoardEntity> boards = boardRepository.findByRegionIdAndIsDeleted(regionId, '0', pageable);
         return boards.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     @Override
     public List<BoardResponseDTO> getBoardsByTime(int regionId, int size, int page) {
         Pageable pageable = PageRequest.of(page, size);
-        List<BoardEntity> boards = boardRepository.findByRegionIdOrderByCreatedAtAsc(regionId, pageable);
+        List<BoardEntity> boards = boardRepository.findByRegionIdAndIsDeletedOrderByCreatedAtAsc(regionId, '0', pageable);
         return boards.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
@@ -65,7 +64,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public List<BoardResponseDTO> searchBoards(int regionId, String word, int size, int page) {
         Pageable pageable = PageRequest.of(page, size);
-        List<BoardEntity> boards = boardRepository.findByRegionIdAndTitleContaining(regionId, word, pageable);
+        List<BoardEntity> boards = boardRepository.findByRegionIdAndTitleContainingAndIsDeleted(regionId, word, '0', pageable);
         return boards.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
@@ -73,12 +72,15 @@ public class BoardServiceImpl implements BoardService {
     public void updateBoard(int boardId, BoardRequestDTO boardRequest) {
         BoardEntity board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new RuntimeException("Board not found"));
+        if (board.getIsDeleted() == '1') {
+            throw new RuntimeException("Cannot update a deleted board");
+        }
         board.setTitle(boardRequest.getTitle());
         board.setContent(boardRequest.getContent());
         board.setRegionId(boardRequest.getRegionId());
         board.setUpdatedAt(LocalDateTime.now());
-        board.setMeetingTime(boardRequest.getMeetingTime());  // 새로운 필드 추가
-        board.setMeetingDay(boardRequest.getMeetingDay());    // 새로운 필드 추가
+        board.setMeetingTime(boardRequest.getMeetingTime());
+        board.setMeetingDay(boardRequest.getMeetingDay());
         board.setUserId(boardRequest.getUserId());
         boardRepository.save(board);
     }
@@ -87,6 +89,9 @@ public class BoardServiceImpl implements BoardService {
     public BoardResponseDTO getBoardDetails(int boardId) {
         BoardEntity board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new RuntimeException("Board not found"));
+        if (board.getIsDeleted() == '1') {
+            throw new RuntimeException("Board has been deleted");
+        }
         return convertToDTO(board);
     }
 
@@ -105,6 +110,8 @@ public class BoardServiceImpl implements BoardService {
         comment.setBoardId(boardId);
         comment.setContent(commentRequest.getContent());
         comment.setCreatedAt(LocalDateTime.now());
+        comment.setUserId(commentRequest.getUserId());
+        comment.setParentId(commentRequest.getParentId());
         commentRepository.save(comment);
     }
 
@@ -112,6 +119,9 @@ public class BoardServiceImpl implements BoardService {
     public void updateComment(int boardId, int commentId, CommentRequestDTO commentRequest) {
         CommentEntity comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
+        if (comment.getIsDeleted() == '1') {
+            throw new RuntimeException("Cannot update a deleted comment");
+        }
         comment.setContent(commentRequest.getContent());
         comment.setUpdatedAt(LocalDateTime.now());
         commentRepository.save(comment);
@@ -129,12 +139,11 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public List<CommentResponseDTO> getComments(int boardId, int size, int page) {
         Pageable pageable = PageRequest.of(page, size);
-        List<CommentEntity> comments = commentRepository.findByBoardId(boardId, pageable);
+        List<CommentEntity> comments = commentRepository.findByBoardIdAndIsDeleted(boardId, 'N', pageable);
         return comments.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     private BoardResponseDTO convertToDTO(BoardEntity board) {
-        System.out.println("Converting BoardEntity to DTO: " + board.getTitle());
         return new BoardResponseDTO(
                 board.getBoardId(), board.getTitle(), board.getContent(),
                 board.getNickname(), board.getCreatedAt(), board.getUpdatedAt(),
@@ -146,5 +155,4 @@ public class BoardServiceImpl implements BoardService {
                 comment.getCommentId(), comment.getBoardId(), comment.getParentId(),
                 comment.getUserId(), comment.getContent(), comment.getCreatedAt(), comment.getUpdatedAt());
     }
-
 }
