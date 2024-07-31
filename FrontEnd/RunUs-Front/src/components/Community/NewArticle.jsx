@@ -72,7 +72,8 @@ const NewArticle = () => {
         meetingTime: formattedMeetingTime, // Send as formatted string
         meetingDay, // Send as it is
         userId: userData.userId,
-        nickname: userData.nickname
+        nickname: userData.nickname,
+        is_deleted: '0'
       }, {
         headers: {
           'Content-Type': 'application/json'
@@ -94,11 +95,6 @@ const NewArticle = () => {
     }
   };
   
-  
-
-  
-  
-
   return (
     <div className="NewArticle">
       <h2>새 글 작성하기</h2>
