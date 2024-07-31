@@ -86,6 +86,10 @@ const WeatherForecast = () => {
     return dailyForecasts;
   };
 
+  const handleClick = () => {
+    window.location.href = `/src/assets/곤지암움짤.mp4`;
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -95,7 +99,7 @@ const WeatherForecast = () => {
   }
 
   return (
-    <div className="WeatherForecast">
+    <div className="WeatherForecast" onClick={handleClick}>
       {forecastData.map((day, index) => (
         <div key={index} className="ForecastItem">
           <h3>{day.date}</h3>

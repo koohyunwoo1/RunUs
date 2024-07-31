@@ -63,8 +63,7 @@ const LogInHome = () => {
     <div>
       <Header />
       <div className="LoginHome-container">
-        <h3 className="Today_item">Today</h3>
-        <h1 className="Today_km">{distance}</h1>
+        <h1 className="Today_item">RunUs</h1>
         <Weather />
         <div className="LoginHomeReportItem">
           <ReportItem onDistanceChange={updateDistance} />
