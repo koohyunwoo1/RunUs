@@ -1,56 +1,68 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { UserContext } from "../../../hooks/UserContext";
 
 const Measure = () => {
+  const { userId: contextUserId, userData } = useContext(UserContext);
   const [position, setPosition] = useState(null);
-  // 사용자의 현재 위치 정보
   const [positionLast, setPositionLast] = useState(null);
-  // 사용자의 이전 위치 정보
   const [distance, setDistance] = useState(0);
-  // 뛴 거리
-  const [weight, setWeight] = useState(0);
-  // 몸무게
   const [startTime, setStartTime] = useState(null);
-  // startTime을 null로 설정해서 startTime이 시작이 되면 useEffect 발생
   const [elapsedTime, setElapsedTime] = useState(0);
-  // 사용자가 측정한 시간을 초 단위로
-  const [calories, setCalories] = useState(10);
-  // 칼로리
+  const [calories, setCalories] = useState(0);
+  const [watchId, setWatchId] = useState(null);
 
-  // 위치 정보를 가져오는 함수
+  // 로컬스토리지에서 userId 가져오기
+  const localStorageUserId = localStorage.getItem("userId");
+  const userId = contextUserId || localStorageUserId;
+
+  // 체중은 userData에서 가져오기
+  const weight = userData ? userData.weight : 0;
+
   const getPosition = () => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
+      const id = navigator.geolocation.watchPosition(
         (pos) => {
-          setPosition(pos.coords);
-          setPositionLast(pos.coords);
+          const newPosition = pos.coords;
+          if (positionLast) {
+            const currentDistance = calculateDistance(
+              positionLast.latitude,
+              positionLast.longitude,
+              newPosition.latitude,
+              newPosition.longitude
+            );
+            setDistance((prevDistance) => prevDistance + currentDistance);
+            setCalories(calculateCalories(distance, weight));
+          }
+          setPosition(newPosition);
+          setPositionLast(newPosition);
         },
         (err) => {
           console.error("위치 정보를 가져오는 중 오류 발생:", err);
-        }
+        },
+        { timeout: 30000 }
       );
+      setWatchId(id);
     } else {
       console.log("Geolocation을 지원하지 않는 브라우저입니다.");
     }
   };
 
-  // 시작 시간 기록
   const startTracking = () => {
     setStartTime(new Date());
+    getPosition();
   };
 
-  // 측정 시간 계산 함수 (초 단위)
   const calculateElapsedTime = () => {
     if (startTime) {
       const endTime = new Date();
-      const diffInSeconds = (endTime - startTime) / 1000; // 밀리초를 초 단위로 변환
+      const diffInSeconds = (endTime - startTime) / 1000;
       setElapsedTime(diffInSeconds);
     }
   };
 
-  // 뛴 거리 계산 함수 (Haversine 공식 사용)
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
-    const R = 6371; // 지구의 반지름 (단위: km)
+    const R = 6371;
     const dLat = (lat2 - lat1) * (Math.PI / 180);
     const dLon = (lon2 - lon1) * (Math.PI / 180);
     const a =
@@ -60,52 +72,42 @@ const Measure = () => {
         Math.sin(dLon / 2) *
         Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c; // 거리 (단위: km)
+    const distance = R * c;
     return distance;
   };
 
-  // 칼로리 계산 함수
   const calculateCalories = (distance, weight) => {
-    // 간단한 예제로, 칼로리 = 뛴 거리(km) * 체중(kg) * 0.9 (단순 예시)
     return distance * weight * 0.9;
   };
 
-  // 저장 버튼 클릭 시 실행될 함수
   const saveData = async () => {
     if (!startTime || !position) {
       alert("먼저 위치 정보를 가져오고 시작해야 합니다.");
       return;
     }
 
+    if (!userId) {
+      alert("로그인 상태가 확인되지 않습니다.");
+      return;
+    }
+
     const endTime = new Date();
-    console.log(endTime);
     const elapsedTimeInSeconds = parseInt((endTime - startTime) / 1000);
-    console.log(elapsedTimeInSeconds);
-    // 끝난 시간
+    const currentCalories = calculateCalories(distance, weight);
 
-    const currentDistance = calculateDistance(
-      positionLast.latitude,
-      positionLast.longitude,
-      position.latitude,
-      position.longitude
-    );
-    console.log("km", currentDistance);
-    console.log("km", position.latitude);
-    console.log("km", position.longitude);
-    console.log("km", positionLast.longitude);
-    console.log("km", positionLast.latitude);
+    const dataToSend = {
+      user_id: userId,
+      distance: distance,
+      time: elapsedTimeInSeconds,
+      kcal: currentCalories,
+      record_date: endTime.toISOString(),
+    };
 
-    const currentCalories = calculateCalories(currentDistance, weight);
-    console.log("kcal", currentCalories);
+    console.log("Sending data:", dataToSend);
 
-    // 백엔드로 데이터 전송하는 코드
     try {
-      const response = await axios.post("http/your-ba:/ckend-url/save", {
-        distance: currentDistance,
-        time: elapsedTimeInSeconds,
-        calories: currentCalories,
-        latitude: position.latitude,
-        longitude: position.longitude,
+      const response = await axios.post("/api/v1/endsolo", dataToSend, {
+        headers: { "Content-Type": "application/json" },
       });
       console.log(response.data);
       alert("데이터가 성공적으로 저장되었습니다.");
@@ -115,13 +117,19 @@ const Measure = () => {
     }
   };
 
-  // 측정 시간을 매 초마다 업데이트 하는 기능
+  const endTracking = () => {
+    if (watchId) {
+      navigator.geolocation.clearWatch(watchId);
+    }
+    saveData();
+    setStartTime(null);
+  };
+
   useEffect(() => {
     if (startTime) {
-      // startTime이 존재할 때 (측정이 시작된 상태)
       const timer = setInterval(() => {
         calculateElapsedTime();
-      }, 1000); // 1 초마다 측정 시간 업데이트
+      }, 1000);
 
       return () => clearInterval(timer);
     }
@@ -140,12 +148,7 @@ const Measure = () => {
       <br />
       <button onClick={startTracking}>측정 시작</button>
       <br />
-      <label>체중 (kg):</label>
-      <input
-        type="number"
-        value={weight}
-        onChange={(e) => setWeight(parseInt(e.target.value))}
-      />
+      <button onClick={endTracking}>측정 종료</button>
       <br />
       <label>측정 시간 (초): {elapsedTime.toFixed(0)}</label>
       <br />
@@ -153,7 +156,6 @@ const Measure = () => {
       <br />
       <label>저장된 소모 칼로리 (kcal): {calories.toFixed(2)}</label>
       <br />
-      <button onClick={saveData}>저장</button>
     </div>
   );
 };

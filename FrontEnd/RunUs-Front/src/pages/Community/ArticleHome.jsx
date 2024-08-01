@@ -40,7 +40,7 @@ const ArticleHome = () => {
 
       // 삭제된 게시글 필터링
       const filteredArticles = response.data.data.filter(article => article.isDeleted !== 1);
-      console.log("filtered : ", filteredArticles)
+      console.log("filtered : ", filteredArticles);
       setArticles(filteredArticles);
       setTotalPages(response.data.totalPages || 1); // 총 페이지 수 설정
       console.log('Articles Response:', response);
@@ -70,7 +70,6 @@ const ArticleHome = () => {
 
   if (loading) return <p>로딩 중...</p>;
   if (error) return <p>문제가 발생했습니다: {error.message}</p>;
-  if (articles.length === 0) return <p>게시글이 없습니다.</p>;
 
   return (
     <div>

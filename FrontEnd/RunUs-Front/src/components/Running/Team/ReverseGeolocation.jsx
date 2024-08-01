@@ -6,7 +6,7 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
   const R = 6371; // Radius of the Earth in kilometers
 
   const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
+  const dLon = toRad(lat2 - lon1);
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(toRad(lat1)) *
@@ -81,7 +81,7 @@ const ReverseGeolocation = ({ teamMembers, owner_user_id, roomId }) => {
         ws.close();
       }
     };
-  }, [roomId, owner_user_id]);
+  }, [roomId, owner_user_id, positions]);
 
   const sendPosition = useCallback((userId, position) => {
     if (socket && socket.readyState === WebSocket.OPEN) {
