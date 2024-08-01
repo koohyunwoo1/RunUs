@@ -114,20 +114,22 @@ public class ChatServiceImpl implements ChatService {
     }
 
     public void updatePartyStatus(int partyId, char status) {
-        PartyEntity party = partyRepository.findById(partyId)
-                .orElseThrow(() -> new RuntimeException("Party not found"));
+        try {
+            PartyEntity party = partyRepository.findById(partyId)
+                    .orElseThrow(() -> new RuntimeException("Party not found"));
 
-        party.setPartyStatus(status);
-        partyRepository.save(party);
+            party.setPartyStatus(status);
+            partyRepository.save(party);
+        } catch (Exception e) {
+            log.error("Error updating party status for partyId: {}", partyId, e);
+            throw e; // 예외를 다시 던져서 트랜잭션이 롤백되도록 함
+        }
 
         // 상태가 '종료'로 변경되면 모든 멤버의 데이터를 저장
 //        if (status == '3') {
 //            saveAllMemberResults(partyId);
 //        }
     }
-
-
-
 
     public void ChangePartyMemberStatus(int partyId, int userId, Character status) {
         PartyMemberEntity member = partyMemberRepository.findByPartyIdAndUserId(partyId, userId)

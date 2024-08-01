@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import runus.runus.record.dto.RecordDTO;
 import runus.runus.record.model.Record;
 import runus.runus.record.repository.RecordRepository;

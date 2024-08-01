@@ -15,6 +15,7 @@ public class Record {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     @Column(name = "record_id")
     private int record_id;
 
