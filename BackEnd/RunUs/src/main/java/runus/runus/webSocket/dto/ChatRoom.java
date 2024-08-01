@@ -154,7 +154,8 @@ public class ChatRoom {
         sendMessage(chatMessage, chatServiceImpl);
 
         // Send updated user list to all clients
-        if (chatMessage.getType().equals(ChatMessage.MessageType.ENTER) || chatMessage.getType().equals(ChatMessage.MessageType.QUIT)) {
+        if (chatMessage.getType().equals(ChatMessage.MessageType.ENTER) || chatMessage.getType().equals(ChatMessage.MessageType.QUIT) ||
+                chatMessage.getType().equals(ChatMessage.MessageType.RUN_EXIT) || chatMessage.getType().equals(ChatMessage.MessageType.WAIT_EXIT)) {
             ChatMessage userListUpdate = new ChatMessage();
             userListUpdate.setType(ChatMessage.MessageType.USERLIST_UPDATE);
             userListUpdate.setRoomId(chatMessage.getRoomId());
