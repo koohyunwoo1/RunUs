@@ -16,6 +16,7 @@ public class BoardRequestDTO {
     private int regionId;
     private LocalDateTime meetingTime;
     private String meetingDay;
+    private String nickname;
 
 //    // 게터와 세터 메서드
 //    public String getTitle() {

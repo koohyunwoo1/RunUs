@@ -7,8 +7,7 @@ import runus.runus.board.entity.BoardEntity;
 import java.util.List;
 
 public interface BoardRepository extends JpaRepository<BoardEntity, Integer> {
-    List<BoardEntity> findByRegionId(int regionId, Pageable pageable);
-    List<BoardEntity> findByRegionIdOrderByCreatedAtAsc(int regionId, Pageable pageable);
     List<BoardEntity> findByRegionIdAndIsDeleted(int regionId, char isDeleted, Pageable pageable);
-    List<BoardEntity> findByRegionIdAndTitleContaining(int regionId, String title, Pageable pageable);
+    List<BoardEntity> findByRegionIdAndIsDeletedOrderByCreatedAtAsc(int regionId, char isDeleted, Pageable pageable);
+    List<BoardEntity> findByRegionIdAndTitleContainingAndIsDeleted(int regionId, String title, char isDeleted, Pageable pageable);
 }
