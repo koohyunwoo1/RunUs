@@ -1,32 +1,62 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import Header from "../../../components/common/Header";
 import "../../../styles/Running/Team/TeanCheck.css";
 import Reverse from "../../../components/Running/Team/ReverseGeolocation";
+import { useParams } from "react-router-dom";
 
 const TeamCheck = () => {
-  const [roomId, setRoomId] = useState(null);
-  const [owner_user_id, setOwnerUserId] = useState(null);
+  const { id } = useParams();
+  const [roomId, setRoomId] = useState(id || null);
+  const [ownerUserId, setOwnerUserId] = useState(null);
   const [teamMembers, setTeamMembers] = useState([]);
+  const [webSocket, setWebSocket] = useState(null);
 
   useEffect(() => {
-    // 예시 데이터: 실제로는 API 호출로부터 받아야 합니다.
-    setRoomId("exampleRoomId");  // Room ID 설정
-    setOwnerUserId("exampleOwnerId");  // 팀 리더 ID 설정
+    if (roomId) {
+      const ws = new WebSocket(`ws://localhost:8080/ws/chat?roomId=${roomId}`);
+
+      ws.onopen = () => {
+        console.log("WebSocket connection opened");
+        ws.send(JSON.stringify({ type: "ENTER", content: "ㅎㅇㅎㅇ" }));
+      };
+
+      ws.onmessage = (event) => {
+        const receivedData = event.data;
+        console.log("Received message:", receivedData);
+      };
+
+      ws.onclose = () => {
+        console.log("WebSocket connection closed");
+      };
+
+      ws.onerror = (error) => {
+        console.error("WebSocket error:", error);
+      };
+
+      setWebSocket(ws);
+
+      return () => {
+        ws.close();
+      };
+    }
+  }, [roomId]);
+
+  useEffect(() => {
+    setRoomId("exampleRoomId");
+    setOwnerUserId("exampleOwnerId");
     setTeamMembers([
       { userId: "member1", name: "Member 1" },
       { userId: "member2", name: "Member 2" },
-    ]);  // 팀 멤버 데이터 설정
+    ]);
   }, []);
 
   return (
     <div>
-      <div>
-        <Header />
-      </div>
+      <Header />
       <div className="TeamCheck">
-        <Reverse 
+        <Reverse
           roomId={roomId}
-          owner_user_id={owner_user_id}
+          owner_user_id={ownerUserId}
           teamMembers={teamMembers}
         />
       </div>

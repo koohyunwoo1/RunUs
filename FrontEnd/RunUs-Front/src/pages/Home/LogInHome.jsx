@@ -37,6 +37,7 @@ const LogInHome = () => {
       };
       const response = await axios.post("api/v1/team/create_room", requestBody);
       const { roomId } = response.data.data;
+ 
       addUserToRoom({
         userId: userData.userId,
         nickname: userData.nickname,
