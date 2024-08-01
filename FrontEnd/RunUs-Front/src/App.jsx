@@ -7,12 +7,12 @@ import LogInHome from "./pages/Home/LogInHome";
 import TeamCreate from "./pages/Running/Team/TeamCreate";
 import ReportHome from "./pages/Report/ReportHome";
 import ArticleHome from "./pages/Community/ArticleHome";
+import ArticleEdit from "./pages/Community/ArticleEdit";
 import MyPageHome from "./pages/MyPage/MyPageHome";
 import SoloMode from "./pages/Running/Solo/SoloMode";
 import TeamQR from "./pages/Running/Team/TeamQR";
 import ArticleCreate from "./pages/Community/ArticleCreate";
 import ArticleDetail from "./pages/Community/ArticleDetail";
-import UserList from "./pages/UseList/UserList";
 import MyPageEdit from "./pages/MyPage/MyPageEdit";
 import CountDown from "./pages/Running/Team/CountDown";
 import TeamCheck from "./pages/Running/Team/TeamCheck";
@@ -85,6 +85,14 @@ const App = () => {
             }
           />
           <Route
+            path="/article-edit/:id"
+            element={
+              <ProtectedRoute>
+                <ArticleEdit />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/my-page-home"
             element={
               <ProtectedRoute>
@@ -105,14 +113,6 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <ArticleDetail />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/UserList"
-            element={
-              <ProtectedRoute>
-                <UserList />
               </ProtectedRoute>
             }
           />
