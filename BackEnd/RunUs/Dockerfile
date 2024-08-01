@@ -20,4 +20,4 @@ RUN ls -al /app/build/libs
 ENTRYPOINT ["java","-jar","/app/build/libs/RunUs-0.0.1-SNAPSHOT.jar"]
 
 # 네트워크 포트를 열어줍니다.
-EXPOSE 8000
+EXPOSE 8001
