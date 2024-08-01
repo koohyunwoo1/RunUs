@@ -139,17 +139,23 @@ public class ChatRoom {
             users.remove(userName);
             chatMessage.setMessage(userName + "님이 퇴장했습니다.(대기방)");
 
+            // 사용자 퇴장 로그 메시지 추가
+            log.info(userName + "님이 대기방에서 퇴장했습니다. (유저 ID: " + userId + ")");
+
         } else if (chatMessage.getType().equals(ChatMessage.MessageType.RUN_EXIT)) { //달리는 중에 나가는 경우
             chatServiceImpl.ChangePartyMemberStatus(partyId, userId, '2');
             users.remove(userName);
             chatMessage.setMessage(userName + "님이 퇴장했습니다.");
+            // 사용자 퇴장 로그 메시지 추가
+            log.info(userName + "님이 러닝 중에 퇴장했습니다. (유저 ID: " + userId + ")");
         }
 
         // Send message to all users
         sendMessage(chatMessage, chatServiceImpl);
 
         // Send updated user list to all clients
-        if (chatMessage.getType().equals(ChatMessage.MessageType.ENTER) || chatMessage.getType().equals(ChatMessage.MessageType.QUIT)) {
+        if (chatMessage.getType().equals(ChatMessage.MessageType.ENTER) || chatMessage.getType().equals(ChatMessage.MessageType.QUIT) ||
+                chatMessage.getType().equals(ChatMessage.MessageType.RUN_EXIT) || chatMessage.getType().equals(ChatMessage.MessageType.WAIT_EXIT)) {
             ChatMessage userListUpdate = new ChatMessage();
             userListUpdate.setType(ChatMessage.MessageType.USERLIST_UPDATE);
             userListUpdate.setRoomId(chatMessage.getRoomId());
