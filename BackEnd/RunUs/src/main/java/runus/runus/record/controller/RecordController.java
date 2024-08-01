@@ -84,4 +84,22 @@ public class RecordController {
     public ResponseEntity<String> handleException(Exception e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    // 러닝 데이터 저장
+    @PostMapping("/result_save")
+    public ResponseEntity<?> resultSave(
+            @RequestParam("user_id") Integer userId,
+            @RequestParam("party_id") Integer partyId,
+            @RequestParam(value = "distance", required = false) Integer distance,
+            @RequestParam(value = "time", required = false) Integer time,
+            @RequestParam(value = "kcal", required = false) Integer kcal) {
+        try {
+            Record record = recordService.saveRecord(userId, partyId, distance, time, kcal);
+            return ResponseEntity.ok(new ApiResponse<>(true, record, "기록 저장 성공"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>(false, e.getMessage(), "기록 저장 실패"));
+        }
+    }
+
 }

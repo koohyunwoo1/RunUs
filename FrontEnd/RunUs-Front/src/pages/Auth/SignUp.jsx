@@ -1,31 +1,12 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "../../styles/Auth/SignUp.css";
 import LogOutHeader from "../../components/Home/LogOutHeader";
 import Button from "../../components/common/Button";
-import { UserContext } from "../../hooks/UserContext"; // UserContext 경로에 맞게 수정
-
-const regionOptions = [
-  { label: "서울특별시", value: 11 },
-  { label: "부산광역시", value: 12 },
-  { label: "대구광역시", value: 13 },
-  { label: "인천광역시", value: 14 },
-  { label: "광주광역시", value: 15 },
-  { label: "대전광역시", value: 16 },
-  { label: "울산광역시", value: 17 },
-  { label: "세종특별자치시", value: 18 },
-  { label: "경기도", value: 19 },
-  { label: "충청북도", value: 20 },
-  { label: "충청남도", value: 21 },
-  { label: "전라남도", value: 22 },
-  { label: "경상북도", value: 23 },
-  { label: "경상남도", value: 24 },
-  { label: "제주특별자치도", value: 25 },
-  { label: "강원특별자치도", value: 26 },
-  { label: "전북특별자치도", value: 27 },
-];
+import { UserContext } from "../../hooks/UserContext";
+import axios from "axios";
 
 const SignUp = () => {
-  const { registerUser, error } = useContext(UserContext); // UserContext에서 registerUser와 error 가져오기
+  const { registerUser, error } = useContext(UserContext);
 
   const [form, setForm] = useState({
     email: "",
@@ -35,17 +16,52 @@ const SignUp = () => {
     password: "",
     confirmPassword: "",
     weight: "",
-    regionId: "", // regionId를 select로 변경
+    regionMajor: "", // 시/도
+    regionId: "" // 시/군/구
   });
 
   const [errors, setErrors] = useState({});
+  const [regionMajorOptions, setRegionMajorOptions] = useState([]);
+  const [regionMinorOptions, setRegionMinorOptions] = useState([]);
+
+  // 시/도 목록 가져오기
+  useEffect(() => {
+    const fetchRegionMajor = async () => {
+      try {
+        const response = await axios.get('/api/v1/region-major');
+        // console.log('Fetched data:', response.data);
+        setRegionMajorOptions(response.data.data);
+      } catch (error) {
+        console.error('Error fetching region major data:', error);
+      }
+    };
+
+    fetchRegionMajor();
+  }, []);
+
+  // 시/군/구 목록 가져오기
+  useEffect(() => {
+    const fetchRegionMinor = async (majorId) => {
+      try {
+        const response = await axios.get(`/api/v1/region-major/${majorId}`);
+        setRegionMinorOptions(response.data.data);
+      } catch (error) {
+        console.error('Error fetching region minor data:', error);
+      }
+    };
+
+    if (form.regionMajor) {
+      fetchRegionMinor(form.regionMajor);
+    } else {
+      setRegionMinorOptions([]);
+    }
+  }, [form.regionMajor]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "phoneNumber") {
-      // 하이픈 자동 추가
       const formattedValue = value
-        .replace(/\D/g, "") // 숫자만 남기기
+        .replace(/\D/g, "")
         .replace(/(\d{3})(\d{3,4})(\d{4})/, "$1-$2-$3");
       setForm({
         ...form,
@@ -62,8 +78,18 @@ const SignUp = () => {
   const handleSelectChange = (e) => {
     setForm({
       ...form,
-      regionId: e.target.value,
+      [e.target.name]: e.target.value,
     });
+
+    if (e.target.name === 'regionId') {
+      const selectedRegion = regionMinorOptions.find(option => option.name === e.target.value);
+      if (selectedRegion) {
+        setForm({
+          ...form,
+          regionId: selectedRegion.id, // ID로 설정
+        })
+      }
+    }
   };
 
   const validate = () => {
@@ -79,9 +105,9 @@ const SignUp = () => {
     if (!form.weight) errors.weight = "체중은 필수입니다.";
     if (!form.phoneNumber) errors.phoneNumber = "휴대폰 번호는 필수입니다.";
     if (!/^\d{3}-\d{3,4}-\d{4}$/.test(form.phoneNumber))
-      errors.phoneNumber =
-        "휴대폰 번호는 올바른 형식이어야 합니다 (예: 010-1234-5678).";
-    if (!form.regionId) errors.regionId = "사는 지역은 필수입니다.";
+      errors.phoneNumber = "휴대폰 번호는 올바른 형식이어야 합니다 (예: 010-1234-5678).";
+    if (!form.regionMajor) errors.regionMajor = "사는 지역은 필수입니다.";
+    if (!form.regionId) errors.regionId = "시/군/구는 필수입니다.";
     return errors;
   };
 
@@ -91,6 +117,7 @@ const SignUp = () => {
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
+      console.log('Form data:', form); // 데이터 확인
       const userData = {
         nickname: form.nickname,
         email: `${form.email}@${form.emailDomain}`,
@@ -100,7 +127,7 @@ const SignUp = () => {
         regionId: parseInt(form.regionId, 10),
       };
 
-      await registerUser(userData); // registerUser 호출
+      await registerUser(userData);
     }
   };
 
@@ -129,9 +156,7 @@ const SignUp = () => {
             value={form.emailDomain}
             onChange={handleChange}
           />
-          {errors.emailDomain && (
-            <p className="SignUpError">{errors.emailDomain}</p>
-          )}
+          {errors.emailDomain && <p className="SignUpError">{errors.emailDomain}</p>}
         </div>
         <div>
           <label className="SignUpLabel">닉네임</label>
@@ -153,9 +178,7 @@ const SignUp = () => {
             value={form.phoneNumber}
             onChange={handleChange}
           />
-          {errors.phoneNumber && (
-            <p className="SignUpError">{errors.phoneNumber}</p>
-          )}
+          {errors.phoneNumber && <p className="SignUpError">{errors.phoneNumber}</p>}
         </div>
         <div>
           <label className="SignUpLabel">비밀번호</label>
@@ -177,9 +200,7 @@ const SignUp = () => {
             value={form.confirmPassword}
             onChange={handleChange}
           />
-          {errors.confirmPassword && (
-            <p className="SignUpError">{errors.confirmPassword}</p>
-          )}
+          {errors.confirmPassword && <p className="SignUpError">{errors.confirmPassword}</p>}
         </div>
         <div>
           <label className="SignUpLabel">체중</label>
@@ -193,25 +214,42 @@ const SignUp = () => {
           {errors.weight && <p className="SignUpError">{errors.weight}</p>}
         </div>
         <div>
-          <label className="SignUpLabel">사는 지역</label>
+          <label className="SignUpLabel">사는 시/도</label>
+          <select
+            name="regionMajor"
+            className="SignUpInput"
+            value={form.regionMajor}
+            onChange={handleSelectChange}
+          >
+            <option value="">시/도 선택</option>
+            {regionMajorOptions.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.name}
+              </option>
+            ))}
+          </select>
+          {errors.regionMajor && <p className="SignUpError">{errors.regionMajor}</p>}
+        </div>
+        <div>
+          <label className="SignUpLabel">사는 시/군/구</label>
           <select
             name="regionId"
             className="SignUpInput"
             value={form.regionId}
             onChange={handleSelectChange}
           >
-            <option value="">지역 선택</option>
-            {regionOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
+            <option value="">시/군/구 선택</option>
+            {regionMinorOptions.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.name}
               </option>
             ))}
           </select>
-
           {errors.regionId && <p className="SignUpError">{errors.regionId}</p>}
         </div>
-        <Button text={"회원 가입"} />
-        {error && <p className="SignUpError">{error}</p>}{" "}
+        <div>
+          <Button type="submit" text="회원 가입" />
+        </div>
       </form>
     </div>
   );

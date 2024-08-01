@@ -19,12 +19,6 @@ const ArticleItem = ({id, title, content }) => {
         </div>
         <div className="article-content">{content}</div>
       </div>
-      {/* <div className="button-section">
-        <Button
-          onClick={()=>nav(`/article-home/${id}`)}  
-          text={"수정하기"} 
-        />
-      </div> */}
     </div>
   );
 };

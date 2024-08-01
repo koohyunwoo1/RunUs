@@ -33,6 +33,7 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.springframework.boot:spring-boot-starter-web' // 7/22 추가, 김구태
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis' //7.29 추가, 최민
     
     // 모니터링 추가
     implementation 'io.micrometer:micrometer-registry-prometheus'

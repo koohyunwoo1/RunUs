@@ -1,14 +1,21 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import QrScanner from "react-qr-scanner";
 import "../../../styles/Running/Team/TeamQR.css";
 import Header from "../../../components/common/Header";
+import { UserContext } from "../../../hooks/UserContext";
 
 const TeamQR = () => {
   const [data, setData] = useState("No result");
+  const { addUserToRoom, userData, roomUsers } = useContext(UserContext);
 
   const handleScan = (result) => {
     if (result && result.text) {
       const resultData = result.text;
+      addUserToRoom({
+        userId: userData.userId,
+        nickname: userData.nickname,
+      });
+      console.log(roomUsers);
       setData(resultData);
 
       if (isValidURL(resultData)) {
