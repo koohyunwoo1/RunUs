@@ -24,13 +24,14 @@ const ReportGraph = () => {
   ]);
 
   useEffect(() => {
+    const userId = localStorage.getItem("userId")
     const fetchData = async () => {
       try {
         const response = await axios.get(
           `api/v1/record/graph/${selectedYear}`,
           {
             params: {
-              user_id: 1,
+              user_id: userId,
             },
           }
         );
@@ -45,7 +46,7 @@ const ReportGraph = () => {
       try {
         const response = await axios.get("api/v1/record/total_distance", {
           params: {
-            user_id: 1,
+            user_id: userId,
             year: selectedYear,
           },
         });

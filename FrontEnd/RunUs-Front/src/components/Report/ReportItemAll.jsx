@@ -15,7 +15,7 @@ const ReportItem = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get("api/v1/record/all", {
-          params: { user_id: 1 }, // userId를 파라미터로 전달
+          params: { user_id: userId }, // userId를 파라미터로 전달
         });
 
         // console.log(response.data); // 응답 데이터 구조 확인
