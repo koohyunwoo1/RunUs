@@ -11,6 +11,7 @@ import org.springframework.data.redis.core.GeoOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import runus.runus.webSocket.Entity.PartyEntity;
@@ -41,6 +42,7 @@ public class ChatServiceImpl implements ChatService {
 
     @Autowired
     private PartyMemberRepository partyMemberRepository;
+
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
@@ -84,13 +86,23 @@ public class ChatServiceImpl implements ChatService {
     }
 
     public void saveUserEntry(int partyId, int userId, Character role) {
-        PartyMemberEntity entity = new PartyMemberEntity();
-        entity.setPartyId(partyId);
-        entity.setUserId(userId);
-        entity.setRole(role);
-        entity.setJoinedAt(new Timestamp(System.currentTimeMillis()));
-        entity.setPartyMemberStatus('0');
-        partyMemberRepository.save(entity);
+        Optional<PartyMemberEntity> existingEntity = partyMemberRepository.findByPartyIdAndUserId(partyId, userId);
+        if (existingEntity.isPresent()) {
+            // 이미 존재하는 경우 파티 멤버 상태만 업데이트
+            PartyMemberEntity entity = existingEntity.get();
+            entity.setPartyMemberStatus('0'); // 상태를 업데이트
+            entity.setJoinedAt(new Timestamp(System.currentTimeMillis())); // 참여 시간 업데이트 (필요한 경우)
+            partyMemberRepository.save(entity);
+        } else {
+            // 새로운 파티 멤버 엔트리 생성
+            PartyMemberEntity entity = new PartyMemberEntity();
+            entity.setPartyId(partyId);
+            entity.setUserId(userId);
+            entity.setRole(role);
+            entity.setJoinedAt(new Timestamp(System.currentTimeMillis()));
+            entity.setPartyMemberStatus('0');
+            partyMemberRepository.save(entity);
+        }
     }
 
     public void exitUserStatus(int partyId, int userId , Character status) {
@@ -107,7 +119,15 @@ public class ChatServiceImpl implements ChatService {
 
         party.setPartyStatus(status);
         partyRepository.save(party);
+
+        // 상태가 '종료'로 변경되면 모든 멤버의 데이터를 저장
+//        if (status == '3') {
+//            saveAllMemberResults(partyId);
+//        }
     }
+
+
+
 
     public void ChangePartyMemberStatus(int partyId, int userId, Character status) {
         PartyMemberEntity member = partyMemberRepository.findByPartyIdAndUserId(partyId, userId)

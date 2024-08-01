@@ -95,10 +95,10 @@ public class RecordController {
             @RequestParam(value = "kcal", required = false) Integer kcal) {
         try {
             Record record = recordService.saveRecord(userId, partyId, distance, time, kcal);
-            return ResponseEntity.ok(new ApiResponse<>(true, record, "Record saved successfully"));
+            return ResponseEntity.ok(new ApiResponse<>(true, record, "기록 저장 성공"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>(false, e.getMessage(), "Failed to save record"));
+                    .body(new ApiResponse<>(false, e.getMessage(), "기록 저장 실패"));
         }
     }
 

@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import runus.runus.record.dto.RecordDTO;
 import runus.runus.record.model.Record;
 import runus.runus.record.repository.RecordRepository;
+import runus.runus.webSocket.service.ChatService;
+import runus.runus.webSocket.service.ChatServiceImpl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,6 +22,9 @@ import java.util.stream.Collectors;
 public class RecordService {
     @Autowired
     private RecordRepository recordRepository;
+
+    @Autowired
+    private ChatServiceImpl chatService;
 
     // 최근 기록 가져오기
     public List<Record> getRecentRecords(Integer userId, int limit) {
@@ -87,7 +92,7 @@ public class RecordService {
         record.setTime(time != null ? time : 0);
         record.setKcal(kcal != null ? kcal : 0);
         record.setRecord_date(LocalDateTime.now());
-
+        chatService.updatePartyStatus(partyId, '3');
         return recordRepository.save(record);
     }
 
