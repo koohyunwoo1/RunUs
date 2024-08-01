@@ -7,5 +7,5 @@ import runus.runus.board.entity.CommentEntity;
 import java.util.List;
 
 public interface CommentRepository extends JpaRepository<CommentEntity, Integer> {
-    List<CommentEntity> findByBoardId(int boardId, Pageable pageable);
+    List<CommentEntity> findByBoardIdAndIsDeleted(int boardId, char isDeleted, Pageable pageable);
 }

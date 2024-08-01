@@ -1,12 +1,18 @@
+
 package runus.runus.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class WebConfig {
+public class WebConfig implements WebMvcConfigurer {
+
+    @Value("${file.upload-dir}")
+    private String uploadDir;
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
@@ -17,6 +23,16 @@ public class WebConfig {
                         .allowedOrigins("*") // 모든 도메인에서의 요청 허용
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH") // 모든 HTTP 메서드 허용
                         .allowedHeaders("*"); // 모든 헤더 허용
+            }
+
+            @Value("${file.upload-dir}")
+            private String uploadDir;
+
+            @Override
+            public void addResourceHandlers(ResourceHandlerRegistry registry) {
+                // File upload directory 설정
+                registry.addResourceHandler("/uploads/**")
+                        .addResourceLocations("file:" + uploadDir + "/profile-pictures/");
             }
         };
     }

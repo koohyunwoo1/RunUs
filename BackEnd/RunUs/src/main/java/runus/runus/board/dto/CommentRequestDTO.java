@@ -12,4 +12,5 @@ public class CommentRequestDTO {
     private int userId;       // 댓글 작성자 ID
     private String content;   // 댓글 내용
     private int boardId;
+    private String nickname;
 }
