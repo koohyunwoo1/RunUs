@@ -13,7 +13,7 @@ public class BoardResponseDTO {
     private int boardId;
     private String title;
     private String content;
-    private String nickname;  // 작성자 닉네임 추가
+    private String nickname;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private int regionId;
