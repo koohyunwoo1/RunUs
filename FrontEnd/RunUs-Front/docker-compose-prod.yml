@@ -8,5 +8,5 @@ services:
       args:
         - REACT_APP_NAME=Run-Us
         - REACT_APP_TITLE=Run-Us
-      ports:
-        - "3002:80"
+    ports:
+      - "3002:80"
