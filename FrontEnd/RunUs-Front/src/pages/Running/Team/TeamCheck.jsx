@@ -1,65 +1,29 @@
-import React, { useState, useEffect } from "react";
-import Header from "../../../components/common/Header";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import "../../../styles/Running/Team/TeanCheck.css";
-import Reverse from "../../../components/Running/Team/ReverseGeolocation";
-import { useParams } from "react-router-dom";
 
 const TeamCheck = () => {
-  const { id } = useParams();
-  const [roomId, setRoomId] = useState(id || null);
-  const [ownerUserId, setOwnerUserId] = useState(null);
-  const [teamMembers, setTeamMembers] = useState([]);
-  const [webSocket, setWebSocket] = useState(null);
-
+  const location = useLocation();
+  const [userNames, setUserNames] = useState([]);
   useEffect(() => {
-    if (roomId) {
-      const ws = new WebSocket(`ws://localhost:8080/ws/chat?roomId=${roomId}`);
-
-      ws.onopen = () => {
-        console.log("WebSocket connection opened");
-        ws.send(JSON.stringify({ type: "ENTER", content: "ㅎㅇㅎㅇ" }));
-      };
-
-      ws.onmessage = (event) => {
-        const receivedData = event.data;
-        console.log("Received message:", receivedData);
-      };
-
-      ws.onclose = () => {
-        console.log("WebSocket connection closed");
-      };
-
-      ws.onerror = (error) => {
-        console.error("WebSocket error:", error);
-      };
-
-      setWebSocket(ws);
-
-      return () => {
-        ws.close();
-      };
+    // Retrieve userNames from sessionStorage
+    const storedUserNames = localStorage.getItem('userNames');
+    if (storedUserNames) {
+      setUserNames(JSON.parse(storedUserNames));
     }
-  }, [roomId]);
-
-  useEffect(() => {
-    setRoomId("exampleRoomId");
-    setOwnerUserId("exampleOwnerId");
-    setTeamMembers([
-      { userId: "member1", name: "Member 1" },
-      { userId: "member2", name: "Member 2" },
-    ]);
+    
+    // Clear userNames from sessionStorage after use
+    // localStorage.removeItem('userNames');
   }, []);
-
+  
   return (
-    <div>
-      <Header />
-      <div className="TeamCheck">
-        <Reverse
-          roomId={roomId}
-          owner_user_id={ownerUserId}
-          teamMembers={teamMembers}
-        />
-      </div>
+    <div className="team-check">
+      <h1>Team Check</h1>
+      <ul>
+        {userNames.map((name, index) => (
+          <li key={index}>{name}</li>
+        ))}
+      </ul>
     </div>
   );
 };

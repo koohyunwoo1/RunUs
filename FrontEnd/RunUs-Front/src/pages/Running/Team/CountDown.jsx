@@ -14,7 +14,16 @@ const CountDown = () => {
       setCountdown((prevCount) => {
         if (prevCount === 1) {
           clearInterval(timer);
-          setTimeout(() => navigate(`/team-check/${id}`), 1000);
+          
+          // Retrieve userNames from localStorage
+          const userNames = JSON.parse(localStorage.getItem('userNames')) || [];
+
+          // Save userNames to sessionStorage
+          localStorage.setItem('userNames', JSON.stringify(userNames));
+          
+          setTimeout(() => {
+            window.location.href = `/team-check/${id}`; // 페이지 이동
+          }, 1000);
           return 0;
         }
         setKey((prevKey) => prevKey + 1);
