@@ -13,5 +13,6 @@ ENV REACT_APP_TITLE=${REACT_APP_TITLE}
 
 RUN npm run build
 
-FROM nginx
-COPY --from=build /app/build /home/ubuntu/nginx-data/html
+# 빌드된 파일을 호스트의 Nginx 데이터 디렉토리로 복사
+RUN mkdir -p /home/ubuntu/nginx-data/html
+RUN cp -r /app/build/* /home/ubuntu/nginx-data/html/
