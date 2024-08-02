@@ -49,12 +49,9 @@ const TeamCreate = () => {
         console.log("Received message:", receivedData);
 
         if (receivedData.type === "USERLIST_UPDATE") {
-          // 콘솔 로그를 통해 메시지 구조 확인
           console.log("User list update message:", receivedData.message);
 
-          // 메시지 처리 로직 수정
           const messageContent = receivedData.message;
-          // 서버가 보내는 메시지 포맷에 맞게 파싱
           const userList = messageContent.split("현재 방에 있는 사용자: ")[1];
           const userNames = userList ? userList.split(", ") : [];
           localStorage.setItem("userNames", JSON.stringify(userNames));
@@ -65,7 +62,6 @@ const TeamCreate = () => {
           navigate("/home");
         } else if (receivedData.type === "START") {
           window.location.href = `/countdown/${waitingRoomId}`;
-          // navigate(`/countdown/${waitingRoomId}`, { state: { userNames } });
         }
       };
 
