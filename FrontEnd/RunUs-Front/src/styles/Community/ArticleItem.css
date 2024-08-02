@@ -1,26 +1,56 @@
+/* ArticleItem.css */
+
+/* ArticleItem의 컨테이너 스타일 */
+.ArticleItem {
+  margin-bottom: 20px; /* 아이템 간의 여백 */
+}
+
+/* 정보 섹션 스타일 */
 .info-section {
-  position: relative;
-  background-color: white;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  /* 팝업 버튼 가로로 배열 */
-  gap: 20px; /* 버튼 사이의 간격 */
-  margin-bottom: 30px;
-  margin-right: 40px;
+  background-color: #fff; /* 흰색 배경 */
+  padding: 16px; /* 내부 여백 */
+  border: 1px solid #ddd; /* 연한 회색 테두리 */
+  border-radius: 10px; /* 둥근 테두리 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
+  display: flex; /* 아이템을 수평으로 배열 */
+  flex-direction: column; /* 세로 방향으로 배열 */
+  gap: 12px; /* 각 요소 간의 간격 */
 }
 
-.created-date {
-  font-size: 10px;
-}
-
+/* 제목 스타일 */
 .article-title {
-  border-bottom: 1px solid rgb(0, 0, 0);
-  font-size: 20px;
+  font-size: 18px; /* 제목 크기 */
+  font-weight: 500; /* 제목 두껍게 */
+  color: #333; /* 텍스트 색상 */
+  border-bottom: 2px solid #ddd; /* 제목 아래에 연한 회색 밑줄 추가 */
+  padding-bottom: 6px; /* 밑줄과 텍스트 간격 */
 }
 
+/* 날짜 스타일 */
+.created-date {
+  font-size: 12px; /* 날짜 크기 */
+  color: #888; /* 연한 회색 */
+}
+
+/* 내용 스타일 */
 .article-content {
-  font-size: 15px;
+  font-size: 14px; /* 내용 크기 */
+  color: #555; /* 텍스트 색상 */
+  line-height: 1.5; /* 줄 간격 */
 }
 
+/* 버튼 스타일 (만약 추가적인 버튼이 필요하다면) */
+.info-section button {
+  padding: 8px 16px; /* 버튼 여백 */
+  border: none;
+  background-color: #007bff; /* 파란색 배경 */
+  color: white; /* 버튼 텍스트 색상 */
+  border-radius: 5px; /* 버튼 테두리 둥글게 */
+  cursor: pointer; /* 커서 모양 변경 */
+  font-size: 14px; /* 버튼 텍스트 크기 */
+  transition: background-color 0.3s ease; /* 배경색 전환 효과 */
+}
+
+.info-section button:hover {
+  background-color: #0056b3; /* 버튼 호버 시 색상 */
+}

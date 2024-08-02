@@ -36,12 +36,12 @@ const LogInHome = () => {
         regionId: userData.regionId,
       };
       const response = await axios.post("api/v1/team/create_room", requestBody);
+
+      console.log(response);
       const { roomId } = response.data.data;
-      addUserToRoom({
-        userId: userData.userId,
-        nickname: userData.nickname,
-      });
-      navigate(`/team-create/${roomId}`);
+      const { roomOwnerId } = response.data.data;
+
+      navigate(`/team-create/${roomId}`, { state: { roomOwnerId } });
     } catch (err) {
       console.error(err);
     }

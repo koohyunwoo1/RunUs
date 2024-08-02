@@ -1,17 +1,14 @@
-import React, { useContext } from "react";
+import React from "react";
 import "../../../styles/Running/Team/TeamUserList.css";
-import { UserContext } from "../../../hooks/UserContext";
 
-const TeamUserList = () => {
-  const { roomUsers } = useContext(UserContext);
-
+const TeamUserList = ({ userNames }) => {
   return (
     <div className="TeamUserList">
       <div className="user-list">
-        {roomUsers.map((user) => (
-          <div className="user-card" key={user.userId}>
+        {userNames.map((userName, index) => (
+          <div className="user-card" key={index}>
             <div className="user-info">
-              <span className="user-nickname">{user.nickname}</span>
+              <span className="user-nickname">{userName}</span>
             </div>
           </div>
         ))}
