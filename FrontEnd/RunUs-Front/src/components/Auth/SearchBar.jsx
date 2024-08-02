@@ -30,7 +30,9 @@ const SearchBar = () => {
         <li onClick={() => openModal(FindPhoneNumberModalContent)}>
           이메일 찾기
         </li>
+        <li>|</li>
         <li onClick={() => openModal(FindEmailModalContent)}>비밀번호 찾기</li>
+        <li>|</li>
         <li onClick={handleSignUp}>회원가입</li>
       </ul>
       <Modal isOpen={isModalOpen} onClose={closeModal}>
