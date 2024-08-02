@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Header from "../../../components/common/Header";
 import "../../../styles/Running/Team/TeanCheck.css";
-import Reverse from "../../../components/Running/Team/ReverseGeolocation";
+import GeolocationComponent from "../../../components/Running/Team/GeolocationComponent";
 import { useParams } from "react-router-dom";
 
 const TeamCheck = () => {
@@ -54,7 +54,7 @@ const TeamCheck = () => {
     <div>
       <Header />
       <div className="TeamCheck">
-        <Reverse
+        <GeolocationComponent
           roomId={roomId}
           owner_user_id={ownerUserId}
           teamMembers={teamMembers}
