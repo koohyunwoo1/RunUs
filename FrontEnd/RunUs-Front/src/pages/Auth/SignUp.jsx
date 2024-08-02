@@ -28,7 +28,7 @@ const SignUp = () => {
   useEffect(() => {
     const fetchRegionMajor = async () => {
       try {
-        const response = await axios.get('/api/v1/region-major');
+        const response = await axios.get('https://i11e103.p.ssafy.io:8001/api/v1/region-major');
         // console.log('Fetched data:', response.data);
         setRegionMajorOptions(response.data.data);
       } catch (error) {
