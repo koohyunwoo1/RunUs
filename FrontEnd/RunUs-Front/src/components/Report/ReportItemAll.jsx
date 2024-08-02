@@ -1,6 +1,9 @@
 import "../../styles/Report/ReportItem.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { IoMdTime } from "react-icons/io";
+import { FaRunning } from "react-icons/fa";
+import { FaFire } from "react-icons/fa";
 
 const ReportItem = () => {
   // API에서 가져온 데이터를 저장할 상태
@@ -56,8 +59,8 @@ const ReportItem = () => {
   };
 
   return (
-    <div>
-      <h3 style={{ marginLeft: "35px" }}>최근 활동</h3>
+    <div className="recent_container">
+      <h3 className="recent_active">최근 활동</h3>
       {Array.isArray(reportData) && reportData.length > 0 ? (
         reportData.map((item, index) => (
           <div className="report_container" key={index}>
@@ -68,10 +71,10 @@ const ReportItem = () => {
               </div>
               <div className="record_details">
                 <div className="distance">
-                  {convertDistance(item.distance)} km
+                <FaRunning /> {convertDistance(item.distance)} km
                 </div>
-                <div className="kcal">{item.kcal} kcal</div>
-                <div className="time">{convertTime(item.time)}</div>
+                <div className="kcal"><FaFire /> {item.kcal} kcal</div>
+                <div className="time"><IoMdTime /> {convertTime(item.time)}</div>
               </div>
             </div>
           </div>

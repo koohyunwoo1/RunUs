@@ -142,7 +142,7 @@ const ReportGraph = () => {
 
       <div className="Report-Graph">
         {graphData && Array.isArray(graphData) && graphData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={400}>
+          <ResponsiveContainer width="100%" height={300}>
             <BarChart
               data={graphData}
               margin={{ top: 15, right: 30, left: 40, bottom: 5 }}
