@@ -1,5 +1,5 @@
 .Report-Graph {
-  border: 1px solid #ddd;
+  border: 1px solid #dddddd;
   border-radius: 12px;
   margin-bottom: 16px;
   margin-left: 10px;
@@ -42,4 +42,13 @@
 .desc span {
   color: white;
   margin-left: 10px;
+}
+
+.subhead{
+  margin-left: 15px;
+}
+
+.head{
+  margin-bottom: -20px;
+  margin-left: 15px;
 }
