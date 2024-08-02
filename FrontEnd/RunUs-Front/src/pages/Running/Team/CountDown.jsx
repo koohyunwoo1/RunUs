@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import "../../../styles/Running/Team/CountDown.css";
 
 const CountDown = () => {
@@ -10,17 +10,12 @@ const CountDown = () => {
 
   useEffect(() => {
     if (countdown === 0) return;
+
     const timer = setInterval(() => {
       setCountdown((prevCount) => {
         if (prevCount === 1) {
           clearInterval(timer);
-          
-          // Retrieve userNames from localStorage
-          const userNames = JSON.parse(localStorage.getItem('userNames')) || [];
 
-          // Save userNames to sessionStorage
-          localStorage.setItem('userNames', JSON.stringify(userNames));
-          
           setTimeout(() => {
             window.location.href = `/team-check/${id}`; // 페이지 이동
           }, 1000);
