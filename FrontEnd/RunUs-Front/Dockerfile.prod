@@ -15,4 +15,4 @@ RUN npm run build
 
 # 빌드된 파일을 호스트의 Nginx 데이터 디렉토리로 복사
 RUN mkdir -p /home/ubuntu/nginx-data/html
-RUN cp -r /app/build/* /home/ubuntu/nginx-data/html/
+RUN cp -r /app/dist/* /home/ubuntu/nginx-data/html/
