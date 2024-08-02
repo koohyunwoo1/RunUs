@@ -1,0 +1,5 @@
+version: '3'
+sevices:
+    react-app:
+        build:
+          context: .
