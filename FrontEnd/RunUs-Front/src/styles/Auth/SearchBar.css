@@ -12,7 +12,7 @@
 }
 
 .suggestions-list li {
-  font-size: 12px;
+  font-size: 13px;
   cursor: pointer;
-  text-decoration: underline;
+  /* text-decoration: underline; */
 }
