@@ -20,5 +20,8 @@ export default defineConfig(({ mode }) => {
       port: 3000,
       host: true
     },
+    define: {
+      'process.env.VITE_API_URL': JSON.stringify(env.VITE_API_URL)
+    }
   };
 });
