@@ -64,8 +64,13 @@ const FindPhoneNumberModalContent = ({ onClose }) => {
             required
             className="modal-input"
             />
-          {email && <p className="email-result">찾은 이메일: {email}</p>}
-          {error && <p className="error-message">{error}</p>}
+          <div>
+            {email && <p className="foundmail">찾은 이메일: {email}</p>}
+            {email && <p><button type="button" onClick={onClose} className="modal-button">닫기</button></p>}
+          </div>
+          <div>
+            {error && <p className="error-message">{error}</p>}
+          </div>
           {!emailFound && ( // 이메일 발견되지 않았을 때만 버튼 표시
           
             <div className="modal-find-mail">

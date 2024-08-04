@@ -43,7 +43,7 @@
   display: block;
   text-align: left;
   margin-left: 10px;
-  margin-bottom: 25px;
+  margin-bottom: 15px;
   font-size: 18px;
 }
 
@@ -59,7 +59,7 @@
 }
 
 .modal-input {
-  margin-top: 10px;
+  /* margin-top: 10px; */
   width: 97%;
   border-radius: 10px;
   font-size: 30px;
@@ -98,4 +98,16 @@
 
 .writing_email {
   margin-bottom: 20px;
+}
+
+.foundmail {
+  font-size: 17px;
+}
+
+.error-message {
+  font-size: 17px;
+}
+
+.foundpw {
+  font-size: 18px;
 }
