@@ -16,10 +16,9 @@ export default defineConfig(({ mode }) => {
       proxy: {
         "/api": {
           // target: "http://localhost:8080",
-          target: env.VITE_API_URL,
+          target: "https://i11e103.p.ssafy.io:8001",
           changeOrigin: true,
           secure: false,
-          rewrite: (path) => path.replace(/^\/api/, ''),
         },
       },
       port: 3000,
