@@ -135,7 +135,7 @@ const SignUp = () => {
     <div>
       <LogOutHeader />
       <form onSubmit={handleSubmit} className="SignUpForm">
-        <h1>회원 가입 - test</h1>
+        <h1>회원 가입 - test2</h1>
         <div>
           <label className="SignUpLabel">이메일</label>
           <input
