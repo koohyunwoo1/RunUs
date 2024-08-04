@@ -43,7 +43,7 @@ const SignUp = () => {
   useEffect(() => {
     const fetchRegionMinor = async (majorId) => {
       try {
-        const response = await axios.get(`https://i11e103.p.ssafy.io:8001/api/v1/region-major/${majorId}`);
+        const response = await axios.get(`/api/v1/region-major/${majorId}`);
         setRegionMinorOptions(response.data.data);
       } catch (error) {
         console.error('Error fetching region minor data:', error);

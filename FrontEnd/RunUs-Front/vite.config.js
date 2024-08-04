@@ -1,10 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { loadEnv } from "vite";
-import dotenv from 'dotenv';
-
-// Load environment variables
-dotenv.config();
 
 export default defineConfig(({ mode }) => {
   // Load environment variables based on the current mode
@@ -16,7 +12,7 @@ export default defineConfig(({ mode }) => {
       proxy: {
         "/api": {
           // target: "http://localhost:8080",
-          target: "https://i11e103.p.ssafy.io:8001",
+          target: env.VITE_API_URL,
           changeOrigin: true,
           secure: false,
         },
