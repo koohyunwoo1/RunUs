@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useState } from "react";
 import QrScanner from "react-qr-scanner";
 import "../../../styles/Running/Team/TeamQR.css";
 import Header from "../../../components/common/Header";
@@ -6,39 +6,7 @@ import { UserContext } from "../../../hooks/UserContext";
 
 const TeamQR = () => {
   const [data, setData] = useState("No result");
-  const [videoDevices, setVideoDevices] = useState([]);
-  const [selectedDeviceId, setSelectedDeviceId] = useState(null);
   const { addUserToRoom, userData } = useContext(UserContext);
-  const videoRef = useRef(null);
-
-  useEffect(() => {
-    // Get available video input devices
-    navigator.mediaDevices.enumerateDevices().then(devices => {
-      const videoInputDevices = devices.filter(device => device.kind === "videoinput");
-      setVideoDevices(videoInputDevices);
-      
-      // Try to find a rear camera
-      const rearCamera = videoInputDevices.find(device => device.label.toLowerCase().includes('back') || device.label.toLowerCase().includes('rear'));
-      setSelectedDeviceId(rearCamera ? rearCamera.deviceId : videoInputDevices[0].deviceId);
-    });
-  }, []);
-
-  useEffect(() => {
-    if (selectedDeviceId) {
-      const constraints = {
-        video: { deviceId: { exact: selectedDeviceId } }
-      };
-      navigator.mediaDevices.getUserMedia(constraints)
-        .then(stream => {
-          if (videoRef.current) {
-            videoRef.current.srcObject = stream;
-          }
-        })
-        .catch(err => {
-          console.error("Error accessing the camera:", err);
-        });
-    }
-  }, [selectedDeviceId]);
 
   const handleScan = (result) => {
     if (result && result.text) {
@@ -124,12 +92,12 @@ const TeamQR = () => {
       <Header />
       <h1 className="TeamQR">QR 코드를 찍어주세요!</h1>
       <div className="qr-reader-container">
-        <video ref={videoRef} style={{ width: "100%", height: "100%" }} autoPlay />
         <QrScanner
-          delay={100}
+          delay={300}
+          style={{ width: "100%" }}
           onError={handleError}
-          onScan={handleScan}
-          style={{ width: "100%", height: "100%" }}
+          onResult={handleScan}
+          constraints={{ facingMode: "environment" }}
         />
       </div>
     </div>
