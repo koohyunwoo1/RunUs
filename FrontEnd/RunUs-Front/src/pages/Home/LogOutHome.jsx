@@ -4,7 +4,7 @@ import { useInView } from "react-intersection-observer";
 import LogOutHeader from "../../components/Home/LogOutHeader";
 import logo2 from "../../assets/logo2.png"
 import logo3 from "../../assets/logo3.png"
-
+import Phone from "../../assets/Phone.png"
 
 const LogOutHome = () => {
   const { ref: ref1, inView: inView1 } = useInView({
@@ -69,8 +69,8 @@ const LogOutHome = () => {
         <div className="image2" ref={ref2}>
           <img src={logo2} alt="" className="imageItem" />
           <img src={logo3} alt="" className="imageItem" />
-          <img src="src/assets/logo2.png" alt="" className="imageItem" />
-          <img src="src/assets/logo3.png" alt="" className="imageItem" />
+          <img src={logo3} alt="" className="imageItem" />
+          <img src={logo2} alt="" className="imageItem" />
         </div>
       </div>
 
@@ -82,7 +82,7 @@ const LogOutHome = () => {
         </h1>
         <div className="image3">
           <img
-            src="src/assets/Phone.png"
+            src={Phone}
             alt=""
             className={inView2 ? "imageItem2 animate" : "imageItem2"}
           />
