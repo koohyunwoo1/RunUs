@@ -6,7 +6,7 @@ import { UserContext } from "../../../hooks/UserContext";
 
 const TeamQR = () => {
   const [data, setData] = useState("No result");
-  const { addUserToRoom, userData, roomUsers } = useContext(UserContext);
+  const { addUserToRoom, userData } = useContext(UserContext);
 
   const handleScan = (result) => {
     if (result && result.text) {
@@ -95,8 +95,10 @@ const TeamQR = () => {
           onError={handleError}
           onScan={handleScan}
           style={{ width: "100%", height: "100%" }} // 부모 컨테이너에서 높이를 조절
+          facingMode="environment" // 후면 카메라 설정, 가능하지 않으면 기본 카메라 사용
         />
       </div>
+      <p>{data}</p>
     </div>
   );
 };
