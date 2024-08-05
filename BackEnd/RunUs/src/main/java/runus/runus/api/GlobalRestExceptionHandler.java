@@ -2,8 +2,11 @@ package runus.runus.api;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 
 @RestControllerAdvice
 public class GlobalRestExceptionHandler {
@@ -26,6 +29,27 @@ public class GlobalRestExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleInvalidDataException(InvalidDataException e) {
         ApiResponse<Void> response = new ApiResponse<>();
         response.setFail(null, e.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        ApiResponse<Void> response = new ApiResponse<>();
+        response.setFail(null, "Invalid input data");
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
+        ApiResponse<Void> response = new ApiResponse<>();
+        response.setFail(null, "Missing required parameter: " + e.getParameterName());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        ApiResponse<Void> response = new ApiResponse<>();
+        response.setFail(null, "Malformed JSON request");
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 

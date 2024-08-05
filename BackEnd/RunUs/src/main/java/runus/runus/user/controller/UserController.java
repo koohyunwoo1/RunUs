@@ -41,13 +41,13 @@ public class UserController {
         String password = userService.searchPassword(credentials.get("email"), credentials.get("phoneNumber"));
         Map<String, String> data = new HashMap<>();
         data.put("password", password);
-        return createResponse(true, data, "성공");
+        return createResponse(true, data, "비밀번호 찾기 성공");
     }
 
     @GetMapping("/search-profile")
     public ResponseEntity<?> searchProfile(@RequestParam Integer userId) {
         UserDto userProfile = userService.getUserProfile(userId);
-        return createResponse(true, userProfile, "조회 성공");
+        return createResponse(true, userProfile, "프로필 조회 성공");
     }
 
     @PostMapping("/profile")

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import runus.runus.api.NotFoundException;
 import runus.runus.user.dto.UserDto;
 import runus.runus.user.entity.User;
 import runus.runus.user.repository.UserRepository;
@@ -27,15 +28,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto updateUser(UserDto userDto) {
-        User existingUser = userRepository.findById(userDto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public User getUserEntityById(Integer id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("계정 정보가 없습니다."));
+    }
 
-        // UserDto의 데이터로 existingUser 업데이트
-        existingUser.setNickname(userDto.getNickname());
-        existingUser.setPhoneNumber(userDto.getPhoneNumber());
-        existingUser.setWeight(userDto.getWeight());
-        existingUser.setRegionId(userDto.getRegionId());
+    @Override
+    public UserDto updateUser(UserDto userDto) {
+        User existingUser = getUserEntityById(userDto.getUserId());
+
+        // UserDto의 데이터로 existingUser 업데이트 (null 체크 포함)
+        if (userDto.getNickname() != null) {
+            existingUser.setNickname(userDto.getNickname());
+        }
+        if (userDto.getPhoneNumber() != null) {
+            existingUser.setPhoneNumber(userDto.getPhoneNumber());
+        }
+        if (userDto.getWeight() != null) {
+            existingUser.setWeight(userDto.getWeight());
+        }
+        if (userDto.getRegionId() != null) {
+            existingUser.setRegionId(userDto.getRegionId());
+        }
         // 다른 필드들도 필요에 따라 업데이트
 
         System.out.println("userServiceImpl"+userDto);
@@ -48,14 +62,14 @@ public class UserServiceImpl implements UserService {
     public String searchEmail(String phoneNumber) {
         return userRepository.findByPhoneNumber(phoneNumber)
                 .map(User::getEmail)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("계정 정보가 없습니다."));
     }
 
     @Override
     public String searchPassword(String email, String phoneNumber) {
         return userRepository.findByEmailAndPhoneNumber(email, phoneNumber)
                 .map(User::getPassword)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("계정 정보가 없습니다."));
     }
 
     @Override
@@ -65,8 +79,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserProfile(Integer userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = getUserEntityById(userId);
         return convertToDto(user);
     }
 
@@ -75,8 +88,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String storeProfilePicture(Integer userId, MultipartFile file) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = getUserEntityById(userId);
 
         // 파일 저장 경로 및 이름 생성
         String filename = UUID.randomUUID().toString() + "-" + file.getOriginalFilename();
