@@ -119,7 +119,7 @@ const SignUp = () => {
       console.log('Form data:', form); // 데이터 확인
       const userData = {
         nickname: form.nickname,
-        email: `${form.email}@${form.emailDomain}`,
+        email: `${form.email}`,
         password: form.password,
         phoneNumber: form.phoneNumber,
         weight: parseInt(form.weight, 10),
