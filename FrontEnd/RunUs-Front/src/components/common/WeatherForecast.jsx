@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/Common/Weather.css";
-
+import 곤지암움짤 from "../../assets/곤지암움짤.mp4"
 const WeatherForecast = () => {
   const [forecastData, setForecastData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -89,7 +89,7 @@ const WeatherForecast = () => {
   };
 
   const handleClick = () => {
-    window.location.href = `/src/assets/곤지암움짤.mp4`;
+    window.location.href = {곤지암움짤};
   };
 
   if (loading) {

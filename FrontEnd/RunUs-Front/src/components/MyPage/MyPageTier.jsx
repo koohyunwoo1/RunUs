@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import "../../styles/MyPage/MyPageTier.css";
 import axios from "axios";
 import { UserContext } from "../../hooks/UserContext";
+import { CiCircleQuestion } from "react-icons/ci";
 
 const tiers = [
   { name: "Unranked", min: 0, max: 49, color: "tier-unranked" },
@@ -44,7 +45,10 @@ const MyPageTier = () => {
   // 컴포넌트 렌더링
   return (
     <div className={`card ${currentTier.color}`}>
-      <h2>{currentTier.name}</h2>
+      <div className="tier-header">
+        <h2>{currentTier.name}</h2>
+        <CiCircleQuestion />
+      </div>
       <p>경험치: {xp}</p>
       <div className="experience-bar">
         <div
