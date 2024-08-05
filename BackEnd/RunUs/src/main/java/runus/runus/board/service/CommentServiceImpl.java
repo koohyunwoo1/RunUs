@@ -26,9 +26,9 @@ public class CommentServiceImpl implements CommentService {
         comment.setContent(commentRequest.getContent());
         comment.setCreatedAt(LocalDateTime.now());
         comment.setUserId(commentRequest.getUserId());
-        comment.setBoardId(commentRequest.getBoardId());
         comment.setParentId(commentRequest.getParentId());
-        comment.setIsDeleted('N');
+        comment.setNickname(commentRequest.getNickname());
+        comment.setIsDeleted('0');
         commentRepository.save(comment);
     }
 
@@ -36,6 +36,9 @@ public class CommentServiceImpl implements CommentService {
     public void updateComment(int boardId, int commentId, CommentRequestDTO commentRequest) {
         CommentEntity comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
+        if (comment.getIsDeleted() == '1') {
+            throw new RuntimeException("Cannot update a deleted comment");
+        }
         comment.setContent(commentRequest.getContent());
         comment.setUpdatedAt(LocalDateTime.now());
         commentRepository.save(comment);
@@ -45,7 +48,7 @@ public class CommentServiceImpl implements CommentService {
     public void deleteComment(int boardId, int commentId) {
         CommentEntity comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
-        comment.setIsDeleted('1'); // Assume '1' indicates deletion
+        comment.setIsDeleted('1');
         comment.setDeletedAt(LocalDateTime.now());
         commentRepository.save(comment);
     }
@@ -53,15 +56,14 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<CommentResponseDTO> getComments(int boardId, int size, int page) {
         Pageable pageable = PageRequest.of(page, size);
-        List<CommentEntity> comments = commentRepository.findByBoardId(boardId, pageable);
-        return comments.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        List<CommentEntity> comments = commentRepository.findByBoardIdAndIsDeleted(boardId, '0', pageable);
+        return comments.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     private CommentResponseDTO convertToDTO(CommentEntity comment) {
         return new CommentResponseDTO(
                 comment.getCommentId(), comment.getBoardId(), comment.getParentId(),
-                comment.getUserId(), comment.getContent(), comment.getCreatedAt(), comment.getUpdatedAt());
+                comment.getUserId(), comment.getContent(), comment.getCreatedAt(), comment.getUpdatedAt(),
+                comment.getNickname());
     }
 }

@@ -1,10 +1,6 @@
 package runus.runus.record.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,18 +10,20 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@Table(name = "record")
 public class Record {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     @Column(name = "record_id")
-    private int record_id;
+    private Integer record_id;
 
     @Column(name = "user_id", nullable = false)
-    private int user_id;
+    private Integer user_id;
 
-    @Column(name = "party_id", nullable = false)
-    private int party_id;
+    @Column(name = "party_id", nullable = true)
+    private Integer party_id;
 
     @Column(name = "distance", nullable = true, columnDefinition = "int default 0")
     private Integer distance;

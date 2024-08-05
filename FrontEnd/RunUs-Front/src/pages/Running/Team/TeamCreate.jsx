@@ -1,91 +1,175 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Header from "../../../components/common/Header";
 import QRCode from "qrcode.react";
 import "../../../styles/Running/Team/TeamCreate.css";
-// import Weather from "../../../components/common/Weather";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import TeamUserList from "../../../components/Running/Team/TeamUserList";
 import TeamSaying from "../../../components/Running/Team/TeamSaying";
 import Modal from "react-modal";
+import { UserContext } from "../../../hooks/UserContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 Modal.setAppElement("#root");
 
 const TeamCreate = () => {
-  const navigate = useNavigate(); // useNavigate 훅을 사용하여 페이지 이동을 처리합니다.
-  const { id } = useParams(); // URL 파라미터에서 대기방 ID를 가져옵니다
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const { userData } = useContext(UserContext);
   const [waitingRoomId, setWaitingRoomId] = useState(id || null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  // const [webSocket, setWebSocket] = useState(null);
+  const [webSocket, setWebSocket] = useState(null);
+  const [userNames, setUserNames] = useState([]);
+  const location = useLocation();
+  const [roomOwnerId, setRoomOwnerId] = useState(
+    location.state?.roomOwnerId || null
+  );
 
-  // useEffect(() => {
-  //   const ws = new WebSocket(
-  //     `ws://localhost:8080/ws/chat?roomId=${waitingRoomId}`
-  //   ); // 웹소켓 서버 URL
+  useEffect(() => {
+    if (waitingRoomId) {
+      const ws = new WebSocket(
+        `wss://i11e103.p.ssafy.io:8001/ws/chat?roomId=${waitingRoomId}`
+      );
+      setWebSocket(ws);
 
-  //   ws.onopen = () => {
-  //     console.log("WebSocket connection opened");
-  //     ws.send(JSON.stringify({ type: "message", content: "ㅎㅇㅎㅇ" })); // 메시지 전송
-  //   };
+      ws.onopen = () => {
+        console.log("WebSocket connection opened");
+        const message = {
+          type: "ENTER",
+          roomId: waitingRoomId,
+          sender: userData.nickname,
+          message: "",
+          userId: userData.userId,
+        };
+        ws.send(JSON.stringify(message));
+      };
 
-  //   ws.onmessage = (event) => {
-  //     const receivedData = event.data;
-  //     console.log("Received message:", receivedData);
-  //   };
+      ws.onmessage = (event) => {
+        const receivedData = JSON.parse(event.data);
+        console.log("Received message:", receivedData);
 
-  //   ws.onclose = () => {
-  //     console.log("WebSocket connection closed");
-  //   };
+        if (receivedData.type === "USERLIST_UPDATE") {
+          console.log("User list update message:", receivedData.message);
 
-  //   ws.onerror = (error) => {
-  //     console.error("WebSocket error:", error);
-  //   };
+          const messageContent = receivedData.message;
+          const userList = messageContent.split("현재 방에 있는 사용자: ")[1];
+          const userNames = userList ? userList.split(", ") : [];
+          localStorage.setItem("userNames", JSON.stringify(userNames));
+          setUserNames(userNames);
+          console.log("User list updated:", userNames);
+        } else if (receivedData.type === "ROOM_CLOSED") {
+          alert("방장이 방을 종료했습니다. 방을 나가겠습니다.");
+          navigate("/home");
+        } else if (receivedData.type === "START") {
+          window.location.href = `/countdown/${waitingRoomId}`;
+        }
+      };
 
-  //   setWebSocket(ws);
+      ws.onclose = () => {
+        console.log("WebSocket connection closed");
+      };
 
-  //   return () => {
-  //     ws.close();
-  //   };
-  // }, []);
-  // 의존성 배열
+      ws.onerror = (error) => {
+        console.error("WebSocket error:", error);
+      };
 
-  const teamCreatePageUrl = `http://localhost:5173/team-create/${waitingRoomId}`;
+      return () => {
+        ws.close();
+      };
+    }
+  }, [waitingRoomId, userData, navigate]);
 
-  // QR 코드 클릭 시 페이지 이동
+  const teamCreatePageUrl = `https://i11e103.p.ssafy.io/team-create/${waitingRoomId}`;
+
   const handleQRCodeClick = () => {
     window.location.href = teamCreatePageUrl;
   };
 
-  // 시작 버튼 눌렀을 시
   const handleStartButtonClick = () => {
-    navigate(`/countdown/${waitingRoomId}`); // Countdown 페이지로 이동
+    if (webSocket) {
+      const startMessage = {
+        type: "START",
+        roomId: waitingRoomId,
+        sender: userData.nickname,
+        message: "",
+        userId: userData.userId,
+      };
+
+      if (webSocket.readyState === WebSocket.OPEN) {
+        webSocket.send(JSON.stringify(startMessage));
+        console.log("START 메시지 전송");
+
+        window.location.href = `/countdown/${waitingRoomId}`;
+      } else {
+        console.warn("WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.");
+      }
+    } else {
+      console.warn("WebSocket 객체가 초기화되지 않았습니다.");
+    }
   };
 
-  // 모달 상태 변경
   const handleModalToggle = () => {
     setModalIsOpen((prevState) => !prevState);
   };
+
+  const handleLeaveRoom = () => {
+    if (webSocket) {
+      const leaveMessage = {
+        type: "WAIT_EXIT",
+        roomId: waitingRoomId,
+        sender: userData.nickname,
+        message: "",
+        userId: userData.userId,
+      };
+
+      if (webSocket.readyState === WebSocket.OPEN) {
+        webSocket.send(JSON.stringify(leaveMessage));
+        localStorage.removeItem("userNames");
+        console.log("방 나가기 메시지 전송");
+      } else {
+        console.warn("WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.");
+      }
+      webSocket.close();
+    } else {
+      console.warn("WebSocket 객체가 초기화되지 않았습니다.");
+    }
+    navigate("/home");
+  };
+
+  const isRoomOwner = roomOwnerId === Number(localStorage.getItem("userId"));
 
   return (
     <div>
       <Header />
       <div className="TeamCreate">
-        {/* <div>
-          <Weather />
-        </div> */}
+        <div>
+          <button
+            onClick={handleLeaveRoom}
+            style={{
+              backgroundColor: "white",
+              border: "none",
+              marginLeft: "10px",
+            }}
+          >
+            <FontAwesomeIcon icon={faArrowLeft} size="lg" />
+          </button>
+        </div>
         <div>
           <TeamSaying />
         </div>
         <div>
-          <TeamUserList />
+          <TeamUserList userNames={userNames} />
         </div>
         <div className="TeamCreateQR">
           <div>
-            <button
-              onClick={handleStartButtonClick}
-              className="TeamCreateButton"
-            >
-              시작
-            </button>
+            {isRoomOwner && (
+              <button
+                onClick={handleStartButtonClick}
+                className="TeamCreateButton"
+              >
+                시작
+              </button>
+            )}
           </div>
           <div>
             <button onClick={handleModalToggle} className="TeamCreateButton">
@@ -93,19 +177,17 @@ const TeamCreate = () => {
             </button>
           </div>
         </div>
-        {/* 모달 컴포넌트 */}
         <Modal
           isOpen={modalIsOpen}
           onRequestClose={handleModalToggle}
           contentLabel="QR Code Modal"
           className="TeamCreateModal"
           overlayClassName="TeamCreateOverlay"
-          // 모달 외부 배경의 스타일을 정의
         >
           <QRCode
             value={teamCreatePageUrl}
             onClick={handleQRCodeClick}
-            style={{ cursor: "pointer", width: "300px", height: "300px" }} // 원하는 크기로 조정
+            style={{ cursor: "pointer", width: "300px", height: "300px" }}
           />
         </Modal>
       </div>

@@ -18,11 +18,11 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Void>> createBoard(@RequestBody BoardRequestDTO boardRequest) {
+    public ResponseEntity<ApiResponse<Integer>> createBoard(@RequestBody BoardRequestDTO boardRequest) {
         System.out.println(boardRequest);
         try {
-            boardService.createBoard(boardRequest);
-            return ResponseEntity.ok(new ApiResponse<>(true, null, "글 작성 성공"));
+            int boardId = boardService.createBoard(boardRequest);
+            return ResponseEntity.ok(new ApiResponse<>(true, boardId, "글 작성 성공"));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new ApiResponse<>(false, null, "글 작성 실패: " + e.getMessage()));
         }

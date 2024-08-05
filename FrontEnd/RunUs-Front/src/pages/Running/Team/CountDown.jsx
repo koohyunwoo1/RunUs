@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import "../../../styles/Running/Team/CountDown.css";
 
 const CountDown = () => {
@@ -10,11 +10,15 @@ const CountDown = () => {
 
   useEffect(() => {
     if (countdown === 0) return;
+
     const timer = setInterval(() => {
       setCountdown((prevCount) => {
         if (prevCount === 1) {
           clearInterval(timer);
-          setTimeout(() => navigate(`/team-check/${id}`), 1000);
+
+          setTimeout(() => {
+            window.location.href = `/team-check/${id}`; // 페이지 이동
+          }, 1000);
           return 0;
         }
         setKey((prevKey) => prevKey + 1);

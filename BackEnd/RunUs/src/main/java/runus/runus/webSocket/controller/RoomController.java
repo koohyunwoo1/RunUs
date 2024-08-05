@@ -12,7 +12,6 @@ import runus.runus.webSocket.service.ChatServiceImpl;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("api/v1/team")
-
 public class RoomController {
     private final ChatServiceImpl chatService;
 

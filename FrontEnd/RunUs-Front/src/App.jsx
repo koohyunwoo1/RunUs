@@ -23,8 +23,11 @@ import { UserProvider } from "./hooks/UserContext";
 import { useEffect, useState } from "react";
 import { getToken } from 'firebase/messaging';
 import { messaging } from './firebase';
-
 // firebase setting end
+
+import axios from 'axios';
+
+axios.defaults.baseURL = process.env.VITE_API_URL;
 
 const App = () => {
 

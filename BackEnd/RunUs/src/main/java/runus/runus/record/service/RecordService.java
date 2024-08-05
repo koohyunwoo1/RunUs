@@ -5,9 +5,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import runus.runus.record.dto.RecordDTO;
 import runus.runus.record.model.Record;
 import runus.runus.record.repository.RecordRepository;
+import runus.runus.webSocket.service.ChatService;
+import runus.runus.webSocket.service.ChatServiceImpl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,6 +23,9 @@ import java.util.stream.Collectors;
 public class RecordService {
     @Autowired
     private RecordRepository recordRepository;
+
+    @Autowired
+    private ChatServiceImpl chatService;
 
     // 최근 기록 가져오기
     public List<Record> getRecentRecords(Integer userId, int limit) {
@@ -78,5 +84,17 @@ public class RecordService {
         return monthlyStats.values().stream().collect(Collectors.toList());
     }
 
+    // 러닝한 데이터를 저장
+    public Record saveRecord(int userId, int partyId, Integer distance, Integer time, Integer kcal) {
+        Record record = new Record();
+        record.setUser_id(userId);
+        record.setParty_id(partyId);
+        record.setDistance(distance != null ? distance : 0);
+        record.setTime(time != null ? time : 0);
+        record.setKcal(kcal != null ? kcal : 0);
+        record.setRecord_date(LocalDateTime.now());
+        chatService.updatePartyStatus(partyId, '3');
+        return recordRepository.save(record);
+    }
 
 }
