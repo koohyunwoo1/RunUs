@@ -17,13 +17,13 @@ public class Record {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     @Column(name = "record_id")
-    private int record_id;
+    private Integer record_id;
 
     @Column(name = "user_id", nullable = false)
-    private int user_id;
+    private Integer user_id;
 
-    @Column(name = "party_id", nullable = false)
-    private int party_id;
+    @Column(name = "party_id", nullable = true)
+    private Integer party_id;
 
     @Column(name = "distance", nullable = true, columnDefinition = "int default 0")
     private Integer distance;

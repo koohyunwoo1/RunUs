@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -9,10 +9,14 @@ const UserProvider = ({ children }) => {
   const [userId, setUserId] = useState(null);
   const [error, setError] = useState("");
   const [roomUsers, setRoomUsers] = useState([]);
+  const [roomId, setRoomId] = useState("");
+  const [message, setMessage] = useState("");
+  const [chatMessages, setChatMessages] = useState([]);
+  const [sessionStarted, setSessionStarted] = useState(false);
+  const socketRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // 페이지 로드 시 로컬에서 사용자 데이터 가져옴
     const storedUserData = localStorage.getItem("userData");
     if (storedUserData) {
       setUserData(JSON.parse(storedUserData));
@@ -22,7 +26,6 @@ const UserProvider = ({ children }) => {
   const loginUser = async (email, password) => {
     try {
       const response = await axios.post("/api/v1/signin", { email, password });
-      console.log(response);
       if (response.data.success) {
         setUserId(response.data.data.userId);
         const data = response.data.data;
@@ -31,11 +34,8 @@ const UserProvider = ({ children }) => {
         localStorage.setItem("AuthToken", response.data.token);
         localStorage.setItem("userId", response.data.data.userId);
         localStorage.setItem("userData", JSON.stringify(data));
-        console.log("Logged in userData:", data); // 로그인 후 userData 확인
       } else {
-        setError(
-          response.data.message || "이메일 또는 비밀번호가 일치하지 않습니다."
-        );
+        setError(response.data.message || "이메일 또는 비밀번호가 일치하지 않습니다.");
       }
     } catch (error) {
       console.error(error);
@@ -84,7 +84,163 @@ const UserProvider = ({ children }) => {
     });
   };
 
-  console.log(roomUsers);
+  // WebSocket 관련 상태 및 함수들
+  const reconnectInterval = 1000;
+  const maxReconnectAttempts = 100;
+  let reconnectAttempts = 0;
+
+  const initializeWebSocket = (roomId) => {
+    const wsUrl = `ws://localhost:8080/ws/chat?roomId=${roomId}`;
+    document.getElementById("websocket-url").textContent = wsUrl;
+
+    socketRef.current = new WebSocket(wsUrl);
+
+    socketRef.current.onopen = () => {
+      console.log(`WebSocket 연결이 열렸습니다: ${userData.username} (ID: ${userId})`);
+      const message = {
+        type: "ENTER",
+        roomId: roomId,
+        sender: userData.username,
+        message: "",
+        userId: userId,
+      };
+      socketRef.current.send(JSON.stringify(message));
+      reconnectAttempts = 0;
+    };
+
+    socketRef.current.onmessage = (event) => {
+      try {
+        const chatMessage = JSON.parse(event.data);
+        handleMessage(chatMessage);
+      } catch (error) {
+        console.error("메시지 파싱 실패:", event.data, error);
+      }
+    };
+
+    socketRef.current.onclose = (event) => {
+      console.log(`WebSocket 연결이 닫혔습니다. 코드: ${event.code}, 이유: ${event.reason}`);
+      if (reconnectAttempts < maxReconnectAttempts) {
+        setTimeout(() => {
+          console.log("재연결 시도 중...");
+          reconnectAttempts++;
+          initializeWebSocket(roomId);
+        }, reconnectInterval);
+      } else {
+        console.error("최대 재연결 시도 횟수에 도달했습니다.");
+      }
+    };
+
+    socketRef.current.onerror = (error) => {
+      console.error("WebSocket 오류:", error);
+    };
+  };
+
+  const handleMessage = (chatMessage) => {
+    if (chatMessage.type === "TALK") {
+      setChatMessages((prevMessages) => [...prevMessages, chatMessage]);
+    } else if (chatMessage.type === "USERLIST_UPDATE") {
+      const users = chatMessage.message.split(": ")[1].split(", ");
+      updateUsersList(users);
+    } else if (chatMessage.type === "TOTAL_DISTANCE") {
+      document.getElementById("total-distances").textContent = chatMessage.message;
+    } else if (chatMessage.type === "LOCATION") {
+      // 위치 업데이트 처리
+    } else if (chatMessage.type === "START") {
+      // 세션 시작 처리
+    } else if (chatMessage.type === "ROOM_CLOSED") {
+      alert(chatMessage.message); // 방 종료 메시지 표시
+      navigate("/home"); // 방 종료 후 홈으로 이동
+    }
+  };
+
+  const updateUsersList = (users) => {
+    users.forEach((user) => {
+      addUserToRoom({ username: user, userId: user });
+    });
+  };
+
+  const sendMessage = () => {
+    const chatMessage = {
+      type: "TALK",
+      roomId: roomId,
+      sender: userData.username,
+      message: message,
+      userId: userId,
+    };
+
+    if (socketRef.current.readyState === WebSocket.OPEN) {
+      socketRef.current.send(JSON.stringify(chatMessage));
+      console.log(`메시지 전송: ${JSON.stringify(chatMessage)}`);
+      setMessage("");
+    } else {
+      console.warn("WebSocket 연결이 열려있지 않습니다.");
+    }
+  };
+
+  const startSession = () => {
+    const startMessage = {
+      type: "START",
+      roomId: roomId,
+      sender: userData.username,
+      message: "",
+      userId: userId,
+    };
+
+    if (socketRef.current.readyState === WebSocket.OPEN) {
+      socketRef.current.send(JSON.stringify(startMessage));
+      console.log("세션 시작 메시지 전송");
+      setSessionStarted(true);
+    } else {
+      console.warn("WebSocket 연결이 열려있지 않습니다.");
+    }
+  };
+
+  const endSession = () => {
+    const endMessage = {
+      type: "QUIT",
+      roomId: roomId,
+      sender: userData.username,
+      message: "",
+      userId: userId,
+    };
+    if (socketRef.current.readyState === WebSocket.OPEN) {
+      if (!sessionStarted) {
+        socketRef.current.send(
+          JSON.stringify({ ...endMessage, type: "WAIT_EXIT" })
+        );
+      } else {
+        socketRef.current.send(
+          JSON.stringify({ ...endMessage, type: "RUN_EXIT" })
+        );
+      }
+      socketRef.current.close();
+    }
+  };
+
+  const leaveRoom = () => {
+    const leaveMessage = {
+      type: sessionStarted ? "RUN_EXIT" : "WAIT_EXIT",
+      roomId: roomId,
+      sender: userData.username,
+      message: "",
+      userId: userId,
+    };
+    if (socketRef.current.readyState === WebSocket.OPEN) {
+      socketRef.current.send(JSON.stringify(leaveMessage));
+      console.log("방 나가기 메시지 전송");
+      socketRef.current.close();
+    }
+  };
+
+  const handleRoomEntry = (enteredRoomId) => {
+    if (!enteredRoomId) {
+      alert("방 이름을 입력하세요.");
+      return;
+    }
+    setRoomId(enteredRoomId);
+    initializeWebSocket(enteredRoomId);
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -96,6 +252,15 @@ const UserProvider = ({ children }) => {
         loginUser,
         logoutUser,
         registerUser,
+        handleRoomEntry,
+        message,
+        setMessage,
+        sendMessage,
+        chatMessages,
+        startSession,
+        endSession,
+        leaveRoom,
+        sessionStarted,
       }}
     >
       {children}

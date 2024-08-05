@@ -29,7 +29,6 @@ const SignUp = () => {
     const fetchRegionMajor = async () => {
       try {
         const response = await axios.get('/api/v1/region-major');
-        // console.log('Fetched data:', response.data);
         setRegionMajorOptions(response.data.data);
       } catch (error) {
         console.error('Error fetching region major data:', error);
@@ -96,16 +95,16 @@ const SignUp = () => {
     const errors = {};
     if (!form.nickname) errors.nickname = "닉네임은 필수입니다.";
     if (!form.email) errors.email = "이메일은 필수입니다.";
-    if (!form.emailDomain) errors.emailDomain = "도메인은 필수입니다.";
+    // if (!form.emailDomain) errors.emailDomain = "도메인은 필수입니다.";
     if (!form.password) errors.password = "비밀번호는 필수입니다.";
     if (form.password.length < 8)
       errors.password = "비밀번호는 최소 8자리입니다.";
     if (form.password !== form.confirmPassword)
       errors.confirmPassword = "비밀번호가 일치하지 않습니다.";
     if (!form.weight) errors.weight = "체중은 필수입니다.";
-    if (!form.phoneNumber) errors.phoneNumber = "휴대폰 번호는 필수입니다.";
+    if (!form.phoneNumber) errors.phoneNumber = "휴대전화번호는 필수입니다.";
     if (!/^\d{3}-\d{3,4}-\d{4}$/.test(form.phoneNumber))
-      errors.phoneNumber = "휴대폰 번호는 올바른 형식이어야 합니다 (예: 010-1234-5678).";
+      errors.phoneNumber = "휴대전화번호는 올바른 형식이어야 합니다.";
     if (!form.regionMajor) errors.regionMajor = "사는 지역은 필수입니다.";
     if (!form.regionId) errors.regionId = "시/군/구는 필수입니다.";
     return errors;
@@ -135,19 +134,20 @@ const SignUp = () => {
     <div>
       <LogOutHeader />
       <form onSubmit={handleSubmit} className="SignUpForm">
-        <h1>회원 가입 - test2</h1>
-        <div>
-          <label className="SignUpLabel">이메일</label>
+        <h2>회원 가입</h2>
+        <div className="inputDiv">
+          {/* <label className="SignUpLabel">이메일</label> */}
           <input
             type="text"
             name="email"
             className="SignUpInput"
             value={form.email}
             onChange={handleChange}
+            placeholder="이메일"
           />
           {errors.email && <p className="SignUpError">{errors.email}</p>}
         </div>
-        <div>
+        {/* <div>
           <label className="SignUpLabel">이메일 도메인</label>
           <input
             type="text"
@@ -155,66 +155,71 @@ const SignUp = () => {
             className="SignUpInput"
             value={form.emailDomain}
             onChange={handleChange}
+            placeholder="도메인을 입력해 주세요"
           />
           {errors.emailDomain && <p className="SignUpError">{errors.emailDomain}</p>}
-        </div>
-        <div>
-          <label className="SignUpLabel">닉네임</label>
+        </div> */}
+        <div className="inputDiv">
+          {/* <label className="SignUpLabel">닉네임</label> */}
           <input
             type="text"
             name="nickname"
             className="SignUpInput"
             value={form.nickname}
             onChange={handleChange}
+            placeholder="닉네임"
           />
           {errors.nickname && <p className="SignUpError">{errors.nickname}</p>}
         </div>
-        <div>
-          <label className="SignUpLabel">휴대폰 번호</label>
+        <div className="inputDiv">
+          {/* <label className="SignUpLabel">휴대폰 번호</label> */}
           <input
             type="text"
             name="phoneNumber"
             className="SignUpInput"
             value={form.phoneNumber}
             onChange={handleChange}
+            placeholder="휴대전화번호"
           />
           {errors.phoneNumber && <p className="SignUpError">{errors.phoneNumber}</p>}
         </div>
-        <div>
-          <label className="SignUpLabel">비밀번호</label>
+        <div className="inputDiv">
+          {/* <label className="SignUpLabel">비밀번호</label> */}
           <input
             type="password"
             name="password"
             className="SignUpInput"
             value={form.password}
             onChange={handleChange}
+            placeholder="비밀번호 (최소 8자리)"
           />
           {errors.password && <p className="SignUpError">{errors.password}</p>}
         </div>
-        <div>
-          <label className="SignUpLabel">비밀번호 확인</label>
+        <div className="inputDiv">
+          {/* <label className="SignUpLabel">비밀번호 확인</label> */}
           <input
             type="password"
             name="confirmPassword"
             className="SignUpInput"
             value={form.confirmPassword}
             onChange={handleChange}
+            placeholder="비밀번호 확인"
           />
           {errors.confirmPassword && <p className="SignUpError">{errors.confirmPassword}</p>}
         </div>
-        <div>
-          <label className="SignUpLabel">체중</label>
+        <div className="inputDiv">
+          {/* <label className="SignUpLabel">체중</label> */}
           <input
             type="number"
             name="weight"
             className="SignUpInput"
             value={form.weight}
             onChange={handleChange}
+            placeholder="체중 (kg)"
           />
           {errors.weight && <p className="SignUpError">{errors.weight}</p>}
         </div>
-        <div>
-          <label className="SignUpLabel">사는 시/도</label>
+        <div className="inputDiv">
           <select
             name="regionMajor"
             className="SignUpInput"
@@ -230,8 +235,7 @@ const SignUp = () => {
           </select>
           {errors.regionMajor && <p className="SignUpError">{errors.regionMajor}</p>}
         </div>
-        <div>
-          <label className="SignUpLabel">사는 시/군/구</label>
+        <div className="inputDiv">
           <select
             name="regionId"
             className="SignUpInput"
@@ -247,8 +251,8 @@ const SignUp = () => {
           </select>
           {errors.regionId && <p className="SignUpError">{errors.regionId}</p>}
         </div>
-        <div>
-          <Button type="submit" text="회원 가입" />
+        <div className="inputDiv">
+          <Button type="submit" text="회원 가입" className="signupButton" />
         </div>
       </form>
     </div>
