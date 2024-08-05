@@ -13,7 +13,7 @@
     <meta name="theme-color" content="#8C383A" />
     <link rel="icon1" href="icons/icon-192x192.png" type="image/png" />
     <link rel="icon2" href="icons/icon-512x512.png" sizes="180x180" />
-    <link rel="manifest" href="manifest.json" />
+    <link rel="manifest" href="/manifest.json" />
     <!-- PWA 설정 ENd -->
 
     <title>Run Us</title>
@@ -42,16 +42,16 @@
       //   console.log("Service workers are not supported.");
       // }
       if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-      navigator.serviceWorker.register('/firebase-messaging-sw.js')
-        .then(function(registration) {
-          console.log('Service Worker registered with scope:', registration.scope);
-        })
-        .catch(function(error) {
-          console.log('Service Worker registration failed:', error);
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/firebase-messaging-sw.js')
+            .then(function(registration) {
+              console.log('Service Worker registered with scope:', registration.scope);
+            })
+            .catch(function(error) {
+              console.log('Service Worker registration failed:', error);
+            });
         });
-    });
-  }
+      }
     </script>
     <!-- PWA 설정 - END -->
   </body>

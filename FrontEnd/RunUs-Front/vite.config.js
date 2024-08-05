@@ -31,6 +31,6 @@ export default defineConfig(({ mode }) => {
           'firebase-messaging-sw': './public/firebase-messaging-sw.js',
         },
       },
-    },
+    }
   };
 });
