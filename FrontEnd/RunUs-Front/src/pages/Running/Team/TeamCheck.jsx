@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import "../../../styles/Running/Team/TeanCheck.css";
-import Header from "../../../components/common/Header";
 
 const TeamCheck = () => {
   const location = useLocation();
@@ -18,7 +17,6 @@ const TeamCheck = () => {
 
   return (
     <div>
-      <Header />
       <div className="TeamCheck">
         <ul>
           {userNames.map((name, index) => (
