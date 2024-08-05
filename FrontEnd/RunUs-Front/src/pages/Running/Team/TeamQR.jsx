@@ -1,16 +1,16 @@
 import React, { useContext, useState } from "react";
-import QrScanner from "react-qr-scanner";
 import "../../../styles/Running/Team/TeamQR.css";
 import Header from "../../../components/common/Header";
 import { UserContext } from "../../../hooks/UserContext";
+import { QrReader } from 'react-qr-reader'; // 명명된 내보내기 사용
 
 const TeamQR = () => {
   const [data, setData] = useState("No result");
   const { addUserToRoom, userData } = useContext(UserContext);
 
   const handleScan = (result) => {
-    if (result && result.text) {
-      const resultData = result.text;
+    if (result) {
+      const resultData = result;
       setData(resultData);
 
       if (isValidURL(resultData)) {
@@ -31,20 +31,22 @@ const TeamQR = () => {
     }
   };
 
+  const handleError = (error) => {
+    console.error("QR Reader Error:", error);
+  };
+
   const joinRoom = (roomId) => {
-    const ws = new WebSocket(
-      `wss://i11e103.p.ssafy.io:8001/ws/chat?roomId=${roomId}`
-    );
+    const ws = new WebSocket(`wss://i11e103.p.ssafy.io:8001/ws/chat?roomId=${roomId}`);
 
     ws.onopen = () => {
       console.log("WebSocket connection opened");
 
       const message = {
-        type: "ENTER",
+        type: 'ENTER',
         roomId: roomId,
         sender: userData.nickname,
-        message: "",
-        userId: userData.userId,
+        message: '',
+        userId: userData.userId
       };
       ws.send(JSON.stringify(message));
     };
@@ -61,10 +63,6 @@ const TeamQR = () => {
     ws.onerror = (error) => {
       console.error("WebSocket error:", error);
     };
-  };
-
-  const handleError = (err) => {
-    console.error(err);
   };
 
   const isValidURL = (url) => {
@@ -92,12 +90,11 @@ const TeamQR = () => {
       <Header />
       <h1 className="TeamQR">QR 코드를 찍어주세요!</h1>
       <div className="qr-reader-container">
-        <QrScanner
-          delay={300}
-          style={{ width: "100%" }}
+        <QrReader
+          onScan={handleScan}
           onError={handleError}
-          onResult={handleScan}
-          constraints={{ facingMode: "environment" }}
+          style={{ width: "100%", height: "100%" }}
+          facingMode="environment" // 후면 카메라 사용
         />
       </div>
     </div>
