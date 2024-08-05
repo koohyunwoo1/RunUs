@@ -191,7 +191,7 @@ const SignUp = () => {
             className="SignUpInput"
             value={form.password}
             onChange={handleChange}
-            placeholder="비밀번호"
+            placeholder="비밀번호 (최소 8자리)"
           />
           {errors.password && <p className="SignUpError">{errors.password}</p>}
         </div>

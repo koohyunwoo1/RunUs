@@ -32,17 +32,19 @@ const TeamQR = () => {
   };
 
   const joinRoom = (roomId) => {
-    const ws = new WebSocket(`wss://i11e103.p.ssafy.io:8001/ws/chat?roomId=${roomId}`);
+    const ws = new WebSocket(
+      `wss://i11e103.p.ssafy.io:8001/ws/chat?roomId=${roomId}`
+    );
 
     ws.onopen = () => {
       console.log("WebSocket connection opened");
 
       const message = {
-        type: 'ENTER',
+        type: "ENTER",
         roomId: roomId,
         sender: userData.nickname,
-        message: '',
-        userId: userData.userId
+        message: "",
+        userId: userData.userId,
       };
       ws.send(JSON.stringify(message));
     };
@@ -94,7 +96,8 @@ const TeamQR = () => {
           delay={100}
           onError={handleError}
           onScan={handleScan}
-          style={{ width: "100%", height: "100%" }} // 부모 컨테이너에서 높이를 조절
+          facingMode="environment"
+          style={{ width: "100%", height: "100%" }}
         />
       </div>
     </div>

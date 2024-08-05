@@ -8,7 +8,6 @@ const TeamCheck = () => {
   const location = useLocation();
   const [userNames, setUserNames] = useState([]);
   useEffect(() => {
-    // Retrieve userNames from sessionStorage
     const storedUserNames = localStorage.getItem("userNames");
     if (storedUserNames) {
       setUserNames(JSON.parse(storedUserNames));
