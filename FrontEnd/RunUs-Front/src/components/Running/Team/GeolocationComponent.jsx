@@ -10,7 +10,7 @@ const GeolocationComponent = ({ userId, roomId }) => {
   useEffect(() => {
     if (!roomId || !userId) return;
 
-    const newWs = new WebSocket(`ws://localhost:8080/ws/chat?roomId=${roomId}`);
+    const newWs = new WebSocket(`https://i11e103.p.ssafy.io:8001/ws/chat?roomId=${roomId}`);
     
     newWs.onopen = () => {
       console.log("WebSocket connection opened");
