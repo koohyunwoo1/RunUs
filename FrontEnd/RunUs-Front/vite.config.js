@@ -1,3 +1,4 @@
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { loadEnv } from "vite";
@@ -22,6 +23,14 @@ export default defineConfig(({ mode }) => {
     },
     define: {
       'process.env.VITE_API_URL': JSON.stringify(env.VITE_API_URL)
-    }
+    },
+    build: {
+      rollupOptions: {
+        input: {
+          app: './index.html',
+          'firebase-messaging-sw': './public/firebase-messaging-sw.js',
+        },
+      },
+    },
   };
 });
