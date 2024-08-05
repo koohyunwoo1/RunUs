@@ -79,7 +79,7 @@ const TeamCreate = () => {
     }
   }, [waitingRoomId, userData, navigate]);
 
-  const teamCreatePageUrl = `http://localhost:3000/team-create/${waitingRoomId}`;
+  const teamCreatePageUrl = `https://i11e103.p.ssafy.io/team-create/${waitingRoomId}`;
 
   const handleQRCodeClick = () => {
     window.location.href = teamCreatePageUrl;

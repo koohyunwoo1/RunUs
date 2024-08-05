@@ -18,8 +18,6 @@ import CountDown from "./pages/Running/Team/CountDown";
 import TeamCheck from "./pages/Running/Team/TeamCheck";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import { UserProvider } from "./hooks/UserContext";
-import GeolocationComponent from "./components/Running/Team/GeolocationComponent";
-
 const App = () => {
   return (
     <UserProvider>
@@ -132,18 +130,7 @@ const App = () => {
               </ProtectedRoute>
             }
           />
-          {/* Add a route for the Geolocation page */}
-          <Route
-            path="/geolocation"
-            element={
-              <ProtectedRoute>
-                <GeolocationComponent />
-              </ProtectedRoute>
-            }
-          />
-
-<Route path="/geolocations" element={<GeolocationComponent userId="user1" roomId="room1" />} />
-
+          
         </Routes>
       </div>
     </UserProvider>
