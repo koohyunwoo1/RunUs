@@ -9,14 +9,14 @@ import org.springframework.transaction.annotation.Transactional;
 import runus.runus.record.dto.RecordDTO;
 import runus.runus.record.model.Record;
 import runus.runus.record.repository.RecordRepository;
+import runus.runus.user.entity.User;
+import runus.runus.user.repository.UserRepository;
+import runus.runus.user.service.UserService;
 import runus.runus.webSocket.service.ChatService;
 import runus.runus.webSocket.service.ChatServiceImpl;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +26,9 @@ public class RecordService {
 
     @Autowired
     private ChatServiceImpl chatService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     // 최근 기록 가져오기
     public List<Record> getRecentRecords(Integer userId, int limit) {
@@ -84,17 +87,52 @@ public class RecordService {
         return monthlyStats.values().stream().collect(Collectors.toList());
     }
 
-    // 러닝한 데이터를 저장
-    public Record saveRecord(int userId, int partyId, Integer distance, Integer time, Integer kcal) {
-        Record record = new Record();
-        record.setUser_id(userId);
-        record.setParty_id(partyId);
-        record.setDistance(distance != null ? distance : 0);
-        record.setTime(time != null ? time : 0);
-        record.setKcal(kcal != null ? kcal : 0);
-        record.setRecord_date(LocalDateTime.now());
-        chatService.updatePartyStatus(partyId, '3');
-        return recordRepository.save(record);
+    public Map<String, Object> saveRecord(Integer userId, Integer partyId, Integer distance, Integer time, Integer kcal) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Record record = new Record();
+            record.setUser_id(userId);
+
+            if(partyId != null ) {
+                record.setParty_id(partyId);
+                chatService.updatePartyStatus(partyId, '3');
+            }
+            record.setDistance(distance != null ? distance : 0);
+            record.setTime(time != null ? time : 0);
+            record.setKcal(kcal != null ? kcal : 0);
+            record.setRecord_date(LocalDateTime.now());
+
+            Record savedRecord = recordRepository.save(record);
+
+            updateUserExperience(userId, partyId, distance != null ? distance : 0);
+
+            response.put("success", true);
+            response.put("data", savedRecord);
+            response.put("message", "기록 저장 성공");
+
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("data", e.getMessage());
+            response.put("message", "기록 저장 실패");
+        }
+        return response;
     }
 
+    private void updateUserExperience(Integer userId, Integer partyId, Integer distance) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (user.getExp() == null) {
+                user.setExp(0); // 기본값 설정
+            }
+
+            if (partyId == null) {
+                user.setExp(user.getExp() + distance * 10);
+            } else {
+                user.setExp(user.getExp() + (int) (distance * 1.3));
+            }
+
+            userRepository.save(user);
+        }
+    }
 }

@@ -89,17 +89,15 @@ public class RecordController {
     @PostMapping("/result_save")
     public ResponseEntity<?> resultSave(
             @RequestParam("user_id") Integer userId,
-            @RequestParam("party_id") Integer partyId,
+            @RequestParam(value = "party_id", required = false) Integer partyId,
             @RequestParam(value = "distance", required = false) Integer distance,
             @RequestParam(value = "time", required = false) Integer time,
             @RequestParam(value = "kcal", required = false) Integer kcal) {
-        try {
-            Record record = recordService.saveRecord(userId, partyId, distance, time, kcal);
-            return ResponseEntity.ok(new ApiResponse<>(true, record, "기록 저장 성공"));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>(false, e.getMessage(), "기록 저장 실패"));
-        }
+        // 기본값 설정
+//        if (partyId == null) {
+//            partyId = 0;
+//        }
+        Map<String, Object> response = recordService.saveRecord(userId, partyId, distance, time, kcal);
+        return ResponseEntity.ok(response);
     }
-
 }
