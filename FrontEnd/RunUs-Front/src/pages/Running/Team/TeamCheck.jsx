@@ -7,7 +7,6 @@ const TeamCheck = () => {
   const location = useLocation();
   const [userNames, setUserNames] = useState([]);
   useEffect(() => {
-    // Retrieve userNames from sessionStorage
     const storedUserNames = localStorage.getItem("userNames");
     if (storedUserNames) {
       setUserNames(JSON.parse(storedUserNames));
@@ -21,7 +20,6 @@ const TeamCheck = () => {
     <div>
       <Header />
       <div className="TeamCheck">
-        <h1>Team Check</h1>
         <ul>
           {userNames.map((name, index) => (
             <li key={index}>{name}</li>
