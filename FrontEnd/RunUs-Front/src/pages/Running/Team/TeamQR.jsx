@@ -93,14 +93,13 @@ const TeamQR = () => {
       <h1 className="TeamQR">QR 코드를 찍어주세요!</h1>
       <div className="qr-reader-container">
         <QrScanner
-          delay={100}
+          delay={300}
+          style={{ width: "100%" }}
           onError={handleError}
-          onScan={handleScan}
-          style={{ width: "100%", height: "100%" }} // 부모 컨테이너에서 높이를 조절
-          facingMode="environment" // 후면 카메라 설정, 가능하지 않으면 기본 카메라 사용
+          onResult={handleScan}
+          constraints={{ facingMode: "environment" }}
         />
       </div>
-      <p>{data}</p>
     </div>
   );
 };
