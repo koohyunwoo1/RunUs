@@ -89,7 +89,7 @@ const WeatherForecast = () => {
   };
 
   const handleClick = () => {
-    window.location.href = `/src/assets/곤지암움짤.mp4`;
+    window.location.href = `../../assets/곤지암움짤.mp4`;
   };
 
   if (loading) {
