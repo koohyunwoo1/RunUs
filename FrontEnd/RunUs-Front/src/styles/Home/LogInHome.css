@@ -65,3 +65,13 @@
 .LoginHomeReportItem {
   margin-top: 50px;
 }
+
+.solomodeButton {
+  width: 30px;
+}
+
+.Button2 {
+  width: 50px; 
+  display: inline-block;
+  text-align: center; 
+}
