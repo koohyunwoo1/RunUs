@@ -15,11 +15,6 @@ import runus.runus.webSocket.service.ChatServiceImpl;
 public class RoomController {
     private final ChatServiceImpl chatService;
 
-//    @PostMapping("/create_room")
-//    public ChatRoom createRoom(@RequestBody PartyRequestDto partyRequestDto){
-//        return chatService.createRoom(partyRequestDto);
-//    }
-
     @PostMapping("/create_room")
     public ResponseEntity<ApiResponse<ChatRoom>> createRoom(@RequestBody PartyRequestDto partyRequestDto, String userName){
         try {
@@ -31,7 +26,6 @@ public class RoomController {
             return ResponseEntity.status(500).body(response);
         }
     }
-
 
     @GetMapping("/message")
     public ResponseEntity<?> sendMessage(){

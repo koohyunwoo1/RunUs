@@ -63,13 +63,13 @@ const LogInHome = () => {
     <div>
       <Header />
       <div className="LoginHome-container">
-        <h1 className="Today_item">RunUs</h1>
+        {/* <h1 className="Today_item">RunUs</h1> */}
         <Weather />
         <div className="LoginHomeReportItem">
           <ReportItem onDistanceChange={updateDistance} />
         </div>
         <div className="MainButton-container">
-          <Button2 src={SoloProfile} onClick={handleSoloProfileClick} />
+          <Button2 src={SoloProfile} onClick={handleSoloProfileClick}/>
           <Button2
             src={TeamProfile}
             onClick={handleTeamProfileClick}
