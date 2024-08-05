@@ -82,8 +82,13 @@ const FindEmailModalContent = ({ onClose }) => {
             className="modal-input"
             />
         </div>
-        {password && <p>찾는 비밀번호: {password}</p>}
-        {error && <p>{error}</p>}
+
+        <div>
+          {password && <p className="foundpw">찾는 비밀번호: {password}</p>}
+          {password && <p><button type="button" onClick={onClose} className="modal-button">닫기</button></p>}
+
+        </div>
+        {error && <p className="error-message">{error}</p>}
         {/* {emailFound && <p>찾은 이메일: {email}</p>}  */}
         {!emailFound && ( // 이메일 발견되지 않았을 때만 버튼 표시
           <div className="modal-find-pw">
