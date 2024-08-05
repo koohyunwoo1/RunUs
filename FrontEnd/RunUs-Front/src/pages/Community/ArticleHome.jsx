@@ -96,14 +96,7 @@ const ArticleHome = () => {
     <div>
       <Header />
       <div className="ArticleHome">
-        <div className="article-filters">
-          <button onClick={handleCompletedOnly}>
-            {completedOnly ? "모든 글 보기" : "모집 완료된 글만 보기"}
-          </button>
-          <button onClick={handleSortByTime}>
-            {sortByTime ? "시간순" : "최신순"}
-          </button>
-        </div>
+
         <form onSubmit={handleSearch} className="search-form">
           <input 
             type="text" 
@@ -113,10 +106,25 @@ const ArticleHome = () => {
           />
           <button type="submit">검색</button>
         </form>
-        <Button
-        className="article-create-button"
-        text={"글 쓰기"} 
-        onClick={() => nav('/article-create')}/>
+
+        <div className="article-filters">
+          <div className="left-buttons">
+            <button onClick={handleCompletedOnly}>
+              {completedOnly ? "모든 글 보기" : "모집 완료된 글만 보기"}
+            </button>
+            <button onClick={handleSortByTime}>
+              {sortByTime ? "시간순" : "최신순"}
+            </button>
+          </div>
+          <div className="right-button">  
+            <Button
+              className="article-create-button"
+              text={"글 쓰기"} 
+              onClick={() => nav('/article-create')}/>
+          </div>
+        </div>
+
+        
         <ArticleList articles={articles} />
         <div className="pagination">
           <Button 
