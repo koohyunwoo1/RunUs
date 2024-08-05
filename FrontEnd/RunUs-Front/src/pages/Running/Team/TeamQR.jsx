@@ -32,17 +32,19 @@ const TeamQR = () => {
   };
 
   const joinRoom = (roomId) => {
-    const ws = new WebSocket(`wss://i11e103.p.ssafy.io:8001/ws/chat?roomId=${roomId}`);
+    const ws = new WebSocket(
+      `wss://i11e103.p.ssafy.io:8001/ws/chat?roomId=${roomId}`
+    );
 
     ws.onopen = () => {
       console.log("WebSocket connection opened");
 
       const message = {
-        type: 'ENTER',
+        type: "ENTER",
         roomId: roomId,
         sender: userData.nickname,
-        message: '',
-        userId: userData.userId
+        message: "",
+        userId: userData.userId,
       };
       ws.send(JSON.stringify(message));
     };
