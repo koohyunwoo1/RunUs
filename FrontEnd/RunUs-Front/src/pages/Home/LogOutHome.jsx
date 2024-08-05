@@ -2,6 +2,9 @@ import React, { useEffect } from "react";
 import "../../styles/Home/LogOutHome.css";
 import { useInView } from "react-intersection-observer";
 import LogOutHeader from "../../components/Home/LogOutHeader";
+import logo2 from "../../assets/logo2.png"
+import logo3 from "../../assets/logo3.png"
+import Phone from "../../assets/Phone.png"
 
 const LogOutHome = () => {
   const { ref: ref1, inView: inView1 } = useInView({
@@ -64,10 +67,10 @@ const LogOutHome = () => {
         <h1 className="title2">시작이 어렵다면 ?</h1>
         <h1 className="title2">작은 미션부터 시작해보세요.</h1>
         <div className="image2" ref={ref2}>
-          <img src="src/assets/logo2.png" alt="" className="imageItem" />
-          <img src="src/assets/logo3.png" alt="" className="imageItem" />
-          <img src="src/assets/logo2.png" alt="" className="imageItem" />
-          <img src="src/assets/logo3.png" alt="" className="imageItem" />
+          <img src={logo2} alt="" className="imageItem" />
+          <img src={logo3} alt="" className="imageItem" />
+          <img src={logo3} alt="" className="imageItem" />
+          <img src={logo2} alt="" className="imageItem" />
         </div>
       </div>
 
@@ -79,7 +82,7 @@ const LogOutHome = () => {
         </h1>
         <div className="image3">
           <img
-            src="src/assets/Phone.png"
+            src={Phone}
             alt=""
             className={inView2 ? "imageItem2 animate" : "imageItem2"}
           />
