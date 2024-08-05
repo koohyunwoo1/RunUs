@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import "../../../styles/Running/Team/TeanCheck.css";
 import Header from "../../../components/common/Header";
+import GeolocationComponent from "../../../components/Running/Team/GeolocationComponent";
 
 const TeamCheck = () => {
   const location = useLocation();
@@ -21,6 +22,8 @@ const TeamCheck = () => {
     <div>
       <Header />
       <div className="TeamCheck">
+        <GeolocationComponent
+        />
         <h1>Team Check</h1>
         <ul>
           {userNames.map((name, index) => (
