@@ -48,11 +48,12 @@ export const useCustomZxing = (onDecodeResult) => {
     return () => {
       if (reader) {
         reader.reset();
-        if (ref.current.srcObject) {
-          const stream = ref.current.srcObject;
-          const tracks = stream.getTracks();
-          tracks.forEach((track) => track.stop());
-        }
+      }
+      if (ref.current && ref.current.srcObject) {
+        const stream = ref.current.srcObject;
+        const tracks = stream.getTracks();
+        tracks.forEach((track) => track.stop());
+        ref.current.srcObject = null; // Ensure to nullify the srcObject
       }
     };
   }, [reader, onDecodeResult]);
@@ -140,7 +141,7 @@ export const TeamQR = () => {
     try {
       const urlObj = new URL(url);
       const pathSegments = urlObj.pathname.split("/");
-      return pathSegments[pathSegments.length - 1]; // 마지막 segment가 roomId라고 가정
+      return pathSegments[pathSegments.length - 1];
     } catch (e) {
       console.error(e);
       return null;
