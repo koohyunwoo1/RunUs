@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 
 const GeolocationComponent = ({ userId, roomId }) => {
-  const [position, setPosition] = useState({ latitude: 37.5665, longitude: 126.9780 });
+  const [position, setPosition] = useState({ latitude: 35.096391, longitude: 128.853720 });
+  const [path, setPath] = useState([])
   const mapRef = useRef(null);
   const markerRef = useRef(null);
   const [ws, setWs] = useState(null);
@@ -39,6 +40,7 @@ const GeolocationComponent = ({ userId, roomId }) => {
       (position) => {
         const { latitude, longitude } = position.coords;
         setPosition({ latitude, longitude });
+        setPath(prevPath => [...prevPath, { latitude, longitude }]);
 
         if (ws && ws.readyState === WebSocket.OPEN) {
           ws.send(JSON.stringify({
@@ -66,7 +68,7 @@ const GeolocationComponent = ({ userId, roomId }) => {
         const mapContainer = mapRef.current;
         const options = {
           center: new window.kakao.maps.LatLng(latitude, longitude),
-          level: 3,
+          level: 5,
         };
         const map = new window.kakao.maps.Map(mapContainer, options);
 
@@ -77,15 +79,27 @@ const GeolocationComponent = ({ userId, roomId }) => {
         });
         marker.setMap(map);
         markerRef.current = marker;
+
+        // 경로 표시
+        const pathLine = path.map(pos => new window.kakao.maps.LatLng(pos.latitude, pos.longitude))
+        const polyline = new window.kakao.maps.Polyline({
+          path: pathLine,
+          strokeWeight: 5,
+          strokeColor: 'red',
+          strokeOpacity: 0.7,
+          strokeStyle: 'solid' 
+        })
+        polyline.setMap(map)
       }
     } else {
       console.error('Kakao Maps API is not loaded.');
     }
-  }, [position]);
+  }, [position, path]);
 
   return (
     <div>
       <h1>Geolocation Component</h1>
+      <p>위도 : {position.latitude}, 경도 : {position.longitude}</p>
       <div
         id="map"
         ref={mapRef}

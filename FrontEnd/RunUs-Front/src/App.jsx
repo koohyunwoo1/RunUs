@@ -18,16 +18,16 @@ import CountDown from "./pages/Running/Team/CountDown";
 import TeamCheck from "./pages/Running/Team/TeamCheck";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import { UserProvider } from "./hooks/UserContext";
+import GeolocationComponent from "./components/Running/Team/GeolocationComponent";
+
 const App = () => {
   return (
     <UserProvider>
-      {/* UserProvider로 App을 감싸서 UserContext를 앱 전역에서 사용 */}
       <div>
         <Routes>
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/" element={<LogOutHome />} />
-          {/* 인증이 필요한 경로 */}
           <Route
             path="/home"
             element={
@@ -132,6 +132,18 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+          {/* Add a route for the Geolocation page */}
+          <Route
+            path="/geolocation"
+            element={
+              <ProtectedRoute>
+                <GeolocationComponent />
+              </ProtectedRoute>
+            }
+          />
+
+<Route path="/geolocations" element={<GeolocationComponent userId="user1" roomId="room1" />} />
+
         </Routes>
       </div>
     </UserProvider>

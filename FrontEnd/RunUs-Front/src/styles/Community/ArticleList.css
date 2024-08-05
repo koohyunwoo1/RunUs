@@ -7,6 +7,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
   max-width: 1200px; /* 최대 넓이 설정 */
   margin: auto; /* 가운데 정렬 */
+  
 }
 
 /* 필터 및 버튼 스타일 */
@@ -17,7 +18,13 @@
   margin-bottom: 20px; /* 필터와 리스트 간의 여백 */
 }
 
+.article-create-button{
+  display: flex;
+  justify-content: right;
+}
+
 .article-filters .article-create-button {
+  display: flex;
   padding: 12px 24px; /* 버튼 여백 */
   border: none;
   background-color: #007bff; /* 파란색 배경 */

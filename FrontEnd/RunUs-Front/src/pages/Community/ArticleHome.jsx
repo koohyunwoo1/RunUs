@@ -5,6 +5,8 @@ import ArticleList from "../../components/Community/ArticleList";
 import axios from "axios";
 import Button from "../../components/common/Button";
 import { UserContext } from "../../hooks/UserContext";
+import { useNavigate } from "react-router-dom";
+
 
 const ArticleHome = () => {
   const [articles, setArticles] = useState([]);
@@ -19,7 +21,7 @@ const ArticleHome = () => {
   const { userData } = useContext(UserContext); // UserContext에서 사용자 정보 가져오기
 
   const size = 10; // 페이지당 게시글 수
-
+  const nav = useNavigate();
   // console.log('UserData:', userData); // 사용자 데이터 로그 확인
 
   // 게시글을 가져오는 함수
@@ -111,6 +113,10 @@ const ArticleHome = () => {
           />
           <button type="submit">검색</button>
         </form>
+        <Button
+        className="article-create-button"
+        text={"글 쓰기"} 
+        onClick={() => nav('/article-create')}/>
         <ArticleList articles={articles} />
         <div className="pagination">
           <Button 
