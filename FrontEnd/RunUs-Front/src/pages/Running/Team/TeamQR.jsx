@@ -6,7 +6,7 @@ import { UserContext } from "../../../hooks/UserContext";
 
 const TeamQR = () => {
   const [data, setData] = useState("No result");
-  const { addUserToRoom, userData, roomUsers } = useContext(UserContext);
+  const { addUserToRoom, userData } = useContext(UserContext);
 
   const handleScan = (result) => {
     if (result && result.text) {
@@ -32,17 +32,19 @@ const TeamQR = () => {
   };
 
   const joinRoom = (roomId) => {
-    const ws = new WebSocket(`wss://i11e103.p.ssafy.io:8001/ws/chat?roomId=${roomId}`);
+    const ws = new WebSocket(
+      `wss://i11e103.p.ssafy.io:8001/ws/chat?roomId=${roomId}`
+    );
 
     ws.onopen = () => {
       console.log("WebSocket connection opened");
 
       const message = {
-        type: 'ENTER',
+        type: "ENTER",
         roomId: roomId,
         sender: userData.nickname,
-        message: '',
-        userId: userData.userId
+        message: "",
+        userId: userData.userId,
       };
       ws.send(JSON.stringify(message));
     };
@@ -91,10 +93,11 @@ const TeamQR = () => {
       <h1 className="TeamQR">QR 코드를 찍어주세요!</h1>
       <div className="qr-reader-container">
         <QrScanner
-          delay={100}
+          delay={300}
+          style={{ width: "100%" }}
           onError={handleError}
-          onScan={handleScan}
-          style={{ width: "100%", height: "100%" }} // 부모 컨테이너에서 높이를 조절
+          onResult={handleScan}
+          constraints={{ facingMode: "environment" }}
         />
       </div>
     </div>
