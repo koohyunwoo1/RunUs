@@ -1,5 +1,8 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { BrowserMultiFormatReader } from "@zxing/library";
+import "../../../styles/Running/Team/TeamQR.css";
+import Header from "../../../components/common/Header";
+import { UserContext } from "../../../hooks/UserContext";
 
 // 사용자 정의 훅: QR 코드 스캐닝
 export const useCustomZxing = (onDecodeResult) => {
@@ -59,18 +62,99 @@ export const useCustomZxing = (onDecodeResult) => {
 
 // 팀 QR 컴포넌트
 export const TeamQR = () => {
-  const [result, setResult] = useState("");
+  const [data, setData] = useState("No result");
+  const { addUserToRoom, userData } = useContext(UserContext);
   const { ref } = useCustomZxing((result) => {
-    if (result) {
-      setResult(result.getText());
-    }
+    handleScan(result);
   });
 
+  const handleScan = (result) => {
+    if (result && result.text) {
+      const resultData = result.text;
+      setData(resultData);
+
+      if (isValidURL(resultData)) {
+        const roomId = extractRoomIdFromUrl(resultData);
+        if (roomId) {
+          addUserToRoom({
+            userId: userData.userId,
+            nickname: userData.nickname,
+          });
+          joinRoom(roomId);
+          window.location.href = resultData; // URL로 이동
+        } else {
+          console.log(resultData);
+        }
+      } else {
+        console.log(resultData);
+      }
+    }
+  };
+
+  const joinRoom = (roomId) => {
+    const ws = new WebSocket(
+      `wss://i11e103.p.ssafy.io:8001/ws/chat?roomId=${roomId}`
+    );
+
+    ws.onopen = () => {
+      console.log("WebSocket connection opened");
+
+      const message = {
+        type: "ENTER",
+        roomId: roomId,
+        sender: userData.nickname,
+        message: "",
+        userId: userData.userId,
+      };
+      ws.send(JSON.stringify(message));
+    };
+
+    ws.onmessage = (event) => {
+      const receivedData = event.data;
+      console.log(receivedData);
+    };
+
+    ws.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+
+    ws.onerror = (error) => {
+      console.error(error);
+    };
+  };
+
+  const handleError = (err) => {
+    console.error(err);
+  };
+
+  const isValidURL = (url) => {
+    try {
+      new URL(url);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  const extractRoomIdFromUrl = (url) => {
+    try {
+      const urlObj = new URL(url);
+      const pathSegments = urlObj.pathname.split("/");
+      return pathSegments[pathSegments.length - 1]; // 마지막 segment가 roomId라고 가정
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  };
+
   return (
-    <>
-      <video ref={ref} autoPlay />
-      <p></p>
-    </>
+    <div>
+      <Header />
+      <h1 className="TeamQR">QR 코드를 찍어주세요!</h1>
+      <div className="qr-reader-container">
+        <video ref={ref} autoPlay style={{ height: "400px", width: "300px" }} />
+      </div>
+    </div>
   );
 };
 
