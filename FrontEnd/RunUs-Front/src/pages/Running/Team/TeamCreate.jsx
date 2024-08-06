@@ -94,11 +94,14 @@ const TeamCreate = () => {
         message: "",
         userId: userData.userId,
       };
-
+  
       if (webSocket.readyState === WebSocket.OPEN) {
-        webSocket.send(JSON.stringify(startMessage));
-        console.log("START 메시지 전송");
-
+        // 3초 지연 후에 메시지 전송 및 페이지 리디렉션
+        setTimeout(() => {
+          webSocket.send(JSON.stringify(startMessage));
+          console.log("START 메시지 전송");
+          console.log(startMessage)
+        }, 3000); 
         window.location.href = `/countdown/${waitingRoomId}`;
       } else {
         console.warn("WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.");
@@ -107,7 +110,7 @@ const TeamCreate = () => {
       console.warn("WebSocket 객체가 초기화되지 않았습니다.");
     }
   };
-
+  
   const handleModalToggle = () => {
     setModalIsOpen((prevState) => !prevState);
   };

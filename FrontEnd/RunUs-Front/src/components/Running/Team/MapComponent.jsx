@@ -2,21 +2,51 @@ import React, { useState, useEffect, useRef } from 'react';
 import GeolocationComponent from './GeolocationComponent';
 
 const MapComponent = () => {
-  const [location, setLocation] = useState({ latitude: 37.5665, longitude: 126.978 }); // 기본 좌표 (서울)
+  const [location, setLocation] = useState({ latitude: null, longitude: null });
   const mapContainer = useRef(null);
   const map = useRef(null);
   const marker = useRef(null);
 
   useEffect(() => {
-    if (window.kakao && !map.current) {
-      // 지도를 생성합니다.
-      map.current = new window.kakao.maps.Map(mapContainer.current, {
-        center: new window.kakao.maps.LatLng(location.latitude, location.longitude),
-        level: 5, // 줌 레벨
-      });
-    }
+    // 현재 위치를 가져오는 함수
+    const getCurrentLocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setLocation({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            });
+          },
+          (error) => {
+            console.error(error);
+            // 오류 발생 시 기본 좌표 설정 (서울)
+            setLocation({ latitude: 37.5665, longitude: 126.978 });
+          }
+        );
+      } else {
+        console.error("Geolocation is not supported by this browser.");
+        // Geolocation을 지원하지 않는 경우 기본 좌표 설정 (서울)
+        setLocation({ latitude: 37.5665, longitude: 126.978 });
+      }
+    };
 
-    if (location && map.current) {
+    getCurrentLocation();
+  }, []);
+
+  useEffect(() => {
+    if (window.kakao && location.latitude && location.longitude) {
+      if (!map.current) {
+        // 지도를 생성합니다.
+        map.current = new window.kakao.maps.Map(mapContainer.current, {
+          center: new window.kakao.maps.LatLng(location.latitude, location.longitude),
+          level: 5, // 줌 레벨
+        });
+      } else {
+        // 지도를 새 위치로 이동
+        map.current.setCenter(new window.kakao.maps.LatLng(location.latitude, location.longitude));
+      }
+
       // 마커를 생성합니다.
       if (!marker.current) {
         marker.current = new window.kakao.maps.Marker({
@@ -26,9 +56,6 @@ const MapComponent = () => {
       } else {
         marker.current.setPosition(new window.kakao.maps.LatLng(location.latitude, location.longitude));
       }
-
-      // 지도를 새 위치로 이동
-      map.current.setCenter(new window.kakao.maps.LatLng(location.latitude, location.longitude));
     }
   }, [location]);
 
