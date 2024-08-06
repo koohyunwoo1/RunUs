@@ -38,7 +38,7 @@ public class BoardEntity {
     @Column(name = "meeting_day")
     private String meetingDay;
 
-    @Column(name = "nickname")
+    @Transient
     private String nickname;
 
     // Lombok이 자동으로 세터와 게터를 생성합니다.

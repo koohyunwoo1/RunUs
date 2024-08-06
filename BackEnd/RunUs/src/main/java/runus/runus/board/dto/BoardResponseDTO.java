@@ -13,12 +13,12 @@ public class BoardResponseDTO {
     private int boardId;
     private String title;
     private String content;
-    private String nickname;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private int regionId;
     private LocalDateTime meetingTime;
     private String meetingDay;
+    private String nickname;
 
 
 

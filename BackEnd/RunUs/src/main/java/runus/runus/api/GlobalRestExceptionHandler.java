@@ -35,7 +35,7 @@ public class GlobalRestExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         ApiResponse<Void> response = new ApiResponse<>();
-        response.setFail(null, "Invalid input data");
+        response.setFail(null, "Invalid input data: " + e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
@@ -49,14 +49,14 @@ public class GlobalRestExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         ApiResponse<Void> response = new ApiResponse<>();
-        response.setFail(null, "Malformed JSON request");
+        response.setFail(null, "Malformed JSON request: " + e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGeneralException(Exception e) {
         ApiResponse<Void> response = new ApiResponse<>();
-        response.setFail(null, "An unexpected error occurred");
+        response.setFail(null, "An unexpected error occurred : " + e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

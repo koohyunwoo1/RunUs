@@ -1,10 +1,13 @@
 package runus.runus.board.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import runus.runus.board.common.ApiBoardResponse;
 import runus.runus.board.dto.BoardRequestDTO;
 import runus.runus.board.dto.BoardResponseDTO;
+import runus.runus.board.entity.BoardEntity;
 import runus.runus.board.service.BoardService;
 import runus.runus.api.ApiResponse;
 
@@ -20,96 +23,71 @@ public class BoardController {
     @PostMapping
     public ResponseEntity<ApiResponse<Integer>> createBoard(@RequestBody BoardRequestDTO boardRequest) {
         System.out.println(boardRequest);
-        try {
-            int boardId = boardService.createBoard(boardRequest);
-            return ResponseEntity.ok(new ApiResponse<>(true, boardId, "글 작성 성공"));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ApiResponse<>(false, null, "글 작성 실패: " + e.getMessage()));
-        }
+        int boardId = boardService.createBoard(boardRequest);
+        return ResponseEntity.ok(new ApiResponse<>(true, boardId, "글 작성 성공"));
     }
 
-    @GetMapping("/region/{regionId}")
-    public ResponseEntity<ApiResponse<List<BoardResponseDTO>>> getBoardsByRegion(
-            @PathVariable("regionId") int regionId,
+    // 게시글 목록, 키워드 검색 통합
+    @GetMapping("/region")
+    public ResponseEntity<ApiBoardResponse<List<BoardResponseDTO>>> getBoardsByRegion(
+            @RequestParam int regionId,
             @RequestParam int size,
-            @RequestParam int page) {
-        try {
-            List<BoardResponseDTO> boards = boardService.getBoardsByRegion(regionId, size, page);
-            return ResponseEntity.ok(new ApiResponse<>(true, boards, "성공"));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ApiResponse<>(false, null, "조회 실패: " + e.getMessage()));
-        }
-    }
+            @RequestParam int page,
+            @RequestParam(required = false) String word,
+            @RequestParam(required = false) String order) {
+        Page<BoardEntity> boards = null;
 
-    @GetMapping("/region/{regionId}/time")
-    public ResponseEntity<ApiResponse<List<BoardResponseDTO>>> getBoardsByTime(
-            @PathVariable("regionId") int regionId,
-            @RequestParam int size,
-            @RequestParam int page) {
-        try {
-            List<BoardResponseDTO> boards = boardService.getBoardsByTime(regionId, size, page);
-            return ResponseEntity.ok(new ApiResponse<>(true, boards, "성공"));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ApiResponse<>(false, null, "조회 실패: " + e.getMessage()));
+        // 검색 키워드 없는 경우
+        if (word == null || word.isEmpty()) {
+            if (order == null || order.isEmpty()) {  // 정렬 없음
+                boards = boardService.getBoardsByRegion(regionId, size, page);
+            } else if (order.equals("time")) {
+                boards = boardService.getBoardsByTime(regionId, size, page);
+            } else if (order.equals("incomplete")) {
+                boards = boardService.getIncompleteBoards(regionId, size, page);
+            }
+        } else {  // 검색 키워드가 있는 경우
+//            if(order == null || order.isEmpty()) {  // 정렬 없음
+//                boards = boardService.searchBoards(regionId, word, size, page);
+//            } else if (order.equals("time")) {
+//                boards = boardService.searchBoards(regionId, word, size, page);
+//            } else if (order.equals("incomplete")) {
+//                boards = boardService.getIncompleteBoardsKeyword(regionId, word, size, page);
+//            }
         }
-    }
 
-    @GetMapping("/region/{regionId}/incomplete")
-    public ResponseEntity<ApiResponse<List<BoardResponseDTO>>> getIncompleteBoards(
-            @PathVariable("regionId") int regionId,
-            @RequestParam int size,
-            @RequestParam int page) {
-        try {
-            List<BoardResponseDTO> boards = boardService.getIncompleteBoards(regionId, size, page);
-            return ResponseEntity.ok(new ApiResponse<>(true, boards, "성공"));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ApiResponse<>(false, null, "조회 실패: " + e.getMessage()));
-        }
-    }
+        List<BoardResponseDTO> boardDTOs = boards.stream()
+                .map(boardService::convertToDTO)
+                .toList();
 
-    @GetMapping("/region/{regionId}/{word}")
-    public ResponseEntity<ApiResponse<List<BoardResponseDTO>>> searchBoards(
-            @PathVariable("regionId") int regionId,
-            @PathVariable("word") String word,
-            @RequestParam int size,
-            @RequestParam int page) {
-        try {
-            List<BoardResponseDTO> boards = boardService.searchBoards(regionId, word, size, page);
-            return ResponseEntity.ok(new ApiResponse<>(true, boards, "성공"));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ApiResponse<>(false, null, "조회 실패: " + e.getMessage()));
-        }
+        return ResponseEntity.ok(
+                new ApiBoardResponse<>(
+                        true,
+                        boardDTOs,
+                        "게시글 정보 조회",
+                        boards.getTotalPages(),
+                        boards.getTotalElements(),
+                        boards.getNumber(),
+                        boards.getSize()));
     }
 
     @PutMapping("/{boardId}")
     public ResponseEntity<ApiResponse<Void>> updateBoard(
             @PathVariable("boardId") int boardId,
             @RequestBody BoardRequestDTO boardRequest) {
-        try {
-            boardService.updateBoard(boardId, boardRequest);
-            return ResponseEntity.ok(new ApiResponse<>(true, null, "글 수정 성공"));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ApiResponse<>(false, null, "글 수정 실패: " + e.getMessage()));
-        }
+        boardService.updateBoard(boardId, boardRequest);
+        return ResponseEntity.ok(new ApiResponse<>(true, null, "게시글 수정 성공"));
     }
 
     @GetMapping("/{boardId}")
     public ResponseEntity<ApiResponse<BoardResponseDTO>> getBoardDetails(@PathVariable("boardId") int boardId) {
-        try {
-            BoardResponseDTO board = boardService.getBoardDetails(boardId);
-            return ResponseEntity.ok(new ApiResponse<>(true, board, "성공"));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ApiResponse<>(false, null, "조회 실패: " + e.getMessage()));
-        }
+        BoardResponseDTO board = boardService.getBoardDetails(boardId);
+        return ResponseEntity.ok(new ApiResponse<>(true, board, "게시글 상세 내용 조회"));
     }
 
     @DeleteMapping("/{boardId}")
     public ResponseEntity<ApiResponse<Void>> deleteBoard(@PathVariable("boardId") int boardId) {
-        try {
-            boardService.deleteBoard(boardId);
-            return ResponseEntity.ok(new ApiResponse<>(true, null, "글 삭제 성공"));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new ApiResponse<>(false, null, "글 삭제 실패: " + e.getMessage()));
-        }
+        boardService.deleteBoard(boardId);
+        return ResponseEntity.ok(new ApiResponse<>(true, null, "게시글 삭제 성공"));
     }
 }
