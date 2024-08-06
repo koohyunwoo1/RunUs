@@ -1,19 +1,13 @@
-
 import React, { useState, useEffect, useContext } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 import GeolocationComponent from '../../../components/Running/Team/GeolocationComponent'; // 위치 업데이트 컴포넌트
 import MapComponent from '../../../components/Running/Team/MapComponent'; // 카카오맵 컴포넌트
 import { UserContext } from '../../../hooks/UserContext'; // 사용자 정보 가져오기
-import { useLocation } from "react-router-dom";
-// import "../../../styles/Running/Team/TeanCheck.css";
+import { useLocation } from 'react-router-dom';
 
 const TeamCheck = () => {
-  const loc = useLocation()
-  const roomId  = loc.pathname.slice(12); // URL 매개변수에서 roomId 추출
-  console.log(roomId); // roomId가 올바르게 추출되는지 확인
-  const navigate = useNavigate();
+  const loc = useLocation();
+  const roomId = loc.pathname.slice(12); // URL 매개변수에서 roomId 추출
   const { userData } = useContext(UserContext);
-  console.log(userData)
   const [webSocket, setWebSocket] = useState(null);
   const [userPositions, setUserPositions] = useState({});
   const [totalDistance, setTotalDistance] = useState(0);
@@ -27,11 +21,6 @@ const TeamCheck = () => {
       return;
     }
 
-    // Only create a new WebSocket connection if one doesn't already exist
-    if (webSocket) {
-      return; // Skip creating a new connection if one is already established
-    }
-
     const ws = new WebSocket(`wss://i11e103.p.ssafy.io:8001/ws/chat?roomId=${roomId}`);
     setWebSocket(ws);
 
@@ -41,7 +30,7 @@ const TeamCheck = () => {
 
     ws.onclose = () => {
       console.log('WebSocket connection closed');
-      setWebSocket(null); // Clear the WebSocket state when the connection closes
+      setWebSocket(null);
     };
 
     ws.onerror = (error) => {
@@ -76,9 +65,9 @@ const TeamCheck = () => {
     };
 
     return () => {
-      ws.close(); // Close the WebSocket connection when the component unmounts
+      ws.close();
     };
-  }, [roomId, webSocket]);
+  }, [roomId]);
 
   const handleStart = () => {
     if (webSocket && webSocket.readyState === WebSocket.OPEN) {
@@ -132,7 +121,6 @@ const TeamCheck = () => {
         }}
       />
       <MapComponent positions={userPositions} />
-      {/* Distance, calories, and time display */}
       <div>Total Distance: {totalDistance} km</div>
       <div>Total Calories: {totalCalories} kcal</div>
       <div>Elapsed Time: {elapsedTime} seconds</div>
