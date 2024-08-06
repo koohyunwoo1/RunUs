@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import GeolocationComponent from '../../../components/Running/Team/GeolocationComponent'; // 위치 업데이트 컴포넌트
-import MapComponent from '../../../components/Running/Team/MapComponent'; // 카카오맵 컴포넌트
-import { UserContext } from '../../../hooks/UserContext'; // 사용자 정보 가져오기
+import GeolocationComponent from '../../../components/Running/Team/GeolocationComponent';
+import MapComponent from '../../../components/Running/Team/MapComponent';
+import { UserContext } from '../../../hooks/UserContext';
 
 const TeamCheck = () => {
-  const { roomId } = useParams(); // URL 매개변수에서 roomId 추출
-  console.log('Room ID:', roomId); // roomId가 올바르게 추출되는지 확인
+  const { roomId } = useParams(); // Get room ID from URL parameters
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
   const [webSocket, setWebSocket] = useState(null);
@@ -22,7 +21,12 @@ const TeamCheck = () => {
       return;
     }
 
-    const ws = new WebSocket(`https://i11e103.p.ssafy.io:8001/ws/chat?roomId=${roomId}`);
+    // Only create a new WebSocket connection if one doesn't already exist
+    if (webSocket) {
+      return; // Skip creating a new connection if one is already established
+    }
+
+    const ws = new WebSocket(`wss://i11e103.p.ssafy.io:8001/ws/chat?roomId=${roomId}`);
     setWebSocket(ws);
 
     ws.onopen = () => {
@@ -31,6 +35,7 @@ const TeamCheck = () => {
 
     ws.onclose = () => {
       console.log('WebSocket connection closed');
+      setWebSocket(null); // Clear the WebSocket state when the connection closes
     };
 
     ws.onerror = (error) => {
@@ -65,9 +70,9 @@ const TeamCheck = () => {
     };
 
     return () => {
-      ws.close();
+      ws.close(); // Close the WebSocket connection when the component unmounts
     };
-  }, [roomId]);
+  }, [roomId, webSocket]);
 
   const handleStart = () => {
     if (webSocket && webSocket.readyState === WebSocket.OPEN) {

@@ -11,7 +11,7 @@ const GeolocationComponent = ({ onLocationUpdate }) => {
       console.error('Error getting location:', error);
     };
 
-    // 20초마다 위치 업데이트
+    // 15초마다 위치 업데이트
     const intervalId = setInterval(() => {
       navigator.geolocation.getCurrentPosition(handleSuccess, handleError);
     }, 15000);
