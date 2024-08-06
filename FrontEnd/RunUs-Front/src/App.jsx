@@ -18,6 +18,9 @@ import CountDown from "./pages/Running/Team/CountDown";
 import TeamCheck from "./pages/Running/Team/TeamCheck";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import { UserProvider } from "./hooks/UserContext";
+import axios from 'axios';
+
+axios.defaults.baseURL = process.env.VITE_API_URL;
 
 const App = () => {
   return (
