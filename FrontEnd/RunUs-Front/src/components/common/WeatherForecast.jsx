@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/Common/Weather.css";
-
+import 곤지암움짤 from "../../assets/곤지암움짤.mp4"
 const WeatherForecast = () => {
-  const [forecastData, setForecastData] = useState(null);
+  const [forecastData, setForecastData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -40,7 +40,7 @@ const WeatherForecast = () => {
       })
       .then((data) => {
         const dailyForecasts = processDailyForecasts(data.list);
-        setForecastData(dailyForecasts);
+        setForecastData(dailyForecasts.slice(0, 3)); // 3일치 데이터만 추출
         setLoading(false);
       })
       .catch((error) => {
@@ -52,12 +52,17 @@ const WeatherForecast = () => {
   const processDailyForecasts = (forecastList) => {
     const dailyForecasts = [];
     const dayMap = {};
+    const seenDays = new Set();
 
     forecastList.forEach((forecast) => {
       const date = new Date(forecast.dt * 1000);
-      const dayKey = `${date.getMonth() + 1}/${date.getDate()}`;
+      const dayKey = `${date.getFullYear()}-${
+        date.getMonth() + 1
+      }-${date.getDate()}`;
 
-      if (!dayMap[dayKey]) {
+      // 3일치 데이터만 추출
+      if (dailyForecasts.length < 3 && !seenDays.has(dayKey)) {
+        seenDays.add(dayKey);
         dayMap[dayKey] = {
           date: `${date.getMonth() + 1}월 ${date.getDate()}일`,
           tempMin: forecast.main.temp_min,
@@ -67,7 +72,8 @@ const WeatherForecast = () => {
             forecast.weather[0].description,
           icon: forecast.weather[0].icon,
         };
-      } else {
+        dailyForecasts.push(dayMap[dayKey]);
+      } else if (dayMap[dayKey]) {
         dayMap[dayKey].tempMin = Math.min(
           dayMap[dayKey].tempMin,
           forecast.main.temp_min
@@ -79,15 +85,11 @@ const WeatherForecast = () => {
       }
     });
 
-    for (const key in dayMap) {
-      dailyForecasts.push(dayMap[key]);
-    }
-
     return dailyForecasts;
   };
 
   const handleClick = () => {
-    window.location.href = `/src/assets/곤지암움짤.mp4`;
+    window.location.href = {곤지암움짤};
   };
 
   if (loading) {

@@ -8,6 +8,7 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
+  CartesianGrid,
 } from "recharts";
 
 const ReportGraph = () => {
@@ -22,6 +23,7 @@ const ReportGraph = () => {
     "2024",
     "2025",
   ]);
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,12 +32,27 @@ const ReportGraph = () => {
           `api/v1/record/graph/${selectedYear}`,
           {
             params: {
-              user_id: 1,
+              user_id: userId,
             },
           }
         );
         console.log(response.data.data);
-        setGraphData(response.data.data);
+
+        // Initialize data for January to December
+        const filledData = Array.from({ length: 12 }, (_, i) => {
+          const monthData = response.data.data.find(
+            (entry) => entry.month === i + 1
+          );
+          return {
+            month: i + 1,
+            recordCount: monthData ? monthData.recordCount : 0,
+            totalTime: monthData ? monthData.totalTime : 0,
+            totalDistance: monthData ? monthData.totalDistance : 0,
+          };
+        });
+
+        // Update state
+        setGraphData(filledData);
       } catch (err) {
         console.log(err);
       }
@@ -45,7 +62,7 @@ const ReportGraph = () => {
       try {
         const response = await axios.get("api/v1/record/total_distance", {
           params: {
-            user_id: 1,
+            user_id: userId,
             year: selectedYear,
           },
         });
@@ -108,9 +125,10 @@ const ReportGraph = () => {
 
   return (
     <div>
-      <h1 style={{ marginLeft: "15px" }}>
+      <h1 className="head">
         {graphTotalData ? convertDistance(graphTotalData) : "0"} km
       </h1>
+      <h5 className="subhead">총누적거리</h5>
       <select
         onChange={handleYearChange}
         className="Report-Graph-Option"
@@ -125,18 +143,19 @@ const ReportGraph = () => {
 
       <div className="Report-Graph">
         {graphData && Array.isArray(graphData) && graphData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={400}>
+          <ResponsiveContainer width="100%" height={300}>
             <BarChart
               data={graphData}
               margin={{ top: 15, right: 30, left: 40, bottom: 5 }}
             >
               <XAxis dataKey="month" tickFormatter={formatXAxisMonth} />
               <YAxis
-                width={70}
+                width={10}
                 tickFormatter={(value) => convertDistance(value) + " km"}
               />
               <Tooltip content={renderTooltipContent} />
-              <Bar dataKey="totalDistance" fill="#d3d3d3" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+              <Bar dataKey="totalDistance" fill="#A1CAF1" />
             </BarChart>
           </ResponsiveContainer>
         ) : (

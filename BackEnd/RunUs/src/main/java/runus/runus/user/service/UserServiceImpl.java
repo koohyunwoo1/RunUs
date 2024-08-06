@@ -1,12 +1,19 @@
 package runus.runus.user.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import runus.runus.user.dto.UserDto;
 import runus.runus.user.entity.User;
 import runus.runus.user.repository.UserRepository;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -61,6 +68,39 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return convertToDto(user);
+    }
+
+    @Value("${file.upload-dir}")
+    private String uploadDir;
+
+    @Override
+    public String storeProfilePicture(Integer userId, MultipartFile file) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 파일 저장 경로 및 이름 생성
+        String filename = UUID.randomUUID().toString() + "-" + file.getOriginalFilename();
+        Path path = Paths.get(uploadDir + "/profile-pictures/" + filename);
+
+        try {
+            // 디렉토리 생성
+            Files.createDirectories(path.getParent());
+            // 파일 저장
+            Files.write(path, file.getBytes());
+
+            // 프로필 URL 업데이트
+            String fileUrl = "/uploads/profile-pictures/" + filename;
+            user.setProfileUrl(fileUrl);
+            // 데이터베이스 업데이트
+            User updatedUser = userRepository.save(user);
+
+            // 로그로 업데이트된 사용자 정보 확인
+            System.out.println("Updated user: " + updatedUser);
+
+            return fileUrl;
+        } catch (IOException e) {
+            throw new RuntimeException("Could not store file. Error: " + e.getMessage());
+        }
     }
 
     private UserDto convertToDto(User user) {

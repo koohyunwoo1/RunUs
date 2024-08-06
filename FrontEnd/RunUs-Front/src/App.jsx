@@ -19,15 +19,17 @@
     // import ProtectedRoute from "./components/common/ProtectedRoute";
     // import { UserProvider } from "./hooks/UserContext";
 
+// firebase setting 
+import { useEffect, useState } from "react";
+import { getToken } from 'firebase/messaging';
+import { messaging } from './firebase';
+// firebase setting end
 
-    // // firebase setting 
-    // import { useContext, useEffect } from "react";
-    // import { UserContext } from "./hooks/UserContext";
-    // import { requestPermissionAndGetToken, sendTokenToServer, deleteTokenFromServer, setupMessageListener } from './hooks/fcm';
-    // // firebase setting end
+import axios from 'axios';
 
-    
-    // const App = () => {
+axios.defaults.baseURL = process.env.VITE_API_URL;
+
+const App = () => {
 
     //   // firebase code
     //   const { userData, userId } = useContext(UserContext);

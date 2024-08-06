@@ -18,7 +18,7 @@
   position: relative;
   max-width: 300px;
   width: 100%;
-  height: 300px;
+  height: 380px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 1);
 }
 
@@ -34,6 +34,7 @@
   z-index: 1100;
 }
 
+
 .modal-close:hover {
   color: red;
 }
@@ -41,7 +42,9 @@
 .modal-label {
   display: block;
   text-align: left;
-  margin-bottom: 5px;
+  margin-left: 10px;
+  margin-bottom: 15px;
+  font-size: 18px;
 }
 
 .modal-button {
@@ -56,16 +59,22 @@
 }
 
 .modal-input {
-  margin-top: 10px;
-  width: 100%;
+  /* margin-top: 10px; */
+  width: 97%;
   border-radius: 10px;
   font-size: 30px;
 }
 
-.modal-buttons {
+.modal-find-mail {
   display: flex;
   justify-content: space-between;
   margin-top: 80px;
+}
+
+.modal-find-pw {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
 }
 
 .submit-button {
@@ -79,4 +88,26 @@
   color: black;
   border: 1px solid #98bae3;
   width: 140px;
+}
+
+.writingplace {
+  margin-top: 50px; /* 상단 여백 조정 */
+  position: relative;
+  height: 100%;
+}
+
+.writing_email {
+  margin-bottom: 20px;
+}
+
+.foundmail {
+  font-size: 17px;
+}
+
+.error-message {
+  font-size: 17px;
+}
+
+.foundpw {
+  font-size: 18px;
 }

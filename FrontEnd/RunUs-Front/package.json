@@ -7,10 +7,13 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "vite --host --mode production"
   },
   "dependencies": {
     "@babel/runtime": "^7.24.8",
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "axios": "^1.7.2",
     "chart.js": "^4.4.3",
     "cors": "^2.8.5",
@@ -28,6 +31,7 @@
     "react-router-dom": "^6.25.1",
     "recharts": "^2.12.7",
     "styled-components": "^6.1.12",
+    "vite": "^4.0.0",
     "ws": "^8.18.0"
   },
   "devDependencies": {
