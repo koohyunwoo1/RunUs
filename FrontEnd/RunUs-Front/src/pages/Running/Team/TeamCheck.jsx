@@ -27,7 +27,12 @@ const TeamCheck = () => {
       return;
     }
 
-    const ws = new WebSocket(`https://i11e103.p.ssafy.io:8001/ws/chat?roomId=${roomId}`);
+    // Only create a new WebSocket connection if one doesn't already exist
+    if (webSocket) {
+      return; // Skip creating a new connection if one is already established
+    }
+
+    const ws = new WebSocket(`wss://i11e103.p.ssafy.io:8001/ws/chat?roomId=${roomId}`);
     setWebSocket(ws);
 
     ws.onopen = () => {
@@ -36,6 +41,7 @@ const TeamCheck = () => {
 
     ws.onclose = () => {
       console.log('WebSocket connection closed');
+      setWebSocket(null); // Clear the WebSocket state when the connection closes
     };
 
     ws.onerror = (error) => {
@@ -70,9 +76,9 @@ const TeamCheck = () => {
     };
 
     return () => {
-      ws.close();
+      ws.close(); // Close the WebSocket connection when the component unmounts
     };
-  }, [roomId]);
+  }, [roomId, webSocket]);
 
   const handleStart = () => {
     if (webSocket && webSocket.readyState === WebSocket.OPEN) {
