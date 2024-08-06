@@ -3,6 +3,7 @@ import axios from "axios";
 import { UserContext } from "../../hooks/UserContext";
 import "../../styles/Community/NewArticle.css";
 import { useNavigate } from "react-router-dom";
+import Header from "../common/Header";
 
 const NewArticle = () => {
   const [title, setTitle] = useState("");
@@ -102,66 +103,69 @@ const NewArticle = () => {
   
 
   return (
-    <div className="NewArticle">
-      <h2>새 글 작성하기</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="title">제목</label>
-          <input
-            id="title"
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="content">내용</label>
-          <textarea
-            id="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="meetingDay">날짜</label>
-          <input
-            id="meetingDay"
-            type="date"
-            value={meetingDay}
-            onChange={(e) => setMeetingDay(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="meetingTime">출발 시간</label>
-          <input
-            id="meetingTime"
-            type="time"
-            value={meetingTime}
-            onChange={(e) => setMeetingTime(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="regionMinor">시/군/구</label>
-          <select
-            id="regionMinor"
-            value={regionMinor}
-            onChange={(e) => setRegionMinor(e.target.value)}
-            required
-          >
-            <option value="">시/군/구 선택</option>
-            {regionMinorOptions.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <button type="submit">등록</button>
-      </form>
+    <div>
+      <Header/>
+      <div className="NewArticle">
+        <h2>글쓰기</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="title">제목</label>
+            <input
+              id="title"
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="content">내용</label>
+            <textarea
+              id="content"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="meetingDay">날짜</label>
+            <input
+              id="meetingDay"
+              type="date"
+              value={meetingDay}
+              onChange={(e) => setMeetingDay(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="meetingTime">출발 시간</label>
+            <input
+              id="meetingTime"
+              type="time"
+              value={meetingTime}
+              onChange={(e) => setMeetingTime(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="regionMinor">시/군/구</label>
+            <select
+              id="regionMinor"
+              value={regionMinor}
+              onChange={(e) => setRegionMinor(e.target.value)}
+              required
+            >
+              <option value="">시/군/구 선택</option>
+              {regionMinorOptions.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button type="submit">등록</button>
+        </form>
+      </div>
     </div>
   );
 };

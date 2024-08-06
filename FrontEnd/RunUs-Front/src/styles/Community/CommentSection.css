@@ -17,13 +17,15 @@
 .comment-section ul li {
   margin-bottom: 10px;
   padding: 10px;
-  background-color: #f1f1f1;
+  background-color: #f7f7f7;
   border-radius: 5px;
 }
 
 .comment-section ul li div {
   margin-bottom: 5px;
 }
+
+
 
 .comment-section form {
   margin-top: 10px;
@@ -56,4 +58,31 @@
 
 .submit-button:hover {
   color: #ccc; /* 호버 시 색상 변경 */
+}
+
+.comment-container{
+  display: flex; /* Flexbox 레이아웃을 활성화합니다 */
+  justify-content: flex-end; /* 버튼을 오른쪽으로 정렬합니다 */
+  align-items: center; /* 수직 중앙 정렬을 유지합니다 */
+  gap: 10px; /* 버튼 간격을 설정합니다 */
+}
+
+
+.submit-container {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.create-comment {
+  
+  
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.date{
+  font-size: 12px;
 }

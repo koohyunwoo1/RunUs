@@ -123,11 +123,14 @@ const CommentSection = ({ articleId }) => {
               ) : (
                 <div>
                   <p>
-                    <strong>{comment.nickname}</strong> : {comment.content}
+                    {comment.nickname}
                   </p>
-                  <span>{new Date(comment.createdAt).toLocaleString()}</span>
+                  <p>
+                    <strong>{comment.content}</strong>
+                  </p>
+                  <span className="date">{new Date(comment.createdAt).toLocaleString()}</span>
                   {userData.userId === comment.userId && (
-                    <div>
+                    <div className="comment-container">
                       <button onClick={() => handleEditComment(comment.commentId, comment.content)}>수정</button>
                       <button onClick={() => handleDeleteComment(comment.commentId)}>삭제</button>
                     </div>
@@ -144,7 +147,9 @@ const CommentSection = ({ articleId }) => {
           onChange={handleCommentChange}
           placeholder="댓글을 입력하세요..."
         />
-        <button type="submit">댓글 작성</button>
+        <div className="submit-container">
+          <button type="submit" className="create-comment">댓글 작성</button>
+        </div>
       </form>
       {hasMoreComments && (
         <button onClick={loadMoreComments}>더 보기</button>

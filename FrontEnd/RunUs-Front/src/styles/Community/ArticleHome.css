@@ -19,7 +19,7 @@
 
 .search-form input {
   flex: 1;
-  max-width: 400px; /* 최대 넓이 줄이기 */
+  max-width: 275px; /* 최대 넓이 줄이기 */
   padding: 10px 15px; /* 패딩 줄이기 */
   border: 1px solid #ddd; /* 연한 회색 테두리 */
   border-radius: 4px; /* 테두리 둥글게 (더 작게 설정) */

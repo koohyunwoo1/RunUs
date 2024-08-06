@@ -35,13 +35,14 @@
 
 .article-filters .article-create-button {
   display: flex;
-  padding: 12px 24px; /* 버튼 여백 */
+  padding: 10px 16px; /* 버튼 여백 */
   border: none;
   background-color: #98bae3; /* 파란색 배경 */
   color: white; /* 흰색 글자 */
   border-radius: 8px; /* 둥근 테두리 */
   cursor: pointer; /* 커서 모양 변경 */
-  font-size: 16px; /* 텍스트 크기 */
+  font-size: 15px; /* 텍스트 크기 */
+  margin-right: 1px;
   transition: background-color 0.3s ease; /* 배경색 전환 효과 */
 }
 
