@@ -7,6 +7,7 @@
 }
 
 .MyPageTier {
+  margin-top: 40px;
   padding-top: 20px;
 }
 
@@ -15,3 +16,14 @@
   margin-left: auto;
   width: 120px;
 }
+
+.tier-header {
+  display: flex;
+  align-items: center;
+}
+
+.tier-header h2 {
+  margin-right: 8px; /* 적절한 여백 설정 */
+}
+
+

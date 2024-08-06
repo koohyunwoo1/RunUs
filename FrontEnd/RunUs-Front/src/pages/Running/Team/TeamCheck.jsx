@@ -1,8 +1,11 @@
+
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import GeolocationComponent from '../../../components/Running/Team/GeolocationComponent'; // 위치 업데이트 컴포넌트
 import MapComponent from '../../../components/Running/Team/MapComponent'; // 카카오맵 컴포넌트
 import { UserContext } from '../../../hooks/UserContext'; // 사용자 정보 가져오기
+import { useLocation } from "react-router-dom";
+import "../../../styles/Running/Team/TeanCheck.css";
 
 const TeamCheck = () => {
   const { roomId } = useParams(); // URL 매개변수에서 roomId 추출
