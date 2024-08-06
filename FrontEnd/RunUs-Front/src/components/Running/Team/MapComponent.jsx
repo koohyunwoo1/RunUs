@@ -1,6 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import GeolocationComponent from './GeolocationComponent';
 
-const MapComponent = ({ location }) => {
+const MapComponent = () => {
+  const [location, setLocation] = useState({ latitude: 37.5665, longitude: 126.978 }); // 기본 좌표 (서울)
   const mapContainer = useRef(null);
   const map = useRef(null);
   const marker = useRef(null);
@@ -9,7 +11,7 @@ const MapComponent = ({ location }) => {
     if (window.kakao && !map.current) {
       // 지도를 생성합니다.
       map.current = new window.kakao.maps.Map(mapContainer.current, {
-        center: new window.kakao.maps.LatLng(37.5665, 126.978), // 기본 좌표 (서울)
+        center: new window.kakao.maps.LatLng(location.latitude, location.longitude),
         level: 5, // 줌 레벨
       });
     }
@@ -31,10 +33,13 @@ const MapComponent = ({ location }) => {
   }, [location]);
 
   return (
-    <div
-      ref={mapContainer}
-      style={{ width: '100%', height: '400px' }}
-    />
+    <div>
+      <div
+        ref={mapContainer}
+        style={{ width: '100%', height: '400px' }}
+      />
+      <GeolocationComponent onLocationUpdate={(lat, lon) => setLocation({ latitude: lat, longitude: lon })} />
+    </div>
   );
 };
 
