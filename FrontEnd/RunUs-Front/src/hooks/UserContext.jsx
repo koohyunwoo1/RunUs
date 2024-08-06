@@ -48,6 +48,7 @@ const UserProvider = ({ children }) => {
       if (response.data.success) {
         localStorage.removeItem("AuthToken");
         localStorage.removeItem("userId");
+        localStorage.removeItem("userData")
         setUserData(null);
         setUserId(null);
         setRoomUsers([]);
