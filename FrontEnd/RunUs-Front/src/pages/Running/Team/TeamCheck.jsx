@@ -1,13 +1,19 @@
+
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import GeolocationComponent from '../../../components/Running/Team/GeolocationComponent';
-import MapComponent from '../../../components/Running/Team/MapComponent';
-import { UserContext } from '../../../hooks/UserContext';
+import GeolocationComponent from '../../../components/Running/Team/GeolocationComponent'; // 위치 업데이트 컴포넌트
+import MapComponent from '../../../components/Running/Team/MapComponent'; // 카카오맵 컴포넌트
+import { UserContext } from '../../../hooks/UserContext'; // 사용자 정보 가져오기
+import { useLocation } from "react-router-dom";
+// import "../../../styles/Running/Team/TeanCheck.css";
 
 const TeamCheck = () => {
-  const { roomId } = useParams(); // Get room ID from URL parameters
+  const loc = useLocation()
+  const roomId  = loc.pathname.slice(12); // URL 매개변수에서 roomId 추출
+  console.log(roomId); // roomId가 올바르게 추출되는지 확인
   const navigate = useNavigate();
-  const { user } = useContext(UserContext);
+  const { userData } = useContext(UserContext);
+  console.log(userData)
   const [webSocket, setWebSocket] = useState(null);
   const [userPositions, setUserPositions] = useState({});
   const [totalDistance, setTotalDistance] = useState(0);
@@ -79,8 +85,8 @@ const TeamCheck = () => {
       const startMessage = {
         type: 'START',
         roomId,
-        sender: user.nickname,
-        userId: user.userId,
+        sender: userData.nickname,
+        userId: userData.userId,
       };
       webSocket.send(JSON.stringify(startMessage));
       setIsRunning(true);
@@ -95,8 +101,8 @@ const TeamCheck = () => {
       const stopMessage = {
         type: 'STOP',
         roomId,
-        sender: user.nickname,
-        userId: user.userId,
+        sender: userData.nickname,
+        userId: userData.userId,
       };
       webSocket.send(JSON.stringify(stopMessage));
       setIsRunning(false);
@@ -117,7 +123,7 @@ const TeamCheck = () => {
             const locationMessage = {
               type: 'UPDATE_LOCATION',
               roomId,
-              userId: user.userId,
+              userId: userData.userId,
               latitude: lat,
               longitude: lon,
             };

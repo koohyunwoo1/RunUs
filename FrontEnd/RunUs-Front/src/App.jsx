@@ -18,20 +18,15 @@ import CountDown from "./pages/Running/Team/CountDown";
 import TeamCheck from "./pages/Running/Team/TeamCheck";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import { UserProvider } from "./hooks/UserContext";
-import axios from 'axios';
-
-axios.defaults.baseURL = process.env.VITE_API_URL;
 
 const App = () => {
   return (
     <UserProvider>
-      {/* UserProvider로 App을 감싸서 UserContext를 앱 전역에서 사용 */}
       <div>
         <Routes>
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/" element={<LogOutHome />} />
-          {/* 인증이 필요한 경로 */}
           <Route
             path="/home"
             element={
@@ -136,6 +131,7 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+          
         </Routes>
       </div>
     </UserProvider>
