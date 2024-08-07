@@ -1,6 +1,8 @@
 import React, { createContext, useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2"
+import "../styles/Common/CustomSwal.css"
 
 const UserContext = createContext();
 
@@ -36,9 +38,28 @@ const UserProvider = ({ children }) => {
         localStorage.setItem("userData", JSON.stringify(data));
       } else {
         setError(response.data.message || "이메일 또는 비밀번호가 일치하지 않습니다.");
+        Swal.fire({
+          icon: 'error',
+          title: '로그인 실패',
+          text: '이메일 또는 비밀번호가 일치하지 않습니다.',
+          customClass: {
+            popup: 'custom-swal-popup',
+            title: 'custom-swal-title',
+            confirmButton: 'custom-swal-confirm-button',
+          },
+        });
       }
     } catch (error) {
-      console.error(error);
+      Swal.fire({
+        icon: 'error',
+        title: '로그인 실패',
+        text: '이메일 또는 비밀번호가 일치하지 않습니다.',
+        customClass: {
+          popup: 'custom-swal-popup',
+          title: 'custom-swal-title',
+          confirmButton: 'custom-swal-confirm-button',
+        },
+      });
     }
   };
 
