@@ -30,7 +30,7 @@ export const requestPermissionAndGetToken = async (userId) => {
 
 export const sendTokenToServer = async (userId, token) => {
   try {
-    const response = await fetch('https://localhost:8000/api/v1/fcm/user', {
+    const response = await fetch('https://i11e103.p.ssafy.io:8001/api/v1/fcm/user', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -50,7 +50,7 @@ export const sendTokenToServer = async (userId, token) => {
 
 export const deleteTokenFromServer = async (userId) => {
   try {
-    const response = await fetch(`https://localhost:8000/api/v1/fcm/user/${userId}`, {
+    const response = await fetch(`https://i11e103.p.ssafy.io:8001/api/v1/fcm/user/${userId}`, {
       method: 'DELETE',
     });
     if (response.ok) {
