@@ -28,7 +28,7 @@ import { messaging } from './firebase';
 
 import axios from 'axios';
 
-//axios.defaults.baseURL = process.env.VITE_API_URL;
+axios.defaults.baseURL = process.env.VITE_API_URL;
 
 const App = () => {
 
