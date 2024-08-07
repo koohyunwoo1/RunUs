@@ -18,6 +18,7 @@ import CountDown from "./pages/Running/Team/CountDown";
 import TeamCheck from "./pages/Running/Team/TeamCheck";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import { UserProvider } from "./hooks/UserContext";
+import RedirectRoute from "./components/common/RedirectRoute";
 
 // firebase setting 
 import { useEffect, useState } from "react";
@@ -27,7 +28,7 @@ import { messaging } from './firebase';
 
 import axios from 'axios';
 
-axios.defaults.baseURL = process.env.VITE_API_URL;
+//axios.defaults.baseURL = process.env.VITE_API_URL;
 
 const App = () => {
 
@@ -79,9 +80,22 @@ const App = () => {
     <UserProvider>
       <div>
         <Routes>
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/" element={<LogOutHome />} />
+          <Route path="/signin" element={
+            <RedirectRoute>
+              <SignIn />
+            </RedirectRoute>
+              
+            } />
+            <Route path="/signup" element={
+              <RedirectRoute>
+                <SignUp />
+              </RedirectRoute>
+              
+            } />
+          <Route path="/" element={
+            <RedirectRoute>
+              <LogOutHome />
+            </RedirectRoute>} />
           <Route
             path="/home"
             element={
@@ -90,104 +104,108 @@ const App = () => {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/solo"
-            element={
-              <ProtectedRoute>
-                <SoloMode />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/team-create/:id"
-            element={
-              <ProtectedRoute>
-                <TeamCreate />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/countdown/:id"
-            element={
-              <ProtectedRoute>
-                <CountDown />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/team-QR"
-            element={
-              <ProtectedRoute>
-                <TeamQR />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/report-home"
-            element={
-              <ProtectedRoute>
-                <ReportHome />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/article-home"
-            element={
-              <ProtectedRoute>
-                <ArticleHome />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/article-edit/:id"
-            element={
-              <ProtectedRoute>
-                <ArticleEdit />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/my-page-home"
-            element={
-              <ProtectedRoute>
-                <MyPageHome />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/article-create"
-            element={
-              <ProtectedRoute>
-                <ArticleCreate />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/article-detail/:id"
-            element={
-              <ProtectedRoute>
-                <ArticleDetail />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/my-page-edit"
-            element={
-              <ProtectedRoute>
-                <MyPageEdit />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/team-check/:id"
-            element={
-              <ProtectedRoute>
-                <TeamCheck />
-              </ProtectedRoute>
-            }
-          />
           
+          {/* 로그인 해야 접근 가능한 페이지 */}
+         
+            <Route
+              path="/solo"
+              element={
+                <ProtectedRoute>
+                  <SoloMode />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/team-create/:id"
+              element={
+                <ProtectedRoute>
+                  <TeamCreate />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/countdown/:id"
+              element={
+                <ProtectedRoute>
+                  <CountDown />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/team-QR"
+              element={
+                <ProtectedRoute>
+                  <TeamQR />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/report-home"
+              element={
+                <ProtectedRoute>
+                  <ReportHome />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/article-home"
+              element={
+                <ProtectedRoute>
+                  <ArticleHome />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/article-edit/:id"
+              element={
+                <ProtectedRoute>
+                  <ArticleEdit />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-page-home"
+              element={
+                <ProtectedRoute>
+                  <MyPageHome />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/article-create"
+              element={
+                <ProtectedRoute>
+                  <ArticleCreate />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/article-detail/:id"
+              element={
+                <ProtectedRoute>
+                  <ArticleDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-page-edit"
+              element={
+                <ProtectedRoute>
+                  <MyPageEdit />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/team-check/:id"
+              element={
+                <ProtectedRoute>
+                  <TeamCheck />
+                </ProtectedRoute>
+              }
+            />
+       
         </Routes>
+        
       </div>
     </UserProvider>
   );
