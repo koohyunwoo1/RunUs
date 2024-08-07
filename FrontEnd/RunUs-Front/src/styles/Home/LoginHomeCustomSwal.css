@@ -1,0 +1,38 @@
+.custom-swal-popup2 {
+  text-align: center;
+  width: 500px;
+  max-width: 80%;
+  padding: 20px;
+  height: 250px; 
+  background-color: #98bae3;
+  border-radius: 20px;
+}
+
+.custom-swal-title2 {
+  font-size: 20px;
+  color: white;
+}
+
+.swal2-button-container2 {
+  display: flex;
+  flex-direction :column;
+  justify-content: center; 
+  gap: 5px
+}
+
+.swal2-styled2 {
+  border: none;
+  border-radius: 15px;
+  padding: 15px 30px;
+  cursor: pointer;
+}
+
+.swal2-confirm2 {
+  background-color: #5981B1;
+  color: white;
+}
+
+.swal2-cancel2 {
+  background-color: #365475;
+  color: white;
+}
