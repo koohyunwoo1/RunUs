@@ -9,6 +9,7 @@ import Modal from "react-modal";
 import { UserContext } from "../../../hooks/UserContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import WebSocketManager from "./WebSocketManager";
 
 Modal.setAppElement("#root");
 
@@ -18,7 +19,6 @@ const TeamCreate = () => {
   const { userData } = useContext(UserContext);
   const [waitingRoomId, setWaitingRoomId] = useState(id || null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [webSocket, setWebSocket] = useState(null);
   const [userNames, setUserNames] = useState([]);
   const location = useLocation();
   const [roomOwnerId, setRoomOwnerId] = useState(
@@ -27,13 +27,14 @@ const TeamCreate = () => {
 
   useEffect(() => {
     if (waitingRoomId) {
-      const ws = new WebSocket(
-        `wss://i11e103.p.ssafy.io:8001/ws/chat?roomId=${waitingRoomId}`
-      );
-      setWebSocket(ws);
+      WebSocketManager.connect(waitingRoomId); // Use singleton WebSocketManager
 
-      ws.onopen = () => {
+      console.log(userData.nickname);
+
+      WebSocketManager.on("open", () => {
         console.log("WebSocket connection opened");
+        console.log(userData.nickname);
+
         const message = {
           type: "ENTER",
           roomId: waitingRoomId,
@@ -41,11 +42,10 @@ const TeamCreate = () => {
           message: "",
           userId: userData.userId,
         };
-        ws.send(JSON.stringify(message));
-      };
+        WebSocketManager.send(message);
+      });
 
-      ws.onmessage = (event) => {
-        const receivedData = JSON.parse(event.data);
+      WebSocketManager.on("message", (receivedData) => {
         console.log("Received message:", receivedData);
 
         if (receivedData.type === "USERLIST_UPDATE") {
@@ -63,18 +63,18 @@ const TeamCreate = () => {
         } else if (receivedData.type === "START") {
           window.location.href = `/countdown/${waitingRoomId}`;
         }
-      };
+      });
 
-      ws.onclose = () => {
+      WebSocketManager.on("close", () => {
         console.log("WebSocket connection closed");
-      };
+      });
 
-      ws.onerror = (error) => {
+      WebSocketManager.on("error", (error) => {
         console.error("WebSocket error:", error);
-      };
+      });
 
       return () => {
-        ws.close();
+        WebSocketManager.close();
       };
     }
   }, [waitingRoomId, userData, navigate]);
@@ -86,56 +86,46 @@ const TeamCreate = () => {
   };
 
   const handleStartButtonClick = () => {
-    if (webSocket) {
-      const startMessage = {
-        type: "START",
-        roomId: waitingRoomId,
-        sender: userData.nickname,
-        message: "",
-        userId: userData.userId,
-      };
-  
-      if (webSocket.readyState === WebSocket.OPEN) {
-        // 3초 지연 후에 메시지 전송 및 페이지 리디렉션
-        setTimeout(() => {
-          webSocket.send(JSON.stringify(startMessage));
-          console.log("START 메시지 전송");
-          console.log(startMessage)
-        }, 3000); 
-        window.location.href = `/countdown/${waitingRoomId}`;
-      } else {
-        console.warn("WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.");
-      }
+    const startMessage = {
+      type: "START",
+      roomId: waitingRoomId,
+      sender: userData.nickname,
+      message: "",
+      userId: userData.userId,
+    };
+
+    if (WebSocketManager.ws && WebSocketManager.ws.readyState === WebSocket.OPEN) {
+      setTimeout(() => {
+        WebSocketManager.send(startMessage);
+        console.log("START 메시지 전송");
+      }, 3000);
+      //window.location.href = `/countdown/${waitingRoomId}`;
     } else {
-      console.warn("WebSocket 객체가 초기화되지 않았습니다.");
+      console.warn("WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.");
     }
   };
-  
+
   const handleModalToggle = () => {
     setModalIsOpen((prevState) => !prevState);
   };
 
   const handleLeaveRoom = () => {
-    if (webSocket) {
-      const leaveMessage = {
-        type: "WAIT_EXIT",
-        roomId: waitingRoomId,
-        sender: userData.nickname,
-        message: "",
-        userId: userData.userId,
-      };
+    const leaveMessage = {
+      type: "WAIT_EXIT",
+      roomId: waitingRoomId,
+      sender: userData.nickname,
+      message: "",
+      userId: userData.userId,
+    };
 
-      if (webSocket.readyState === WebSocket.OPEN) {
-        webSocket.send(JSON.stringify(leaveMessage));
-        localStorage.removeItem("userNames");
-        console.log("방 나가기 메시지 전송");
-      } else {
-        console.warn("WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.");
-      }
-      webSocket.close();
+    if (WebSocketManager.ws && WebSocketManager.ws.readyState === WebSocket.OPEN) {
+      WebSocketManager.send(leaveMessage);
+      localStorage.removeItem("userNames");
+      console.log("방 나가기 메시지 전송");
     } else {
-      console.warn("WebSocket 객체가 초기화되지 않았습니다.");
+      console.warn("WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.");
     }
+    WebSocketManager.close();
     navigate("/home");
   };
 
