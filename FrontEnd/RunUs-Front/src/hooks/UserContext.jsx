@@ -4,6 +4,10 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2"
 import "../styles/Common/CustomSwal.css"
 
+// fcm setteing
+import { requestPermissionAndGetToken, sendTokenToServer, deleteTokenFromServer } from './fcm';
+// fcm setting end
+
 const UserContext = createContext();
 
 const UserProvider = ({ children }) => {
@@ -36,6 +40,17 @@ const UserProvider = ({ children }) => {
         localStorage.setItem("AuthToken", response.data.token);
         localStorage.setItem("userId", response.data.data.userId);
         localStorage.setItem("userData", JSON.stringify(data));
+        console.log("Logged in userData:", data); // 로그인 후 userData 확인
+
+        // fcm code
+        // FCM 토큰 요청 및 서버로 전송
+        const fcmToken = await requestPermissionAndGetToken();
+        if (fcmToken) {
+          await sendTokenToServer(response.data.data.userId, fcmToken);
+        }
+
+        // fcm code end
+
       } else {
         setError(response.data.message || "이메일 또는 비밀번호가 일치하지 않습니다.");
         Swal.fire({
@@ -67,6 +82,11 @@ const UserProvider = ({ children }) => {
     try {
       const response = await axios.post("/api/v1/signout");
       if (response.data.success) {
+
+        // fcm code
+        await deleteTokenFromServer(userId);
+        // fcm code end
+
         localStorage.removeItem("AuthToken");
         localStorage.removeItem("userId");
         localStorage.removeItem("userData")
