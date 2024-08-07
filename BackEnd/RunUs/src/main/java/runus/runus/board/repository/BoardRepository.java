@@ -5,23 +5,59 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import runus.runus.board.dto.BoardResponseDTO;
 import runus.runus.board.entity.BoardEntity;
 
-import java.util.List;
-
 public interface BoardRepository extends JpaRepository<BoardEntity, Integer> {
-    Page<BoardEntity> findByRegionIdAndIsDeleted(int regionId, char isDeleted, Pageable pageable);
-    Page<BoardEntity> findByRegionIdAndIsDeletedOrderByCreatedAtAsc(int regionId, char isDeleted, Pageable pageable);
-    Page<BoardEntity> findByRegionIdAndTitleContainingAndIsDeleted(int regionId, String title, char isDeleted, Pageable pageable);
+
+    // 게시글 상세보기
+    @Query("SELECT new runus.runus.board.dto.BoardResponseDTO(b.boardId, b.title, b.content, b.createdAt, b.updatedAt, b.regionId, b.meetingTime, b.meetingDay, COALESCE(u.nickname, 'undefined'), b.isDeleted) " +
+            "FROM BoardEntity b LEFT JOIN runus.runus.user.entity.User u ON b.userId = u.userId " +
+            "WHERE b.boardId = :boardId")
+    BoardResponseDTO findByIdDetail(@Param("boardId") int boardId);
+
 
     // 게시글 목록
-    @Query(value = "SELECT b.*, COALESCE(u.nickname, 'undefined') AS nickname " +
-            "FROM board b LEFT JOIN user u ON b.user_id = u.user_id " +
-            "WHERE b.region_id = :regionId AND b.is_deleted = :isDeleted",
-            countQuery = "SELECT count(*) FROM board b WHERE b.region_id = :regionId AND b.is_deleted = :isDeleted",
-            nativeQuery = true)
-    Page<BoardEntity> findByRegionIdAndIsDeletedWithNickname(@Param("regionId") int regionId, @Param("isDeleted") char isDeleted, Pageable pageable);
+    @Query("SELECT new runus.runus.board.dto.BoardResponseDTO(b.boardId, b.title, b.content, b.createdAt, b.updatedAt, b.regionId, b.meetingTime, b.meetingDay, COALESCE(u.nickname, 'undefined'), b.isDeleted) " +
+            "FROM BoardEntity b LEFT JOIN runus.runus.user.entity.User u ON b.userId = u.userId " +
+            "WHERE b.regionId = :regionId AND b.isDeleted = :isDeleted " +
+            "ORDER BY b.boardId DESC ")
+    Page<BoardResponseDTO> findByRegionId(@Param("regionId") int regionId, @Param("isDeleted") char isDeleted, Pageable pageable);
 
-    @Query("SELECT b FROM BoardEntity b WHERE b.regionId = :regionId AND b.isDeleted = :isDeleted AND b.meetingTime >= CURRENT_TIMESTAMP ORDER BY b.meetingTime ASC")
-    Page<BoardEntity> findUpcomingMeetings(@Param("regionId") int regionId, @Param("isDeleted") char isDeleted, Pageable pageable);
+    // 게시글 목록 - 검색
+    @Query("SELECT new runus.runus.board.dto.BoardResponseDTO(b.boardId, b.title, b.content, b.createdAt, b.updatedAt, b.regionId, b.meetingTime, b.meetingDay, COALESCE(u.nickname, 'undefined'), b.isDeleted) " +
+            "FROM BoardEntity b LEFT JOIN runus.runus.user.entity.User u ON b.userId = u.userId " +
+            "WHERE b.regionId = :regionId AND b.isDeleted = :isDeleted AND b.title LIKE %:title% " +
+            "ORDER BY b.boardId DESC ")
+    Page<BoardResponseDTO> findByRegionIdByKeyword(@Param("regionId") int regionId, @Param("title") String title, @Param("isDeleted") char isDeleted, Pageable pageable);
+
+    
+    // 달리기 기한 가까운 목록
+    @Query("SELECT new runus.runus.board.dto.BoardResponseDTO(b.boardId, b.title, b.content, b.createdAt, b.updatedAt, b.regionId, b.meetingTime, b.meetingDay, COALESCE(u.nickname, 'undefined'), b.isDeleted) " +
+            "FROM BoardEntity b LEFT JOIN runus.runus.user.entity.User u ON b.userId = u.userId " +
+            "WHERE b.regionId = :regionId AND b.isDeleted = :isDeleted AND b.meetingTime >= CURRENT_TIMESTAMP " +
+            "ORDER BY b.meetingTime ASC")
+    Page<BoardResponseDTO> findUpcomingMeetings(@Param("regionId") int regionId, @Param("isDeleted") char isDeleted, Pageable pageable);
+
+    // 달리기 기한 가까운 목록 - 검색
+    @Query("SELECT new runus.runus.board.dto.BoardResponseDTO(b.boardId, b.title, b.content, b.createdAt, b.updatedAt, b.regionId, b.meetingTime, b.meetingDay, COALESCE(u.nickname, 'undefined'), b.isDeleted) " +
+            "FROM BoardEntity b LEFT JOIN runus.runus.user.entity.User u ON b.userId = u.userId " +
+            "WHERE b.regionId = :regionId AND b.isDeleted = :isDeleted AND b.meetingTime >= CURRENT_TIMESTAMP AND b.title LIKE %:title% " +
+            "ORDER BY b.meetingTime ASC")
+    Page<BoardResponseDTO> findUpcomingMeetingsByKeyword(@Param("regionId") int regionId, @Param("title") String title, @Param("isDeleted") char isDeleted, Pageable pageable);
+
+
+    // 달리기 안 끝난 목록
+    @Query("SELECT new runus.runus.board.dto.BoardResponseDTO(b.boardId, b.title, b.content, b.createdAt, b.updatedAt, b.regionId, b.meetingTime, b.meetingDay, COALESCE(u.nickname, 'undefined'), b.isDeleted) " +
+            "FROM BoardEntity b LEFT JOIN runus.runus.user.entity.User u ON b.userId = u.userId " +
+            "WHERE b.regionId = :regionId AND b.isDeleted = :isDeleted AND b.meetingTime >= CURRENT_TIMESTAMP " +
+            "ORDER BY b.boardId desc ")
+    Page<BoardResponseDTO> findIncompleteMeetings(@Param("regionId") int regionId, @Param("isDeleted") char isDeleted, Pageable pageable);
+
+    // 달리기 안 끝난 목록 - 검색
+    @Query("SELECT new runus.runus.board.dto.BoardResponseDTO(b.boardId, b.title, b.content, b.createdAt, b.updatedAt, b.regionId, b.meetingTime, b.meetingDay, COALESCE(u.nickname, 'undefined'), b.isDeleted) " +
+            "FROM BoardEntity b LEFT JOIN runus.runus.user.entity.User u ON b.userId = u.userId " +
+            "WHERE b.regionId = :regionId AND b.isDeleted = :isDeleted AND b.meetingTime >= CURRENT_TIMESTAMP AND b.title LIKE %:title% " +
+            "ORDER BY b.boardId DESC ")
+    Page<BoardResponseDTO> findIncompleteMeetingsByKeyword(@Param("regionId") int regionId, @Param("title") String title, @Param("isDeleted") char isDeleted, Pageable pageable);
 }

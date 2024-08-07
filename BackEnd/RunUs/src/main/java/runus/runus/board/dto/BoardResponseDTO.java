@@ -19,6 +19,7 @@ public class BoardResponseDTO {
     private LocalDateTime meetingTime;
     private String meetingDay;
     private String nickname;
+    private char isDeleted;
 
 
 

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import runus.runus.api.NotFoundException;
 import runus.runus.board.dto.BoardRequestDTO;
 import runus.runus.board.dto.BoardResponseDTO;
-import runus.runus.board.dto.CommentRequestDTO;
 import runus.runus.board.dto.CommentResponseDTO;
 import runus.runus.board.entity.BoardEntity;
 import runus.runus.board.entity.CommentEntity;
@@ -17,6 +16,7 @@ import runus.runus.board.repository.CommentRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,38 +43,46 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Page<BoardEntity> getBoardsByRegion(int regionId, int size, int page) {
+    public Page<BoardResponseDTO> getBoardsByRegion(int regionId, int size, int page) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<BoardEntity> boards = boardRepository.findByRegionIdAndIsDeletedWithNickname(regionId, '0', pageable);
+        Page<BoardResponseDTO> boards = boardRepository.findByRegionId(regionId, '0', pageable);
+        System.out.println(boards.getContent());
         return boards;
     }
 
     @Override
-    public Page<BoardEntity> getBoardsByTime(int regionId, int size, int page) {
+    public Page<BoardResponseDTO> getBoardsByTime(int regionId, int size, int page) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<BoardEntity> boards = boardRepository.findUpcomingMeetings(regionId, '0', pageable);
+        Page<BoardResponseDTO> boards = boardRepository.findUpcomingMeetings(regionId, '0', pageable);
         return boards;
     }
 
     @Override
-    public Page<BoardEntity> getIncompleteBoards(int regionId, int size, int page) {
+    public Page<BoardResponseDTO> getIncompleteBoards(int regionId, int size, int page) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<BoardEntity> boards = boardRepository.findUpcomingMeetings(regionId, '0', pageable);
+        Page<BoardResponseDTO> boards = boardRepository.findIncompleteMeetings(regionId, '0', pageable);
         return boards;
     }
 
     @Override
-    public List<BoardResponseDTO> getIncompleteBoardsKeyword(int regionId, String word, int size, int page) {
+    public Page<BoardResponseDTO> getIncompleteBoardsKeyword(int regionId, String word, int size, int page) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<BoardEntity> boards = boardRepository.findByRegionIdAndTitleContainingAndIsDeleted(regionId, word, '0', pageable);
-        return boards.stream().map(this::convertToDTO).collect(Collectors.toList());
+        Page<BoardResponseDTO> boards = boardRepository.findIncompleteMeetingsByKeyword(regionId, word, '0', pageable);
+        return boards;
     }
 
     @Override
-    public List<BoardResponseDTO> searchBoards(int regionId, String word, int size, int page) {
+    public Page<BoardResponseDTO> getUpcomingBoardsKeyword(int regionId, String word, int size, int page) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<BoardEntity> boards = boardRepository.findByRegionIdAndTitleContainingAndIsDeleted(regionId, word, '0', pageable);
-        return boards.stream().map(this::convertToDTO).collect(Collectors.toList());
+        Page<BoardResponseDTO> boards = boardRepository.findUpcomingMeetingsByKeyword(regionId, word, '0', pageable);
+        return boards;
+    }
+
+    @Override
+    public Page<BoardResponseDTO> searchBoards(int regionId, String word, int size, int page) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<BoardResponseDTO> boards = boardRepository.findByRegionIdByKeyword(regionId, word, '0', pageable);
+        return boards;
     }
 
     @Override
@@ -96,12 +104,12 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public BoardResponseDTO getBoardDetails(int boardId) {
-        BoardEntity board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new NotFoundException("Board not found"));
+        Optional<BoardResponseDTO> optionalBoard = Optional.ofNullable(boardRepository.findByIdDetail(boardId));
+        BoardResponseDTO board = optionalBoard.orElseThrow(() -> new NotFoundException("Not Found"));
         if (board.getIsDeleted() == '1') {
             throw new NotFoundException("Board has been deleted");
         }
-        return convertToDTO(board);
+        return board;
     }
 
     @Override
@@ -111,21 +119,5 @@ public class BoardServiceImpl implements BoardService {
         board.setIsDeleted('1');
         board.setDeletedAt(LocalDateTime.now());
         boardRepository.save(board);
-    }
-
-    @Override
-    public BoardResponseDTO convertToDTO(BoardEntity board) {
-        return new BoardResponseDTO(
-                board.getBoardId(), board.getTitle(), board.getContent(),
-                board.getCreatedAt(), board.getUpdatedAt(),
-                board.getRegionId(), board.getMeetingTime(), board.getMeetingDay(), board.getNickname());
-    }
-
-    @Override
-    public CommentResponseDTO convertToDTO(CommentEntity comment) {
-        return new CommentResponseDTO(
-                comment.getCommentId(), comment.getBoardId(), comment.getParentId(),
-                comment.getUserId(), comment.getContent(), comment.getCreatedAt(), comment.getUpdatedAt(),
-                comment.getNickname());
     }
 }

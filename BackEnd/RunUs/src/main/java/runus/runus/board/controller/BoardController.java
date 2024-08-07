@@ -35,35 +35,35 @@ public class BoardController {
             @RequestParam int page,
             @RequestParam(required = false) String word,
             @RequestParam(required = false) String order) {
-        Page<BoardEntity> boards = null;
+        Page<BoardResponseDTO> boards = null;
 
         // 검색 키워드 없는 경우
         if (word == null || word.isEmpty()) {
             if (order == null || order.isEmpty()) {  // 정렬 없음
                 boards = boardService.getBoardsByRegion(regionId, size, page);
-            } else if (order.equals("time")) {
+            }
+            else if (order.equals("time")) {
                 boards = boardService.getBoardsByTime(regionId, size, page);
-            } else if (order.equals("incomplete")) {
+            }
+            else if (order.equals("incomplete")) {
                 boards = boardService.getIncompleteBoards(regionId, size, page);
             }
         } else {  // 검색 키워드가 있는 경우
-//            if(order == null || order.isEmpty()) {  // 정렬 없음
-//                boards = boardService.searchBoards(regionId, word, size, page);
-//            } else if (order.equals("time")) {
-//                boards = boardService.searchBoards(regionId, word, size, page);
-//            } else if (order.equals("incomplete")) {
-//                boards = boardService.getIncompleteBoardsKeyword(regionId, word, size, page);
-//            }
+            if(order == null || order.isEmpty()) {  // 정렬 없음
+                boards = boardService.searchBoards(regionId, word, size, page);
+            }
+            else if (order.equals("time")) {
+                boards = boardService.getUpcomingBoardsKeyword(regionId, word, size, page);
+            }
+            else if (order.equals("incomplete")) {
+                boards = boardService.getIncompleteBoardsKeyword(regionId, word, size, page);
+            }
         }
-
-        List<BoardResponseDTO> boardDTOs = boards.stream()
-                .map(boardService::convertToDTO)
-                .toList();
 
         return ResponseEntity.ok(
                 new ApiBoardResponse<>(
                         true,
-                        boardDTOs,
+                        boards.stream().toList(),
                         "게시글 정보 조회",
                         boards.getTotalPages(),
                         boards.getTotalElements(),
