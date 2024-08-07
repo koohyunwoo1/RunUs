@@ -3,13 +3,13 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import "../../styles/Home/LogInHome.css";
 import Header from "../../components/common/Header";
-import ReportItem from "../../components/Report/ReportItem";
 import Button2 from "../../components/common/Button2";
 import SoloProfile from "../../assets/SoloProfile2.png";
 import TeamProfile from "../../assets/TeamProfile2.png";
 import axios from "axios";
 import { UserContext } from "../../hooks/UserContext";
 import Weather from "../../components/common/Weather";
+import LoginHomeMapView from "../../components/Home/LoginHomeMapView";
 import "../../styles/Home/LoginHomeCustomSwal.css";
 
 const LogInHome = () => {
@@ -18,6 +18,7 @@ const LogInHome = () => {
   const navigate = useNavigate();
   const { userData } = useContext(UserContext);
 
+  // 팀 프로필 클릭 핸들러
   const handleTeamProfileClick = async () => {
     const result = await Swal.fire({
       title: "팀 옵션을 선택해주세요 !",
@@ -52,6 +53,7 @@ const LogInHome = () => {
     });
   };
 
+  // 팀 생성 클릭 핸들러
   const handleCreateTeamClick = async () => {
     Swal.close();
     try {
@@ -71,13 +73,28 @@ const LogInHome = () => {
     }
   };
 
+  // 팀 입장 클릭 핸들러
   const handleJoinTeamClick = () => {
-    Swal.close(); // Close the SweetAlert popup
+    Swal.close();
     navigate("/team-QR");
   };
 
-  const updateDistance = (newDistance) => {
-    setDistance(newDistance);
+  // 솔로 프로필 클릭 핸들러
+  const handleSoloProfileClick = async () => {
+    const result = await Swal.fire({
+      title: "Run Us ?",
+      showCancelButton: true,
+      confirmButtonText: "예",
+      cancelButtonText: "아니오",
+      customClass: {
+        popup: "custom-swal-popup2",
+        title: "custom-swal-title2",
+      },
+    });
+
+    if (result.isConfirmed) {
+      navigate("/countdown");
+    }
   };
 
   return (
@@ -85,11 +102,11 @@ const LogInHome = () => {
       <Header />
       <div className="LoginHome-container">
         <Weather />
-        <div className="LoginHomeReportItem">
-          <ReportItem onDistanceChange={updateDistance} />
+        <div className="LoginHomeMapView">
+          <LoginHomeMapView />
         </div>
         <div className="MainButton-container">
-          <Button2 src={SoloProfile} onClick={() => navigate("/solo")} />
+          <Button2 src={SoloProfile} onClick={handleSoloProfileClick} />
           <Button2
             src={TeamProfile}
             onClick={handleTeamProfileClick}

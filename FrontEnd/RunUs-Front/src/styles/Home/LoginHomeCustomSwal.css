@@ -4,13 +4,13 @@
   max-width: 80%;
   padding: 20px;
   height: 250px; 
-  background-color: #98bae3;
   border-radius: 20px;
+  background-color: lightgray;
 }
 
 .custom-swal-title2 {
   font-size: 20px;
-  color: white;
+  color: black;
 }
 
 .swal2-button-container2 {
@@ -30,9 +30,11 @@
 .swal2-confirm2 {
   background-color: #5981B1;
   color: white;
+  font-size: 15px;
 }
 
 .swal2-cancel2 {
   background-color: #365475;
   color: white;
+  font-size: 15px;
 }

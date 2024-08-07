@@ -5,6 +5,7 @@
   border-radius: 20px;
   padding: 10px 20px;
   width: 70px;
+  z-index: 1;
 }
 
 .Button_image {
