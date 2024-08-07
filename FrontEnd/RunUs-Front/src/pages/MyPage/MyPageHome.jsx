@@ -34,8 +34,8 @@ const MyPageHome = () => {
         <div
           style={{
             marginTop: "100px",
-            marginRight: "20px",
-            textAlign: "right",
+            // marginRight: "20px",
+            textAlign: "left",
           }}
         >
           <Logout />

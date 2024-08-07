@@ -10,9 +10,11 @@ const Logout = () => {
   };
 
   return (
-    <p onClick={handleLogout}>
-      로그아웃
-    </p>
+    <div className="logoutFooter">
+      <p onClick={handleLogout} className="logoutText">
+        로그아웃
+      </p>
+    </div>
   );
 };
 

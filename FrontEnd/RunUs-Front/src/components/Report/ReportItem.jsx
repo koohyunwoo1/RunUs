@@ -78,7 +78,8 @@ const ReportItem = ({ onDistanceChange }) => {
           </div>
         ))
       ) : (
-        <div>데이터가 없습니다.</div>
+        // <div>데이터가 없습니다.</div>
+        <div></div>
       )}
       <div className="pagination"></div>
     </div>

@@ -20,10 +20,11 @@
 .tier-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
 .tier-header h2 {
-  margin-right: 8px; /* 적절한 여백 설정 */
+  margin: 0px;
 }
 
 
