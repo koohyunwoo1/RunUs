@@ -31,6 +31,7 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
   console.log('Received background message: ', payload);
   
+  if (payload.data && payload.data.source === 'server') {
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
@@ -38,12 +39,14 @@ messaging.onBackgroundMessage((payload) => {
     vibrate: [100, 50, 100],
     sound: '/notification-sound.wav'
   };
-
+  
   self.registration.showNotification(notificationTitle, notificationOptions);
+}
 });
 
 self.addEventListener('push', function(event) {
   const payload = event.data.json();
+  if (payload.data && payload.data.source === 'server') {
   const options = {
     body: payload.notification.body,
     icon: '/icons/icon-192x192.png',
@@ -54,5 +57,6 @@ self.addEventListener('push', function(event) {
   event.waitUntil(
     self.registration.showNotification(payload.notification.title, options)
   );
+}
 });
 
