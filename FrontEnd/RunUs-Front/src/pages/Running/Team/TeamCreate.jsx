@@ -30,21 +30,29 @@ const TeamPage = () => {
   const location = useLocation();
   const [roomOwnerId, setRoomOwnerId] = useState(
     location.state?.roomOwnerId || null
-  );
+  );    
 
   useEffect(() => {
+    
+    if (!userData) {
+      console.log("User data is null");
+      return;
+    }
+
+    console.log(userData);
     if (waitingRoomId) {
       WebSocketManager.connect(waitingRoomId); // Use singleton WebSocketManager
 
       WebSocketManager.on("open", () => {
         console.log("WebSocket connection opened");
+        setIsWebSocketConnected(true);
 
         const message = {
           type: "ENTER",
           roomId: waitingRoomId,
           sender: userData.nickname,
           message: "",
-          userId: userData.userId,
+          userId : userData.userId,
         };
         WebSocketManager.send(message);
       });
@@ -67,10 +75,14 @@ const TeamPage = () => {
             ...prevPositions,
             [sender]: { latitude, longitude },
           }));
+        } else if (receivedData.type === "START") {
+          // Start sending location updates when "START" message is received
+          setIsRunning(true);
         }
       });
 
       WebSocketManager.on("close", () => {
+        console.log("WebSocket connection closed");
         setIsWebSocketConnected(false);
         setIsRunning(false);
       });
@@ -97,8 +109,8 @@ const TeamPage = () => {
           type: 'LOCATION',
           roomId: waitingRoomId,
           sender: userData.nickname,
-          message: `${userData.nickname}의 총 이동 거리: ${Math.round(Math.random() * 100) / 10} km`,
-          userId: userData.userId,
+          message: "",
+          userId : userData.userId,
           longitude,
           latitude,
         };
@@ -111,12 +123,13 @@ const TeamPage = () => {
   };
 
   const handleStartButtonClick = () => {
+    console.log(userData);
     const startMessage = {
       type: "START",
       roomId: waitingRoomId,
       sender: userData.nickname,
       message: "",
-      userId: userData.userId,
+      userId : userData.userId,
     };
 
     if (WebSocketManager.ws && WebSocketManager.ws.readyState === WebSocket.OPEN) {
@@ -134,7 +147,7 @@ const TeamPage = () => {
         type: 'STOP',
         roomId: waitingRoomId,
         sender: userData.nickname,
-        userId: userData.userId,
+        userId : userData.userId,
       };
       WebSocketManager.send(stopMessage);
       setIsRunning(false);
@@ -149,7 +162,7 @@ const TeamPage = () => {
       roomId: waitingRoomId,
       sender: userData.nickname,
       message: "",
-      userId: userData.userId,
+      userId : userData.userId,
     };
 
     if (WebSocketManager.ws && WebSocketManager.ws.readyState === WebSocket.OPEN) {
