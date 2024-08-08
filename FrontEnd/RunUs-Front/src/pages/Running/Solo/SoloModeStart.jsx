@@ -3,21 +3,23 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios"; // axios import
 import "../../../styles/Running/Solo/SoloModeStart.css";
 
 const SoloModeStart = () => {
-  const [time, setTime] = useState(0);
-  const [distance, setDistance] = useState(0);
-  const [location, setLocation] = useState({ latitude: null, longitude: null });
-  const [isRunning, setIsRunning] = useState(true);
-  const [error, setError] = useState(null);
+  const [time, setTime] = useState(0); // 시간 상태
+  const [distance, setDistance] = useState(0); // 이동 거리 상태
+  const [location, setLocation] = useState({ latitude: null, longitude: null }); // 현재 위치 상태
+  const [isRunning, setIsRunning] = useState(true); // 타이머 상태 자동 시작
+  const [error, setError] = useState(null); // 에러 메시지 상태
+  const [calories, setCalories] = useState(0); // 칼로리 상태
   const prevLocation = useRef({
     latitude: null,
     longitude: null,
     timestamp: null,
     speed: null,
-  });
-  const timerRef = useRef(null);
+  }); // 이전 위치 정보
+  const timerRef = useRef(null); // 타이머 참조
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,7 +37,7 @@ const SoloModeStart = () => {
         prevLocation.current.longitude !== null
       ) {
         const timeElapsed =
-          (currentTime - prevLocation.current.timestamp) / 1000;
+          (currentTime - prevLocation.current.timestamp) / 1000; // 초 단위로 변환
         const maxPossibleDistance =
           (prevLocation.current.speed || 0) * timeElapsed;
         const dist = calculateDistance(
@@ -70,6 +72,10 @@ const SoloModeStart = () => {
           };
           setLocation({ latitude, longitude });
         }
+
+        // 칼로리 계산 및 상태 업데이트
+        const calculatedCalories = calculateCalories(distance);
+        setCalories(calculatedCalories);
       } else {
         prevLocation.current = {
           latitude,
@@ -101,15 +107,16 @@ const SoloModeStart = () => {
         handleError,
         options
       );
+      0;
 
       return () => navigator.geolocation.clearWatch(watchId);
     }
-  }, [isRunning]);
+  }, [isRunning, distance]); // distance가 변경될 때마다 칼로리 계산
 
   useEffect(() => {
     if (isRunning) {
       timerRef.current = setInterval(() => {
-        setTime((prevTime) => prevTime + 1);
+        setTime((prevTime) => prevTime + 1); // 매초 시간 증가
       }, 1000);
     } else {
       if (timerRef.current) {
@@ -125,7 +132,7 @@ const SoloModeStart = () => {
   }, [isRunning]);
 
   const handleToggle = () => {
-    setIsRunning((prev) => !prev);
+    setIsRunning((prev) => !prev); // 타이머 상태 토글
   };
 
   const handleEnd = async () => {
@@ -142,7 +149,34 @@ const SoloModeStart = () => {
     });
 
     if (result.isConfirmed) {
-      navigate("/home");
+      try {
+        // 데이터 준비
+        const user_id = localStorage.getItem("userId");
+        const response = await axios.post(
+          `/api/v1/record/result_save?user_id=${user_id}&distance=${distance}&time=${time}&kcal=${calories}`
+        );
+
+        if (response.data.success) {
+          console.log(response.data.data);
+          navigate("/home");
+        } else {
+          console.error(response.data);
+          Swal.fire({
+            title: "저장 실패",
+            text: "기록 저장에 실패했습니다.",
+            icon: "error",
+            confirmButtonText: "확인",
+          });
+        }
+      } catch (error) {
+        console.error(error);
+        Swal.fire({
+          title: "저장 실패",
+          text: "기록 저장 중 오류가 발생했습니다.",
+          icon: "error",
+          confirmButtonText: "확인",
+        });
+      }
     }
   };
 
@@ -179,6 +213,13 @@ const SoloModeStart = () => {
     return { latitude: correctedLat, longitude: correctedLon };
   };
 
+  const calculateCalories = (distance, weight = 70) => {
+    // 간단한 계산 예시: 거리(킬로미터) * 체중(킬로그램) * 1.036 (칼로리/킬로그램/킬로미터)
+    const distanceInKm = distance / 1000;
+    const caloriesBurned = distanceInKm * weight * 1.036;
+    return caloriesBurned;
+  };
+
   return (
     <div className="SoloModeStart">
       <button className="back-button" onClick={() => navigate("/home")}>
@@ -193,11 +234,12 @@ const SoloModeStart = () => {
           <p>Latitude: {location.latitude}</p>
           <p>Longitude: {location.longitude}</p>
           <p>Distance traveled: {distance.toFixed(2)} meters</p>
+          <p>Calories burned: {calories.toFixed(2)} kcal</p>{" "}
+          {/* 칼로리 정보 표시 */}
           <button onClick={handleToggle}>{isRunning ? "Stop" : "Start"}</button>
           <button onClick={handleEnd}>End</button>
         </>
       )}
-      <div>ㅎㅇ</div>
     </div>
   );
 };
