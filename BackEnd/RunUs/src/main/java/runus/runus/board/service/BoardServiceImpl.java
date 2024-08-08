@@ -46,7 +46,6 @@ public class BoardServiceImpl implements BoardService {
     public Page<BoardResponseDTO> getBoardsByRegion(int regionId, int size, int page) {
         Pageable pageable = PageRequest.of(page, size);
         Page<BoardResponseDTO> boards = boardRepository.findByRegionId(regionId, '0', pageable);
-        System.out.println(boards.getContent());
         return boards;
     }
 

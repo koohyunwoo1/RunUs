@@ -3,12 +3,6 @@ package runus.runus.board.service;
 import org.springframework.data.domain.Page;
 import runus.runus.board.dto.BoardRequestDTO;
 import runus.runus.board.dto.BoardResponseDTO;
-import runus.runus.board.dto.CommentRequestDTO;
-import runus.runus.board.dto.CommentResponseDTO;
-import runus.runus.board.entity.BoardEntity;
-import runus.runus.board.entity.CommentEntity;
-
-import java.util.List;
 
 public interface BoardService {
     int createBoard(BoardRequestDTO boardRequest);
