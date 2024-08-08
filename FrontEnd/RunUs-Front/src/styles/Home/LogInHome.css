@@ -2,9 +2,6 @@
   margin-top: 100px;
   padding-left: 10px;
   padding-right: 10px;
-  position: relative;
-  height: 100vh; 
-  width: 100%; 
 }
 
 .Today_item,
@@ -17,20 +14,25 @@
   display: flex;
   justify-content: space-evenly;
   margin-top: 300px;
-  
 }
 
 .LoginHomeMapView {
-  margin-top: 150px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 55%; /* 컨테이너의 높이를 따라가도록 설정 */
-  width: 100%; /* 컨테이너의 너비를 따라가도록 설정 */
+  position: absolute; /* 절대 위치 지정 */
+  margin-top: 100px;
+  top: 0; /* 부모 컨테이너의 상단에 위치 */
+  left: 0; /* 부모 컨테이너의 왼쪽에 위치 */
+  height: 100vh; /* 뷰포트의 전체 높이를 채우도록 설정 */
+  width: 100vw; /* 뷰포트의 전체 너비를 채우도록 설정 */
   background: transparent; /* 배경을 투명하게 설정 */
-  mask-image: radial-gradient(circle, rgba(0, 0, 0, 0.5) 30%, rgba(0, 0, 0, 0) 70%);
-  -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 0.5) 10%, rgba(0, 0, 0, 0) 80%);
-  z-index: 0; 
+  mask-image: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 0.5) 30%,
+    rgba(0, 0, 0, 0) 50%
+  );
+  -webkit-mask-image: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 0.5) 5%,
+    rgba(0, 0, 0, 0) 60%
+  );
+  z-index: 0;
 }
-
-

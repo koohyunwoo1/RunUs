@@ -46,7 +46,7 @@ const MapView = () => {
   return (
     <MapContainer
       center={position}
-      zoom={17}
+      zoom={15}
       style={{
         height: "100%",
         width: "100%",
@@ -60,7 +60,20 @@ const MapView = () => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
       <Marker position={position} icon={customIcon}>
-        <Popup>You are here.</Popup>
+        <Popup>
+          <div
+            style={{
+              backgroundColor: "#ffffff",
+              color: "black",
+              borderRadius: "8px",
+              padding: "10px",
+              fontSize: "14px",
+              textAlign: "center",
+            }}
+          >
+            Here me !
+          </div>
+        </Popup>
       </Marker>
     </MapContainer>
   );
