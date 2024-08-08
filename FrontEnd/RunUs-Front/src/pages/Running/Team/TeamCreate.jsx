@@ -9,17 +9,24 @@ import Modal from "react-modal";
 import { UserContext } from "../../../hooks/UserContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import WebSocketManager from "./WebSocketManager";
+import MapComponent from '../../../components/Running/Team/MapComponent'; // 카카오맵 컴포넌트
 
 Modal.setAppElement("#root");
 
-const TeamCreate = () => {
+const TeamPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { userData } = useContext(UserContext);
   const [waitingRoomId, setWaitingRoomId] = useState(id || null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [webSocket, setWebSocket] = useState(null);
   const [userNames, setUserNames] = useState([]);
+  const [userPositions, setUserPositions] = useState({});
+  const [totalDistance, setTotalDistance] = useState(0);
+  const [totalCalories, setTotalCalories] = useState(0);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+  const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
   const location = useLocation();
   const [roomOwnerId, setRoomOwnerId] = useState(
     location.state?.roomOwnerId || null
@@ -27,13 +34,11 @@ const TeamCreate = () => {
 
   useEffect(() => {
     if (waitingRoomId) {
-      const ws = new WebSocket(
-        `wss://i11e103.p.ssafy.io:8001/ws/chat?roomId=${waitingRoomId}`
-      );
-      setWebSocket(ws);
+      WebSocketManager.connect(waitingRoomId); // Use singleton WebSocketManager
 
-      ws.onopen = () => {
+      WebSocketManager.on("open", () => {
         console.log("WebSocket connection opened");
+
         const message = {
           type: "ENTER",
           roomId: waitingRoomId,
@@ -41,105 +46,139 @@ const TeamCreate = () => {
           message: "",
           userId: userData.userId,
         };
-        ws.send(JSON.stringify(message));
-      };
+        WebSocketManager.send(message);
+      });
 
-      ws.onmessage = (event) => {
-        const receivedData = JSON.parse(event.data);
+      WebSocketManager.on("message", (receivedData) => {
         console.log("Received message:", receivedData);
 
         if (receivedData.type === "USERLIST_UPDATE") {
-          console.log("User list update message:", receivedData.message);
-
           const messageContent = receivedData.message;
           const userList = messageContent.split("현재 방에 있는 사용자: ")[1];
           const userNames = userList ? userList.split(", ") : [];
           localStorage.setItem("userNames", JSON.stringify(userNames));
           setUserNames(userNames);
-          console.log("User list updated:", userNames);
         } else if (receivedData.type === "ROOM_CLOSED") {
           alert("방장이 방을 종료했습니다. 방을 나가겠습니다.");
           navigate("/home");
-        } else if (receivedData.type === "START") {
-          window.location.href = `/countdown/${waitingRoomId}`;
+        } else if (receivedData.type === "LOCATION") {
+          const { sender, longitude, latitude, message } = receivedData;
+          setUserPositions(prevPositions => ({
+            ...prevPositions,
+            [sender]: { latitude, longitude },
+          }));
         }
-      };
+      });
 
-      ws.onclose = () => {
-        console.log("WebSocket connection closed");
-      };
+      WebSocketManager.on("close", () => {
+        setIsWebSocketConnected(false);
+        setIsRunning(false);
+      });
 
-      ws.onerror = (error) => {
+      WebSocketManager.on("error", (error) => {
         console.error("WebSocket error:", error);
-      };
+      });
 
       return () => {
-        ws.close();
+        WebSocketManager.close();
       };
     }
   }, [waitingRoomId, userData, navigate]);
 
-  const teamCreatePageUrl = `https://i11e103.p.ssafy.io/team-create/${waitingRoomId}`;
+  const startSendingLocation = () => {
+    const updateLocation = () => {
+      if (isWebSocketConnected) {
+        const baseLatitude = 37.5665; // Example coordinates
+        const baseLongitude = 126.978;
+        const latitude = baseLatitude + (Math.random() - 0.5) * 0.01;
+        const longitude = baseLongitude + (Math.random() - 0.5) * 0.01;
 
-  const handleQRCodeClick = () => {
-    window.location.href = teamCreatePageUrl;
+        const locationMessage = {
+          type: 'LOCATION',
+          roomId: waitingRoomId,
+          sender: userData.nickname,
+          message: `${userData.nickname}의 총 이동 거리: ${Math.round(Math.random() * 100) / 10} km`,
+          userId: userData.userId,
+          longitude,
+          latitude,
+        };
+        WebSocketManager.send(locationMessage);
+      }
+    };
+
+    const intervalId = setInterval(updateLocation, 5000);
+    return () => clearInterval(intervalId);
   };
 
   const handleStartButtonClick = () => {
-    if (webSocket) {
-      const startMessage = {
-        type: "START",
-        roomId: waitingRoomId,
-        sender: userData.nickname,
-        message: "",
-        userId: userData.userId,
-      };
-  
-      if (webSocket.readyState === WebSocket.OPEN) {
-        // 3초 지연 후에 메시지 전송 및 페이지 리디렉션
-        setTimeout(() => {
-          webSocket.send(JSON.stringify(startMessage));
-          console.log("START 메시지 전송");
-          console.log(startMessage)
-        }, 3000); 
-        window.location.href = `/countdown/${waitingRoomId}`;
-      } else {
-        console.warn("WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.");
-      }
+    const startMessage = {
+      type: "START",
+      roomId: waitingRoomId,
+      sender: userData.nickname,
+      message: "",
+      userId: userData.userId,
+    };
+
+    if (WebSocketManager.ws && WebSocketManager.ws.readyState === WebSocket.OPEN) {
+      WebSocketManager.send(startMessage);
+      setIsRunning(true);
+      setIsWebSocketConnected(true); // Ensure WebSocket is connected before starting location updates
     } else {
-      console.warn("WebSocket 객체가 초기화되지 않았습니다.");
+      console.warn("WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.");
     }
   };
-  
+
+  const handleStop = () => {
+    if (WebSocketManager.ws && WebSocketManager.ws.readyState === WebSocket.OPEN) {
+      const stopMessage = {
+        type: 'STOP',
+        roomId: waitingRoomId,
+        sender: userData.nickname,
+        userId: userData.userId,
+      };
+      WebSocketManager.send(stopMessage);
+      setIsRunning(false);
+    } else {
+      console.warn("WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.");
+    }
+  };
+
+  const handleLeaveRoom = () => {
+    const leaveMessage = {
+      type: "WAIT_EXIT",
+      roomId: waitingRoomId,
+      sender: userData.nickname,
+      message: "",
+      userId: userData.userId,
+    };
+
+    if (WebSocketManager.ws && WebSocketManager.ws.readyState === WebSocket.OPEN) {
+      WebSocketManager.send(leaveMessage);
+      localStorage.removeItem("userNames");
+    }
+    WebSocketManager.close();
+    navigate("/home");
+  };
+
   const handleModalToggle = () => {
     setModalIsOpen((prevState) => !prevState);
   };
 
-  const handleLeaveRoom = () => {
-    if (webSocket) {
-      const leaveMessage = {
-        type: "WAIT_EXIT",
-        roomId: waitingRoomId,
-        sender: userData.nickname,
-        message: "",
-        userId: userData.userId,
-      };
-
-      if (webSocket.readyState === WebSocket.OPEN) {
-        webSocket.send(JSON.stringify(leaveMessage));
-        localStorage.removeItem("userNames");
-        console.log("방 나가기 메시지 전송");
-      } else {
-        console.warn("WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.");
-      }
-      webSocket.close();
-    } else {
-      console.warn("WebSocket 객체가 초기화되지 않았습니다.");
-    }
-    navigate("/home");
-  };
+  const teamCreatePageUrl = `https://i11e103.p.ssafy.io/team-create/${waitingRoomId}`;
 
   const isRoomOwner = roomOwnerId === Number(localStorage.getItem("userId"));
+
+  useEffect(() => {
+    let stopSendingLocation;
+
+    if (isRunning && isWebSocketConnected) {
+      stopSendingLocation = startSendingLocation();
+    }
+
+    return () => {
+      if (stopSendingLocation) stopSendingLocation();
+    };
+  }, [isRunning, isWebSocketConnected]);
 
   return (
     <div>
@@ -189,13 +228,24 @@ const TeamCreate = () => {
         >
           <QRCode
             value={teamCreatePageUrl}
-            onClick={handleQRCodeClick}
+            onClick={() => window.location.href = teamCreatePageUrl}
             style={{ cursor: "pointer", width: "300px", height: "300px" }}
           />
         </Modal>
+        <div>
+          <MapComponent positions={userPositions} />
+          <div>Total Distance: {totalDistance} km</div>
+          <div>Total Calories: {totalCalories} kcal</div>
+          <div>Elapsed Time: {elapsedTime} seconds</div>
+        </div>
+        {isRunning && (
+          <button onClick={handleStop} className="TeamCreateButton">
+            Stop
+          </button>
+        )}
       </div>
     </div>
   );
 };
 
-export default TeamCreate;
+export default TeamPage;

@@ -1,99 +1,89 @@
-import React, { useState, useEffect, useContext } from 'react';
-import GeolocationComponent from '../../../components/Running/Team/GeolocationComponent'; // 위치 업데이트 컴포넌트
+import React, { useState, useEffect, useContext } from "react";
 import MapComponent from '../../../components/Running/Team/MapComponent'; // 카카오맵 컴포넌트
 import { UserContext } from '../../../hooks/UserContext'; // 사용자 정보 가져오기
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import WebSocketManager from './WebSocketManager';
 
 const TeamCheck = () => {
   const loc = useLocation();
+  const navigate = useNavigate();
   const roomId = loc.pathname.slice(12); // URL 매개변수에서 roomId 추출
   const { userData } = useContext(UserContext);
-  const [webSocket, setWebSocket] = useState(null);
   const [userPositions, setUserPositions] = useState({});
+  const [userNames, setUserNames] = useState([]);
   const [totalDistance, setTotalDistance] = useState(0);
   const [totalCalories, setTotalCalories] = useState(0);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
 
   useEffect(() => {
     if (!roomId) {
       console.error('roomId is not available');
       return;
     }
-
-    const ws = new WebSocket(`wss://i11e103.p.ssafy.io:8001/ws/chat?roomId=${roomId}`);
-    setWebSocket(ws);
-
-    ws.onopen = () => {
-      console.log('WebSocket connection established');
-    };
-
-    ws.onclose = () => {
-      console.log('WebSocket connection closed');
-      setWebSocket(null);
-    };
-
-    ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
-    };
-
-    ws.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-
-      switch (message.type) {
-        case 'UPDATE_POSITION':
-          setUserPositions((prevPositions) => ({
-            ...prevPositions,
-            [message.userId]: { latitude: message.latitude, longitude: message.longitude },
-          }));
-          break;
-        case 'UPDATE_DISTANCE':
-          setTotalDistance(message.distance);
-          break;
-        case 'UPDATE_CALORIES':
-          setTotalCalories(message.calories);
-          break;
-        case 'UPDATE_TIME':
-          setElapsedTime(message.elapsedTime);
-          break;
-        case 'USERLIST_UPDATE':
-          // 사용자 목록 업데이트 처리
-          break;
-        default:
-          break;
+  
+    WebSocketManager.connect(roomId); // WebSocket 연결
+  
+    const handleMessage = (receivedData) => {
+      console.log("Received message:", receivedData);
+  
+      if (receivedData && receivedData.type === 'LOCATION') {
+        const { sender, longitude, latitude, message } = receivedData;
+  
+        // Update state or UI with the received location data
+        setUserPositions(prevPositions => ({
+          ...prevPositions,
+          [sender]: { latitude, longitude },
+        }));
+  
+        console.log(`Received location from ${sender}:`);
+        console.log(`Longitude: ${longitude}, Latitude: ${latitude}`);
+        console.log(`Message: ${message}`);
+      } else {
+        console.warn('Unexpected message type or data:', receivedData);
       }
     };
-
+  
+    const handleOpen = () => {
+      console.log('WebSocket connection opened');
+      setIsWebSocketConnected(true);
+  
+      // Automatically start sending location updates
+      setIsRunning(true);
+    };
+  
+    const handleClose = () => {
+      console.log('WebSocket connection closed');
+      setIsWebSocketConnected(false);
+      setIsRunning(false);
+    };
+  
+    WebSocketManager.on('message', handleMessage); // 메시지 이벤트 리스너 추가
+    WebSocketManager.on('open', handleOpen);
+    WebSocketManager.on('close', handleClose);
+    WebSocketManager.on('error', (error) => {
+      console.error('WebSocket error:', error);
+    });
+  
     return () => {
-      ws.close();
+      WebSocketManager.off('message', handleMessage);
+      WebSocketManager.off('open', handleOpen);
+      WebSocketManager.off('close', handleClose);
+      WebSocketManager.close();
     };
   }, [roomId]);
-
-  const handleStart = () => {
-    if (webSocket && webSocket.readyState === WebSocket.OPEN) {
-      const startMessage = {
-        type: 'START',
-        roomId,
-        sender: userData.nickname,
-        userId: userData.userId,
-      };
-      webSocket.send(JSON.stringify(startMessage));
-      setIsRunning(true);
-      console.log('START 메시지 전송');
-    } else {
-      console.warn('WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.');
-    }
-  };
+  
 
   const handleStop = () => {
-    if (webSocket && webSocket.readyState === WebSocket.OPEN) {
+    if (WebSocketManager.ws && WebSocketManager.ws.readyState === WebSocket.OPEN) {
       const stopMessage = {
         type: 'STOP',
         roomId,
         sender: userData.nickname,
         userId: userData.userId,
       };
-      webSocket.send(JSON.stringify(stopMessage));
+      WebSocketManager.send(stopMessage);
       setIsRunning(false);
       console.log('STOP 메시지 전송');
     } else {
@@ -101,29 +91,63 @@ const TeamCheck = () => {
     }
   };
 
+  const getDummyLocation = () => {
+    const baseLatitude = 37.5665; // 서울시청 좌표 (예시)
+    const baseLongitude = 126.978; // 서울시청 좌표 (예시)
+    return {
+      latitude: baseLatitude + (Math.random() - 0.5) * 0.01,
+      longitude: baseLongitude + (Math.random() - 0.5) * 0.01,
+    };
+  };
+
+  const startSendingLocation = () => {
+    const updateLocation = () => {
+      console.log('Attempting to send location...');
+      if (isWebSocketConnected) {
+        const { latitude, longitude } = getDummyLocation();
+        if (WebSocketManager.ws && WebSocketManager.ws.readyState === WebSocket.OPEN) {
+          const locationMessage = {
+            type: 'LOCATION',
+            roomId,
+            sender: userData.nickname,
+            message: `${userData.nickname}의 총 이동 거리: ${Math.round(Math.random() * 100) / 10} km`,
+            userId: userData.userId,
+            longitude,
+            latitude,
+          };
+          WebSocketManager.send(locationMessage);
+          console.log(`위치 정보 전송: ${JSON.stringify(locationMessage)}`);
+        } else {
+          console.warn('WebSocket is not open. ReadyState:', WebSocketManager.ws.readyState);
+        }
+      }
+    };
+
+    const intervalId = setInterval(updateLocation, 5000);
+    return () => clearInterval(intervalId);
+  };
+
+  useEffect(() => {
+    let stopSendingLocation;
+
+    if (isRunning && isWebSocketConnected) {
+      stopSendingLocation = startSendingLocation();
+    }
+
+    return () => {
+      if (stopSendingLocation) stopSendingLocation();
+    };
+  }, [isRunning, isWebSocketConnected]);
+
   return (
     <div>
       <h1>Team Check</h1>
-      <button onClick={handleStart}>Start</button>
       <button onClick={handleStop}>Stop</button>
-      <GeolocationComponent
-        onLocationUpdate={(lat, lon) => {
-          if (webSocket && webSocket.readyState === WebSocket.OPEN) {
-            const locationMessage = {
-              type: 'UPDATE_LOCATION',
-              roomId,
-              userId: userData.userId,
-              latitude: lat,
-              longitude: lon,
-            };
-            webSocket.send(JSON.stringify(locationMessage));
-          }
-        }}
-      />
       <MapComponent positions={userPositions} />
       <div>Total Distance: {totalDistance} km</div>
       <div>Total Calories: {totalCalories} kcal</div>
       <div>Elapsed Time: {elapsedTime} seconds</div>
+      {!isWebSocketConnected && <div>WebSocket 연결이 끊어졌습니다. 재연결을 시도 중입니다...</div>}
     </div>
   );
 };

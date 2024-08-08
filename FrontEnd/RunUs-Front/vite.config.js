@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => {
     server: {
       proxy: {
         "/api": {
-          // target: "http://localhost:8080",
+          //target: "http://localhost:8080",
           target: env.VITE_API_URL,
           changeOrigin: true,
           secure: false,
@@ -28,7 +28,7 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         input: {
           app: './index.html',
-          'firebase-messaging-sw': './public/firebase-messaging-sw.js',
+          // 'firebase-messaging-sw': './public/firebase-messaging-sw.js',
         },
       },
     }
