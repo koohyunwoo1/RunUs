@@ -1,0 +1,17 @@
+.SoloModeStart {
+  margin-top: 40px;
+  margin-left: 10px;
+  text-align: center;
+  position: relative;
+  padding: 20px;
+}
+
+.back-button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+}
