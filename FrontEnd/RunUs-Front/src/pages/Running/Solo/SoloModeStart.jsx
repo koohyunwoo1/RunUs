@@ -153,12 +153,14 @@ const SoloModeStart = () => {
         // 데이터 준비
         const user_id = localStorage.getItem("userId");
         const response = await axios.post(
-          `/api/v1/record/result_save?user_id=${user_id}&distance=${distance}&time=${time}&kcal=${calories}`
+          `/api/v1/record/result_save?user_id=${user_id}&distance=${parseInt(
+            distance
+          )}&time=${time}&kcal=${parseInt(calories)}`
         );
 
         if (response.data.success) {
           console.log(response.data.data);
-          navigate("/home");
+          navigate("/report-home");
         } else {
           console.error(response.data);
           Swal.fire({
@@ -225,7 +227,6 @@ const SoloModeStart = () => {
       <button className="back-button" onClick={() => navigate("/home")}>
         <FontAwesomeIcon icon={faArrowLeft} size="lg" />
       </button>
-      <h1>Solo Mode</h1>
       {error ? (
         <p>Error: {error}</p>
       ) : (
