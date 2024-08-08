@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import WebSocketManager from "./WebSocketManager";
 import MapComponent from '../../../components/Running/Team/MapComponent'; // 카카오맵 컴포넌트
+import axios from "axios";
 
 Modal.setAppElement("#root");
 
@@ -31,6 +32,9 @@ const TeamPage = () => {
   const [roomOwnerId, setRoomOwnerId] = useState(
     location.state?.roomOwnerId || null
   );    
+  const [partyId, setPartyId] = useState(
+    location.state?.partyId || null
+  );
 
   useEffect(() => {
     
@@ -91,6 +95,23 @@ const TeamPage = () => {
         } else if (receivedData.type === "START") {
           // Start sending location updates when "START" message is received
           setIsRunning(true);
+        } else if (receivedData.type === "QUIT"){
+            try {
+              const response = axios.post('api/v1/record/result_save', null, {
+                params: {
+                  user_id: userData.userId,
+                  party_id: partyId,
+                  distance: totalDistance, 
+                  time: elapsedTime,
+                  kcal : totalCalories,
+                }
+              });        
+              console.log(response);
+
+              navigate(`/home`);
+            } catch (err) {
+              console.error(err);
+            }
         }
       });
 
@@ -154,12 +175,13 @@ const TeamPage = () => {
     }
   };
 
-  const handleStop = () => {
+  const handleQuit = () => {
     if (WebSocketManager.ws && WebSocketManager.ws.readyState === WebSocket.OPEN) {
       const stopMessage = {
-        type: 'STOP',
+        type: 'QUIT',
         roomId: waitingRoomId,
         sender: userData.nickname,
+        message: "방장이 종료 버튼을 눌렀습니다.",
         userId : userData.userId,
       };
       WebSocketManager.send(stopMessage);
@@ -265,8 +287,8 @@ const TeamPage = () => {
           <div>Elapsed Time: {elapsedTime} seconds</div>
         </div>
         {isRunning && (
-          <button onClick={handleStop} className="TeamCreateButton">
-            Stop
+          <button onClick={handleQuit} className="TeamCreateButton">
+            Quit
           </button>
         )}
       </div>
