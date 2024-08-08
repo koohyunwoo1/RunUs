@@ -82,7 +82,7 @@ const LogInHome = () => {
   // 솔로 프로필 클릭 핸들러
   const handleSoloProfileClick = async () => {
     const result = await Swal.fire({
-      title: "Run Us ?",
+      title: "Run ?",
       showCancelButton: true,
       confirmButtonText: "예",
       cancelButtonText: "아니오",

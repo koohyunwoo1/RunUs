@@ -50,24 +50,44 @@ const ReportItem = () => {
   };
 
   return (
-    <div className="recent_container">
+    <div>
       <h3 className="recent_active">최근 활동</h3>
       {Array.isArray(reportData) && reportData.length > 0 ? (
         reportData.map((item, index) => (
           <div className="report_container" key={index}>
             <div className="record_container">
-              <div className="record_date">{item.recordDate}</div>
-              <div className="mode_indicator">
-                {item.party_id ? "팀 모드" : "솔로 모드"}
+              <div className="record_container2">
+                <div className="mode_indicator">
+                  {item.party_id ? "팀 모드" : "솔로 모드"}
+                </div>
+                <div className="record_date">{item.recordDate}</div>
               </div>
               <div className="record_details">
                 <div className="distance">
                   <FaRunning />
-                  {convertDistance(item.distance)} km
+                  {convertDistance(item.distance)}
+                  <span
+                    style={{
+                      color: "gray",
+                      fontWeight: "15",
+                      marginLeft: "3px",
+                    }}
+                  >
+                    km
+                  </span>
                 </div>
                 <div className="kcal">
                   <FaFire />
-                  {item.kcal} kcal
+                  {item.kcal}
+                  <span
+                    style={{
+                      color: "gray",
+                      fontWeight: "15",
+                      marginLeft: "3px",
+                    }}
+                  >
+                    kcal
+                  </span>
                 </div>
                 <div className="time">
                   <IoMdTime />

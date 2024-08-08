@@ -2,8 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import axios from "axios"; // axios import
+import {
+  faArrowLeft,
+  faPlay,
+  faPause,
+  faStop,
+} from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 import "../../../styles/Running/Solo/SoloModeStart.css";
 
 const SoloModeStart = () => {
@@ -107,7 +112,6 @@ const SoloModeStart = () => {
         handleError,
         options
       );
-      0;
 
       return () => navigator.geolocation.clearWatch(watchId);
     }
@@ -216,7 +220,6 @@ const SoloModeStart = () => {
   };
 
   const calculateCalories = (distance, weight = 70) => {
-    // 간단한 계산 예시: 거리(킬로미터) * 체중(킬로그램) * 1.036 (칼로리/킬로그램/킬로미터)
     const distanceInKm = distance / 1000;
     const caloriesBurned = distanceInKm * weight * 1.036;
     return caloriesBurned;
@@ -224,22 +227,45 @@ const SoloModeStart = () => {
 
   return (
     <div className="SoloModeStart">
-      <button className="back-button" onClick={() => navigate("/home")}>
+      <button className="backButton" onClick={() => navigate("/home")}>
         <FontAwesomeIcon icon={faArrowLeft} size="lg" />
       </button>
+
       {error ? (
         <p>Error: {error}</p>
       ) : (
-        <>
-          <p>Elapsed Time: {formatTime(time)}</p>
-          <p>Latitude: {location.latitude}</p>
-          <p>Longitude: {location.longitude}</p>
-          <p>Distance traveled: {distance.toFixed(2)} meters</p>
-          <p>Calories burned: {calories.toFixed(2)} kcal</p>{" "}
-          {/* 칼로리 정보 표시 */}
-          <button onClick={handleToggle}>{isRunning ? "Stop" : "Start"}</button>
-          <button onClick={handleEnd}>End</button>
-        </>
+        <div>
+          <div className="SoloModeStartHeader">
+            <div>
+              <h1 style={{ fontSize: "30px" }}>
+                {formatTime(time)} <br />
+              </h1>
+              시간
+            </div>
+            <div>
+              <h1 style={{ fontSize: "30px" }}>
+                {parseInt(calories.toFixed(2))} <br />
+              </h1>
+              칼로리
+            </div>
+          </div>
+
+          <div className="SoloModeStartDistance">
+            <p>
+              {(distance / 1000).toFixed(2)} <br />
+              <span style={{ fontSize: "20px" }}>킬로미터</span>
+            </p>
+          </div>
+
+          <div className="SoloModeStartButtons">
+            <button className="iconButton" onClick={handleToggle}>
+              <FontAwesomeIcon icon={isRunning ? faPause : faPlay} size="2x" />
+            </button>
+            <button className="iconButton" onClick={handleEnd}>
+              <FontAwesomeIcon icon={faStop} size="2x" />
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
