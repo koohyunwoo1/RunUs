@@ -5,10 +5,10 @@ const TeamUserList = ({ userNames }) => {
   return (
     <div className="TeamUserList">
       <div className="user-list">
-        {userNames.map((userName, index) => (
+        {userNames.map((user, index) => (
           <div className="user-card" key={index}>
             <div className="user-info">
-              <span className="user-nickname">{userName}</span>
+              <span className="user-nickname">{user.name} - {user.distance}</span>
             </div>
           </div>
         ))}
