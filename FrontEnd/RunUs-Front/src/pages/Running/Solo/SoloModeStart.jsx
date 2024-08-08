@@ -1,32 +1,31 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "../../../components/common/Header";
 import Swal from "sweetalert2";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import "../../../styles/Running/Solo/SoloModeStart.css";
 
 const SoloModeStart = () => {
-  const [time, setTime] = useState(0); // 시간 상태
-  const [distance, setDistance] = useState(0); // 이동 거리 상태
-  const [location, setLocation] = useState({ latitude: null, longitude: null }); // 현재 위치 상태
-  const [isRunning, setIsRunning] = useState(true); // 타이머 상태 자동 시작
-  const [error, setError] = useState(null); // 에러 메시지 상태
+  const [time, setTime] = useState(0);
+  const [distance, setDistance] = useState(0);
+  const [location, setLocation] = useState({ latitude: null, longitude: null });
+  const [isRunning, setIsRunning] = useState(true);
+  const [error, setError] = useState(null);
   const prevLocation = useRef({
     latitude: null,
     longitude: null,
     timestamp: null,
     speed: null,
-  }); // 이전 위치 정보
-  const timerRef = useRef(null); // 타이머 참조
+  });
+  const timerRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // 브라우저에서 지리적 위치 정보 제공 안 하면 에러 처리
     if (!navigator.geolocation) {
       setError("Geolocation is not supported by your browser");
       return;
     }
 
-    // 위치 정보 얻기 성공했을 때 처리 함수
     const handleSuccess = (position) => {
       const { latitude, longitude, speed } = position.coords;
       const currentTime = Date.now();
@@ -36,7 +35,7 @@ const SoloModeStart = () => {
         prevLocation.current.longitude !== null
       ) {
         const timeElapsed =
-          (currentTime - prevLocation.current.timestamp) / 1000; // 초 단위로 변환
+          (currentTime - prevLocation.current.timestamp) / 1000;
         const maxPossibleDistance =
           (prevLocation.current.speed || 0) * timeElapsed;
         const dist = calculateDistance(
@@ -110,7 +109,7 @@ const SoloModeStart = () => {
   useEffect(() => {
     if (isRunning) {
       timerRef.current = setInterval(() => {
-        setTime((prevTime) => prevTime + 1); // 매초 시간 증가
+        setTime((prevTime) => prevTime + 1);
       }, 1000);
     } else {
       if (timerRef.current) {
@@ -126,7 +125,7 @@ const SoloModeStart = () => {
   }, [isRunning]);
 
   const handleToggle = () => {
-    setIsRunning((prev) => !prev); // 타이머 상태 토글
+    setIsRunning((prev) => !prev);
   };
 
   const handleEnd = async () => {
@@ -182,7 +181,9 @@ const SoloModeStart = () => {
 
   return (
     <div className="SoloModeStart">
-      <Header />
+      <button className="back-button" onClick={() => navigate("/home")}>
+        <FontAwesomeIcon icon={faArrowLeft} size="lg" />
+      </button>
       <h1>Solo Mode</h1>
       {error ? (
         <p>Error: {error}</p>
@@ -192,7 +193,7 @@ const SoloModeStart = () => {
           <p>Latitude: {location.latitude}</p>
           <p>Longitude: {location.longitude}</p>
           <p>Distance traveled: {distance.toFixed(2)} meters</p>
-          <button onClick={handleToggle}>{isRunning ? "stop" : "start"}</button>
+          <button onClick={handleToggle}>{isRunning ? "Stop" : "Start"}</button>
           <button onClick={handleEnd}>End</button>
         </>
       )}

@@ -23,7 +23,8 @@ const customIcon = new L.DivIcon({
 });
 
 const MapView = () => {
-  const [position, setPosition] = useState(null); // 초기값을 null로 설정
+  const [position, setPosition] = useState(null);
+  const [audio] = useState(new Audio("/sounds/HereMe.mp3")); // public 디렉토리 내의 절대 경로 사용
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -41,7 +42,17 @@ const MapView = () => {
     }
   }, []);
 
-  if (!position) return null; // 위치가 없으면 아무 것도 렌더링하지 않음
+  const playSound = () => {
+    if (audio) {
+      audio.play().catch((error) => {
+        console.error("Audio play error:", error);
+      });
+    } else {
+      console.error("Audio file not loaded");
+    }
+  };
+
+  if (!position) return null;
 
   return (
     <MapContainer
@@ -59,7 +70,15 @@ const MapView = () => {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
-      <Marker position={position} icon={customIcon}>
+      <Marker
+        position={position}
+        icon={customIcon}
+        eventHandlers={{
+          click: () => {
+            playSound();
+          },
+        }}
+      >
         <Popup>
           <div
             style={{
@@ -67,7 +86,7 @@ const MapView = () => {
               color: "black",
               borderRadius: "8px",
               padding: "10px",
-              fontSize: "14px",
+              fontSize: "20px",
               textAlign: "center",
             }}
           >
