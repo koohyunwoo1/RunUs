@@ -22,82 +22,58 @@ const TeamCheck = () => {
       console.error('roomId is not available');
       return;
     }
-
+  
     WebSocketManager.connect(roomId); // WebSocket 연결
-
+  
     const handleMessage = (receivedData) => {
       console.log("Received message:", receivedData);
-    
-      switch (receivedData.type) {
-        case "USERLIST_UPDATE": {
-          console.log("User list update message:", receivedData.message);
-    
-          const messageContent = receivedData.message;
-          const userList = messageContent.split("현재 방에 있는 사용자: ")[1];
-          const userNames = userList ? userList.split(", ") : [];
-          localStorage.setItem("userNames", JSON.stringify(userNames));
-          setUserNames(userNames);
-          console.log("User list updated:", userNames);
-          break;
-        }
-        case "ROOM_CLOSED": {
-          alert("방장이 방을 종료했습니다. 방을 나가겠습니다.");
-          navigate("/home");
-          break;
-        }
-        case "START": {
-          window.location.href = `/countdown/${roomId}`;
-          break;
-        }
-        default: {
-          console.log(`Unhandled message type: ${receivedData.type}`, receivedData);
-          break;
-        }
+  
+      if (receivedData && receivedData.type === 'LOCATION') {
+        const { sender, longitude, latitude, message } = receivedData;
+  
+        // Update state or UI with the received location data
+        setUserPositions(prevPositions => ({
+          ...prevPositions,
+          [sender]: { latitude, longitude },
+        }));
+  
+        console.log(`Received location from ${sender}:`);
+        console.log(`Longitude: ${longitude}, Latitude: ${latitude}`);
+        console.log(`Message: ${message}`);
+      } else {
+        console.warn('Unexpected message type or data:', receivedData);
       }
     };
-    
-
+  
     const handleOpen = () => {
       console.log('WebSocket connection opened');
       setIsWebSocketConnected(true);
-      if (isRunning) startSendingLocation();
+  
+      // Automatically start sending location updates
+      setIsRunning(true);
     };
-
+  
     const handleClose = () => {
       console.log('WebSocket connection closed');
       setIsWebSocketConnected(false);
+      setIsRunning(false);
     };
-
-    WebSocketManager.on('message', handleMessage);
+  
+    WebSocketManager.on('message', handleMessage); // 메시지 이벤트 리스너 추가
     WebSocketManager.on('open', handleOpen);
     WebSocketManager.on('close', handleClose);
     WebSocketManager.on('error', (error) => {
       console.error('WebSocket error:', error);
     });
-
+  
     return () => {
       WebSocketManager.off('message', handleMessage);
       WebSocketManager.off('open', handleOpen);
       WebSocketManager.off('close', handleClose);
       WebSocketManager.close();
     };
-  }, [roomId, isRunning, navigate]);
-
-  const handleStart = () => {
-    if (WebSocketManager.ws && WebSocketManager.ws.readyState === WebSocket.OPEN) {
-      const startMessage = {
-        type: 'START',
-        roomId,
-        sender: userData.nickname,
-        userId: userData.userId,
-      };
-      WebSocketManager.send(startMessage);
-      setIsRunning(true);
-      console.log('START 메시지 전송');
-    } else {
-      console.warn('WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.');
-    }
-  };
+  }, [roomId]);
+  
 
   const handleStop = () => {
     if (WebSocketManager.ws && WebSocketManager.ws.readyState === WebSocket.OPEN) {
@@ -166,7 +142,6 @@ const TeamCheck = () => {
   return (
     <div>
       <h1>Team Check</h1>
-      <button onClick={handleStart}>Start</button>
       <button onClick={handleStop}>Stop</button>
       <MapComponent positions={userPositions} />
       <div>Total Distance: {totalDistance} km</div>
