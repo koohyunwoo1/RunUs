@@ -13,7 +13,6 @@ import runus.runus.user.service.UserService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,11 +25,14 @@ public class RecordController {
     // 티어 정보 보기
     @GetMapping("/tier")
     // user의 tier_id 출력
-    public ResponseEntity<?> getUserTier(@RequestParam("user_id") Integer user_id) {
-        Optional<User> user = userService.getUserById(user_id);
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getUserTier(@RequestParam Integer userId) {
+        User user = userService.getUserEntityById(userId);
         Map<String, Object> data = new HashMap<>();
-        data.put("tier_id", user.map(User::getTierId).orElse(null));
-        return ResponseEntity.ok(new ApiResponse<>(true, data, "티어 조회 성공"));
+        data.put("tier_id", user.getTierId());
+
+        ApiResponse<Map<String, Object>> response = new ApiResponse<>();
+        response.setSuccess(data, "티어 정보 조회");
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // 최근 기록
@@ -74,7 +76,7 @@ public class RecordController {
     public ResponseEntity<?> getMonthlyStatistics(@RequestParam("user_id") Integer user_id, @PathVariable("year") Integer year) {
         try {
             List<Map<String, Object>> stats = recordService.getMonthlyStatistics(user_id, year);
-            return ResponseEntity.ok(new ApiResponse<>(true,stats,"년도 별 월 통계 조회 성공"));
+            return ResponseEntity.ok(new ApiResponse<>(true, stats, "년도 별 월 통계 조회 성공"));
         } catch (Exception e) {
             return ResponseEntity.ok(new ApiResponse<>(false, e.getMessage(), "년도 별 월 통계 조회 실패"));
         }

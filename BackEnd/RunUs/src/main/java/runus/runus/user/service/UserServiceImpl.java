@@ -73,11 +73,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> getUserById(Integer userId) {
-        return userRepository.findById(userId);
-    }
-
-    @Override
     public UserDto getUserProfile(Integer userId) {
         User user = getUserEntityById(userId);
         return convertToDto(user);

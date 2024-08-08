@@ -11,7 +11,6 @@ public interface UserService {
     String searchEmail(String phoneNumber);
     String searchPassword(String email, String phoneNumber);
 
-    Optional<User> getUserById(Integer userId);
     UserDto getUserProfile(Integer userId); // 회원 정보 조회 메서드 추가
     String storeProfilePicture(Integer userId, MultipartFile file); // 프로필 사진 저장 메서드 추가
 
