@@ -110,10 +110,10 @@ const ArticleHome = () => {
         <div className="article-filters">
           <div className="left-buttons">
             <button onClick={handleCompletedOnly}>
-              {completedOnly ? "모든 글 보기" : "모집 완료된 글만 보기"}
+              {completedOnly ? "모든 글 보기" : "모집 가능한 글만 보기"}
             </button>
             <button onClick={handleSortByTime}>
-              {sortByTime ? "시간순" : "최신순"}
+              {sortByTime ? "오래된순" : "최신순"}
             </button>
           </div>
           <div className="right-button">  

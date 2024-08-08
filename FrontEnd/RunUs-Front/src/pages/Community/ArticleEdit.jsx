@@ -14,10 +14,11 @@ const ArticleEdit = () => {
     meetingDay: "",
     meetingTime: ""
   });
-  const [regionMinorOptions, setRegionMinorOptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const userData = JSON.parse(localStorage.getItem("userData")); // 로컬 스토리지에서 사용자 데이터 가져오기
+
+  // 로컬 스토리지에서 사용자 데이터 가져오기
+  const userData = JSON.parse(localStorage.getItem("userData"));
 
   useEffect(() => {
     if (!id) {
@@ -33,29 +34,13 @@ const ArticleEdit = () => {
         const response = await axios.get(`/api/v1/boards/${id}`);
         console.log('Article response:', response.data);
         const articleData = response.data.data;
-        setArticle(articleData);
 
-        // Fetch parentId from region-minor
-        const minorResponse = await axios.get(`/api/v1/region-minor/${articleData.regionId}`);
-        const minorData = minorResponse.data.data;
-        const parentId = minorData.parentId;
-
-        if (!parentId) {
-          console.error('Parent ID not found');
-          return;
-        }
-
-        // Fetch region-major using parentId
-        const majorResponse = await axios.get(`/api/v1/region-major/${parentId}`);
-        const majorData = majorResponse.data.data;
-
-        if (majorData) {
-          setRegionMinorOptions(majorData);
-        } else {
-          console.error('Major data not found for the given parentId');
-        }
+        setArticle({
+          ...articleData,
+          regionId: userData.regionId // 사용자 지역으로 설정
+        });
       } catch (err) {
-        console.error('Error fetching article or region options:', err.response ? err.response.data : err.message);
+        console.error('Error fetching article:', err.response ? err.response.data : err.message);
         setError(err);
       } finally {
         setLoading(false);
@@ -63,18 +48,17 @@ const ArticleEdit = () => {
     };
 
     fetchArticle();
-  }, [id]);
+  }, [id]); // userData를 종속성 배열에서 제거
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-
-      const formattedMeetingTime = `${article.meetingDay}T${article.meetingTime}`
+      const formattedMeetingTime = `${article.meetingDay}T${article.meetingTime}`;
 
       await axios.put(`/api/v1/boards/${id}`, {
         title: article.title,
         content: article.content,
-        regionId: parseInt(article.regionId, 10),
+        regionId: userData.regionId, // 자동으로 사용자 지역으로 설정
         userId: userData.userId, // userId 추가
         meetingDay: article.meetingDay,
         meetingTime: formattedMeetingTime
@@ -132,22 +116,7 @@ const ArticleEdit = () => {
             required
           />
         </div>
-        <div className="form-group">
-          <label htmlFor="regionMinor">시/군/구</label>
-          <select
-            id="regionMinor"
-            value={article.regionId || ""}
-            onChange={(e) => setArticle({ ...article, regionId: e.target.value })}
-            required
-          >
-            <option value="">시/군/구 선택</option>
-            {regionMinorOptions.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        {/* 지역 선택 요소 제거 */}
         <Button type="submit" text="저장" />
         <Button text="취소" onClick={() => nav(`/article-detail/${id}`)} />
       </form>
