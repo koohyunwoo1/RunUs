@@ -197,6 +197,7 @@ const SoloModeStart = () => {
           <button onClick={handleEnd}>End</button>
         </>
       )}
+      <div>ㅎㅇ</div>
     </div>
   );
 };
