@@ -32,6 +32,36 @@
   background-color: #4ee2ec;
 }
 
+.tier-unranked-text {
+  color: gray;
+}
+
+.tier-bronze-text {
+  color: #cd7f32; 
+}
+
+.tier-silver-text {
+  color: silver;
+}
+
+.tier-gold-text {
+  color: rgb(255, 215, 50); 
+}
+
+.tier-platinum-text {
+  color: #3ed4be;
+}
+
+.tier-diamond-text {
+  color: #4ee2ec;
+}
+
+.tier_modal-content ul {
+  list-style: none; /* 글머리 제거 */
+  padding-left: 20px; /* 기본 패딩 제거 */
+}
+
+
 .experience-bar {
   background-color: #e0e0e0;
   border-radius: 10px;
@@ -45,4 +75,66 @@
   background-color: white;
   height: 100%;
   transition: width 0.5s ease-in-out;
+}
+
+/* 모달 오버레이 */
+.tier_modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* 모달 내용 */
+.tier_modal-content {
+  background-color: white;
+  color: black;
+  padding: 0px 10px;
+  border-radius: 10px;
+  max-width: 380px;
+  width: 80%;
+  height: 300px;
+  text-align: center;
+  position: relative;
+}
+
+/* 모달 닫기 버튼 */
+.tier_modal-content button {
+  background-color: #98bae3;
+  width: 120px;
+  height: 40px;
+  font-size: 18px;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.tier_modal-content button:hover {
+  background-color: #98bae3;
+} 
+
+.tierHelp {
+  cursor: pointer;
+  font-size: 28px;
+  transition: color 0.3s;
+}
+
+.tierHelp:hover {
+  color: #ccc;
+}
+
+.tierexplain {
+  text-align: left;
+  font-size: 18px;
+}
+
+.expExplain {
+  margin: 0px;
 }

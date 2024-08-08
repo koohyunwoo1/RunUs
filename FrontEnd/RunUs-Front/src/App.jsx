@@ -1,5 +1,10 @@
-import React from "react";
+
+import React, { useContext, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
+import { UserProvider, UserContext } from "./hooks/UserContext";
+import { requestPermissionAndGetToken, sendTokenToServer, deleteTokenFromServer, setupMessageListener } from './hooks/fcm';
+
+// 페이지 컴포넌트 import
 import SignIn from "./pages/Auth/SignIn";
 import SignUp from "./pages/Auth/SignUp";
 import LogOutHome from "./pages/Home/LogOutHome";
@@ -17,71 +22,59 @@ import MyPageEdit from "./pages/MyPage/MyPageEdit";
 import CountDown from "./pages/Running/Team/CountDown";
 import TeamCheck from "./pages/Running/Team/TeamCheck";
 import ProtectedRoute from "./components/common/ProtectedRoute";
-import { UserProvider } from "./hooks/UserContext";
-
-// firebase setting 
-import { useEffect, useState } from "react";
-import { getToken } from 'firebase/messaging';
-import { messaging } from './firebase';
-// firebase setting end
+import RedirectRoute from "./components/common/RedirectRoute";
 
 import axios from 'axios';
 
 axios.defaults.baseURL = process.env.VITE_API_URL;
 
-const App = () => {
-
-  // firebase code
-  const sendTokenToServer = async (token) => {
-    try {
-      const response = await fetch('https://localhost:8000/api/v1/fcm/user', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: 'park', // 실제 사용자 ID로 대체해야 합니다
-          token: token
-        }),
-      });
-      if (response.ok) {
-        console.log('Token sent to server successfully');
-      } else {
-        console.error('Failed to send token to server');
-      }
-    } catch (error) {
-      console.error('Error sending token to server:', error);
-    }
-  };
-
- 
+const AppContent = () => {
+  const { userData, userId } = useContext(UserContext);
   
-
   useEffect(() => {
-    const requestPermission = async () => {
-      try {
-        await Notification.requestPermission();
-        const token = await getToken(messaging, { vapidKey: 'BCpoEnMBbhsZk7yUTELkZw7zAzb7ikaHE0uiIVLR4gTeX8BpM2Mab52k4M-_ljDNJC8bY2FQkCpU1ngEQ0KSF5E' });
-        console.log('FCM Token:', token);
-        await sendTokenToServer(token);
-      } catch (error) {
-        console.log('FCM 권한 요청 실패:', error);
+    let messageHandler;
+
+    const setupFCM = async () => {
+      if (userData) {
+        const token = await requestPermissionAndGetToken();
+        if (token) {
+          await sendTokenToServer(userId, token);
+          messageHandler = setupMessageListener();
+        }
+      } else if (messageHandler) {
+        messageHandler();
+        await deleteTokenFromServer(userId);
       }
     };
 
-    requestPermission();
-  }, []);
+    setupFCM();
 
-
-  // firebase code end
+    return () => {
+      if (messageHandler) {
+        messageHandler();
+      }
+    };
+  }, [userData, userId]);
 
   return (
-    <UserProvider>
-      <div>
-        <Routes>
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/" element={<LogOutHome />} />
+    <div>
+      <Routes>
+          <Route path="/signin" element={
+            <RedirectRoute>
+              <SignIn />
+            </RedirectRoute>
+              
+            } />
+            <Route path="/signup" element={
+              <RedirectRoute>
+                <SignUp />
+              </RedirectRoute>
+              
+            } />
+          <Route path="/" element={
+            <RedirectRoute>
+              <LogOutHome />
+            </RedirectRoute>} />
           <Route
             path="/home"
             element={
@@ -90,107 +83,114 @@ const App = () => {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/solo"
-            element={
-              <ProtectedRoute>
-                <SoloMode />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/team-create/:id"
-            element={
-              <ProtectedRoute>
-                <TeamCreate />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/countdown/:id"
-            element={
-              <ProtectedRoute>
-                <CountDown />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/team-QR"
-            element={
-              <ProtectedRoute>
-                <TeamQR />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/report-home"
-            element={
-              <ProtectedRoute>
-                <ReportHome />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/article-home"
-            element={
-              <ProtectedRoute>
-                <ArticleHome />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/article-edit/:id"
-            element={
-              <ProtectedRoute>
-                <ArticleEdit />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/my-page-home"
-            element={
-              <ProtectedRoute>
-                <MyPageHome />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/article-create"
-            element={
-              <ProtectedRoute>
-                <ArticleCreate />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/article-detail/:id"
-            element={
-              <ProtectedRoute>
-                <ArticleDetail />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/my-page-edit"
-            element={
-              <ProtectedRoute>
-                <MyPageEdit />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/team-check/:id"
-            element={
-              <ProtectedRoute>
-                <TeamCheck />
-              </ProtectedRoute>
-            }
-          />
           
+          {/* 로그인 해야 접근 가능한 페이지 */}
+            <Route
+              path="/solo"
+              element={
+                <ProtectedRoute>
+                  <SoloMode />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/team-create/:id"
+              element={
+                <ProtectedRoute>
+                  <TeamCreate />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/countdown/:id"
+              element={
+                <ProtectedRoute>
+                  <CountDown />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/team-QR"
+              element={
+                <ProtectedRoute>
+                  <TeamQR />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/report-home"
+              element={
+                <ProtectedRoute>
+                  <ReportHome />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/article-home"
+              element={
+                <ProtectedRoute>
+                  <ArticleHome />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/article-edit/:id"
+              element={
+                <ProtectedRoute>
+                  <ArticleEdit />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-page-home"
+              element={
+                <ProtectedRoute>
+                  <MyPageHome />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/article-create"
+              element={
+                <ProtectedRoute>
+                  <ArticleCreate />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/article-detail/:id"
+              element={
+                <ProtectedRoute>
+                  <ArticleDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-page-edit"
+              element={
+                <ProtectedRoute>
+                  <MyPageEdit />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/team-check/:id"
+              element={
+                <ProtectedRoute>
+                  <TeamCheck />
+                </ProtectedRoute>
+              }
+            />
         </Routes>
-      </div>
-    </UserProvider>
+    </div>
   );
 };
 
+const App = () => {
+  return (
+    <UserProvider>
+      <AppContent />
+    </UserProvider>
+  );
+};
 export default App;

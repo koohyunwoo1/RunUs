@@ -80,7 +80,9 @@ const ReportItem = () => {
           </div>
         ))
       ) : (
-        <div>데이터가 없습니다.</div>
+        <div>
+          <p className="noReport">데이터가 없습니다.</p>
+          </div>
       )}
     </div>
   );

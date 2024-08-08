@@ -7,6 +7,8 @@
   margin-top: 15px;
   padding: 16px;
   background-color: #ffffffef;
+    /* background-color: rgba(255, 255, 255, 0.4); */
+
   box-shadow: 0 1px px rgba(0, 0, 0, 0.2);
 }
 
@@ -46,6 +48,8 @@
 }
 
 .subhead{
+  font-size: 16px;
+  font-weight: bold;
   margin-left: 15px;
 }
 
