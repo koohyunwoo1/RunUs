@@ -149,9 +149,11 @@ public class ChatRoom {
                 chatMessage.setMessage(userName + "의 총 이동 거리: " + String.format("%.5f", totalDistance) + " km");
                 sendMessage(chatMessage, chatServiceImpl);
 
-                
+
+                System.out.println("팀원 팀장 비교 하기 전 if");
                 // 멀어진 팀원 및 팀장에게 알림 24.08.05 이형준
                 if (distance > MAX_DISTANCE) {
+                    System.out.println("팀장 팀원 비교 시작 if");
                     sendDistanceAlert(userId, userName, distance, false);
                     sendDistanceAlert(roomOwnerId, userName, distance, true);
                     System.out.println("call distance with leader and member");
@@ -204,6 +206,8 @@ public class ChatRoom {
 
 
     private void sendDistanceAlert(int userId, String userName, double distance, boolean isOwner) {
+        System.out.println("sendDistanceAlert start");
+
 
         if (fcmService == null) {
             log.error("FCMService is not initialized. FCMService is null. Cannot send notification.");

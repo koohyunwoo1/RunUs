@@ -17,11 +17,12 @@ public class FCMServiceImpl implements FCMService {
     @Override
     public void saveToken(String userId, String token) {
 //        fcmTokenDAO.saveToken(userId, token);
+        System.out.println("saveToken start");
         String existingToken = fcmTokenDAO.getToken(userId);
         if (existingToken == null || !existingToken.equals(token)) {
             fcmTokenDAO.saveToken(userId, token);
-            System.out.println("call saveToken(FCMServiceImpl)");
             System.out.println("Token saved for user: " + userId);
+            System.out.println("saveToken end");
         } else {
             System.out.println("Token already exists for user: " + userId);
         }
@@ -37,6 +38,7 @@ public class FCMServiceImpl implements FCMService {
 
     @Override
     public void sendNotification(String userId, NotificationDTO notification) throws FirebaseMessagingException {
+        System.out.println("sendNotification start");
         String token = fcmTokenDAO.getToken(userId);
         System.out.println("TOKEN: " + token);
         if (token != null) {
