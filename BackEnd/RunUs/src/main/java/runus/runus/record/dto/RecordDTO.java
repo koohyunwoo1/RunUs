@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
+@AllArgsConstructor
 @Getter
 @Setter
 public class RecordDTO {
@@ -15,6 +18,6 @@ public class RecordDTO {
     private Integer time;       // 시간
     private Integer kcal;// 칼로리
 
-    private String record_date; // 기록 날짜 (타임스탬프 형태)
+    private LocalDateTime record_date; // 기록 날짜 (타임스탬프 형태)
 
 }

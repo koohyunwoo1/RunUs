@@ -7,10 +7,14 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
 @Setter
-public class ResponseMessage {
-
+@Getter
+public class ApiBoardResponse<T> {
+    private boolean success;
+    private T data;
     private String message;
-    private Object data;
+    private int totalPages;
+    private long totalElements;
+    private int pageNumber;
+    private int pageSize;
 }

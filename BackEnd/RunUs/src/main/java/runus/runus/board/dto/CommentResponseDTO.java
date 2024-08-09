@@ -18,5 +18,4 @@ public class CommentResponseDTO {
     private LocalDateTime updatedAt;
     private String nickname;
 
-    // constructor, getters and setters
 }
