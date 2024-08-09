@@ -14,6 +14,7 @@ import runus.runus.webSocket.service.ChatServiceImpl;
 import java.util.HashSet;
 import java.util.Set;
 
+@Builder
 @Getter
 @Slf4j
 public class ChatRoom {
@@ -33,16 +34,11 @@ public class ChatRoom {
     // FCM 사용
     private FCMService fcmService;
 
+
     // 방장과 멀어지는 거리 100 M
     private static final double  MAX_DISTANCE = 0.1; // 최대허용 거리 (km)
 
 
-    @Builder
-    public ChatRoom(String roomId, String userName, int roomOwnerId) {
-        this.roomId = roomId;
-        this.userName = userName;
-        this.roomOwnerId = roomOwnerId;
-    }
 
     // Setter methods for partyId, userName, userId
     public void setPartyId(int partyId) { this.partyId = partyId; }
@@ -203,6 +199,12 @@ public class ChatRoom {
 
 
     private void sendDistanceAlert(int userId, String userName, double distance, boolean isOwner) {
+
+        if (fcmService == null) {
+            log.error("FCMService is not initialized. FCMService is null. Cannot send notification.");
+            return;
+        }
+
         try {
             String title = isOwner ? "팀원 거리 경고" : "거리 경고";
             String body = isOwner
@@ -211,10 +213,9 @@ public class ChatRoom {
 
             NotificationDTO notification = new NotificationDTO(title, body);
             fcmService.sendNotification(String.valueOf(userId), notification);
-            System.out.println("call sendDistanceAlert (ChatRoom)");
+            log.info("Distance alert sent to user: {}", userId);
         } catch (Exception e) {
             log.error("Failed to send distance alert to user: " + userId, e);
-            System.out.println("call sendDistanceAlert (ChatRoom)");
         }
     }
 }

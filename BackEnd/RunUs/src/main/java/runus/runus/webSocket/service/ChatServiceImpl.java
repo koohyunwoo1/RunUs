@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
+import runus.runus.fcm.service.FCMService;
 import runus.runus.webSocket.Entity.PartyEntity;
 import runus.runus.webSocket.Entity.PartyMemberEntity;
 import runus.runus.webSocket.dto.PartyRequestDto;
@@ -46,6 +47,10 @@ public class ChatServiceImpl implements ChatService {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    @Autowired
+    private FCMService fcmService;
+
+
     @PostConstruct
     private void init() {
         chatRooms = new LinkedHashMap<>();
@@ -62,6 +67,8 @@ public class ChatServiceImpl implements ChatService {
         ChatRoom chatRoom = ChatRoom.builder()
                 .roomId(randomId)
                 .roomOwnerId(ownerUserId)
+                .userName(userName)
+                .fcmService(fcmService)
                 .build();
         chatRooms.put(randomId, chatRoom);
 

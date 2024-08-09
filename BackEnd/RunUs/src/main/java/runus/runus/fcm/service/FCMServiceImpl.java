@@ -14,15 +14,17 @@ public class FCMServiceImpl implements FCMService {
     @Autowired
     private FCMTokenDAO fcmTokenDAO;
 
-    private FCMService fcmService;
-
-
-
     @Override
     public void saveToken(String userId, String token) {
-        fcmTokenDAO.saveToken(userId, token);
-        System.out.println("call saveToken(FCMServiceImpl)");
-        System.out.println("Token saved for user: " + userId);
+//        fcmTokenDAO.saveToken(userId, token);
+        String existingToken = fcmTokenDAO.getToken(userId);
+        if (existingToken == null || !existingToken.equals(token)) {
+            fcmTokenDAO.saveToken(userId, token);
+            System.out.println("call saveToken(FCMServiceImpl)");
+            System.out.println("Token saved for user: " + userId);
+        } else {
+            System.out.println("Token already exists for user: " + userId);
+        }
     }
 
     @Override
