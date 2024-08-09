@@ -99,7 +99,7 @@ const AppContent = () => {
 
         {/* 로그인 해야 접근 가능한 페이지 */}
         <Route
-          path="/team-create/:id"
+          path="/team-create/:id/:party/:roomOwnerId"
           element={
             <ProtectedRoute>
               <TeamCreate />

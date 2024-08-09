@@ -1,72 +1,74 @@
-import React, { useState, useEffect, useRef } from 'react';
-import GeolocationComponent from './GeolocationComponent';
+import React, { useEffect, useRef } from 'react';
 
-const MapComponent = () => {
-  const [location, setLocation] = useState({ latitude: null, longitude: null });
+const MapComponent = ({ positions, roomOwnerId }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
-  const marker = useRef(null);
+  const markers = useRef({}); // 사용자별로 최신 위치 마커를 저장
+  const overlays = useRef({}); // 사용자별로 오버레이를 저장
 
   useEffect(() => {
-    // 현재 위치를 가져오는 함수
-    const getCurrentLocation = () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            setLocation({
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-            });
-          },
-          (error) => {
-            console.error(error);
-            // 오류 발생 시 기본 좌표 설정 (서울)
-            setLocation({ latitude: 37.5665, longitude: 126.978 });
-          }
-        );
-      } else {
-        console.error("Geolocation is not supported by this browser.");
-        // Geolocation을 지원하지 않는 경우 기본 좌표 설정 (서울)
-        setLocation({ latitude: 37.5665, longitude: 126.978 });
-      }
-    };
-
-    getCurrentLocation();
-  }, []);
-
-  useEffect(() => {
-    if (window.kakao && location.latitude && location.longitude) {
+    if (window.kakao && mapContainer.current) {
       if (!map.current) {
         // 지도를 생성합니다.
         map.current = new window.kakao.maps.Map(mapContainer.current, {
-          center: new window.kakao.maps.LatLng(location.latitude, location.longitude),
+          center: new window.kakao.maps.LatLng(37.5665, 126.978), // 기본 위치 (서울)
           level: 5, // 줌 레벨
         });
-      } else {
-        // 지도를 새 위치로 이동
-        map.current.setCenter(new window.kakao.maps.LatLng(location.latitude, location.longitude));
-      }
-
-      // 마커를 생성합니다.
-      if (!marker.current) {
-        marker.current = new window.kakao.maps.Marker({
-          position: new window.kakao.maps.LatLng(location.latitude, location.longitude),
-        });
-        marker.current.setMap(map.current);
-      } else {
-        marker.current.setPosition(new window.kakao.maps.LatLng(location.latitude, location.longitude));
       }
     }
-  }, [location]);
+  }, []);
+
+  useEffect(() => {
+    if (map.current && positions) {
+      // 기존 마커와 오버레이를 모두 삭제합니다.
+      Object.values(markers.current).forEach(marker => marker.setMap(null));
+      Object.values(overlays.current).forEach(overlay => overlay.setMap(null));
+      markers.current = {};
+      overlays.current = {};
+
+      // 새로운 마커와 오버레이를 추가합니다.
+      Object.keys(positions).forEach(userId => {
+        const { latitude, longitude, nickname } = positions[userId];
+        const position = new window.kakao.maps.LatLng(latitude, longitude);
+
+        // 마커 생성
+        const marker = new window.kakao.maps.Marker({
+          position: position,
+          map: map.current,
+        });
+
+        // 방장이면 오버레이 배경색 빨간색, 아니면 흰색
+        const isOwner = userId === String(roomOwnerId); // Convert roomOwnerId to string for comparison
+        const backgroundColor = isOwner ? 'red' : 'white';
+
+        const overlay = new window.kakao.maps.CustomOverlay({
+          position: position,
+          content: `<div style="background: ${backgroundColor}; padding: 5px; border: 1px solid black; border-radius: 5px;">${nickname}</div>`,
+          xAnchor: 0.5,
+          yAnchor: 1.5,
+        });
+
+        // 오버레이를 지도에 추가
+        overlay.setMap(map.current);
+
+        // 사용자별로 최신 위치 마커와 오버레이를 저장
+        markers.current[userId] = marker;
+        overlays.current[userId] = overlay;
+      });
+
+      // 지도의 중앙 위치를 사용자의 첫 번째 위치로 이동합니다 (옵션).
+      const firstPosition = Object.values(positions)[0];
+      if (firstPosition) {
+        map.current.setCenter(new window.kakao.maps.LatLng(firstPosition.latitude, firstPosition.longitude));
+      }
+    }
+  }, [positions, roomOwnerId]);
 
   return (
-    <div>
-      <div
-        ref={mapContainer}
-        style={{ width: '100%', height: '400px' }}
-      />
-      <GeolocationComponent onLocationUpdate={(lat, lon) => setLocation({ latitude: lat, longitude: lon })} />
-    </div>
+    <div
+      ref={mapContainer}
+      style={{ width: '100%', height: '400px' }}
+    />
   );
 };
 
