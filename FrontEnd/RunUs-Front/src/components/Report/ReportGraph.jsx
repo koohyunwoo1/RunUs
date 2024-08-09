@@ -147,7 +147,7 @@ const ReportGraph = () => {
               <XAxis dataKey="month" tickFormatter={formatXAxisMonth} />
               <YAxis
                 width={10}
-                tickFormatter={(value) => convertDistance(value) + " km"}
+                tickFormatter={(value) => convertDistance(value)}
               />
               <Tooltip content={renderTooltipContent} />
               <CartesianGrid strokeDasharray="3 3" vertical={false} />

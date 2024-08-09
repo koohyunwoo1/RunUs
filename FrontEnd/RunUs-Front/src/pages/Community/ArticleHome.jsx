@@ -6,7 +6,7 @@ import axios from "axios";
 import Button from "../../components/common/Button";
 import { UserContext } from "../../hooks/UserContext";
 import { useNavigate } from "react-router-dom";
-
+import Header from "../../components/common/Header";
 const ArticleHome = () => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -36,7 +36,9 @@ const ArticleHome = () => {
       }
 
       const response = await axios.get(url, { params: { size, page } });
-      const filteredArticles = response.data.data.filter(article => article.isDeleted !== 1);
+      const filteredArticles = response.data.data.filter(
+        (article) => article.isDeleted !== 1
+      );
       setArticles(filteredArticles);
       setTotalPages(response.data.totalPages || 1);
     } catch (err) {
@@ -60,11 +62,11 @@ const ArticleHome = () => {
   }, [userData, page, sortByTime, completedOnly]);
 
   const handleSortByTime = () => {
-    setSortByTime(prev => !prev);
+    setSortByTime((prev) => !prev);
   };
 
   const handleCompletedOnly = () => {
-    setCompletedOnly(prev => !prev);
+    setCompletedOnly((prev) => !prev);
   };
 
   const handleSearch = (e) => {
@@ -78,58 +80,60 @@ const ArticleHome = () => {
 
   return (
     <>
-    <div>
-    <div className="ArticleHome">
-      <form onSubmit={handleSearch} className="search-form">
-        <input
-          type="text"
-          value={word}
-          onChange={(e) => setWord(e.target.value)}
-          placeholder="검색어를 입력하세요"
-          />
-        <button type="submit">검색</button>
-      </form>
+      <div>
+        <Header />
+        <div className="ArticleHome">
+          <form onSubmit={handleSearch} className="search-form">
+            <input
+              type="text"
+              value={word}
+              onChange={(e) => setWord(e.target.value)}
+              placeholder="검색어를 입력하세요"
+            />
+            <button type="submit">검색</button>
+          </form>
 
-        <div className="article-filters">
-          <div className="left-buttons">
-            <button onClick={handleCompletedOnly}>
-              {completedOnly ? "모든 글 보기" : "모집 가능한 글만 보기"}
-            </button>
-            <button onClick={handleSortByTime}>
-              {sortByTime ? "오래된순" : "최신순"}
-            </button>
-          </div>
-          <div className="right-button">  
-            <Button
-              className="article-create-button"
-              text={"글 쓰기"} 
-              onClick={() => nav('/article-create')}/>
+          <div className="article-filters">
+            <div className="left-buttons">
+              <button onClick={handleCompletedOnly}>
+                {completedOnly ? "모든 글 보기" : "모집 가능한 글만 보기"}
+              </button>
+              <button onClick={handleSortByTime}>
+                {sortByTime ? "오래된순" : "최신순"}
+              </button>
+            </div>
+            <div className="right-button">
+              <Button
+                className="article-create-button"
+                text={"글 쓰기"}
+                onClick={() => nav("/article-create")}
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      <ArticleList articles={articles} />
-      <div className="pagination">
-        <Button
-          onClick={() => setPage(prev => Math.max(prev - 1, 0))}
-          disabled={page === 0}
-          text="이전"
+        <ArticleList articles={articles} />
+        <div className="pagination">
+          <Button
+            onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
+            disabled={page === 0}
+            text="이전"
           />
-        <span> Page : {page + 1} </span>
-        <Button
-          onClick={() => {
-            setPage(prev => {
-              const newPage = prev + 1 <= totalPages ? prev + 1 : prev;
-              return newPage;
-            });
-          }}
-          disabled={page + 1 >= totalPages}
-          text="다음"
+          <span> Page : {page + 1} </span>
+          <Button
+            onClick={() => {
+              setPage((prev) => {
+                const newPage = prev + 1 <= totalPages ? prev + 1 : prev;
+                return newPage;
+              });
+            }}
+            disabled={page + 1 >= totalPages}
+            text="다음"
           />
+        </div>
       </div>
-    </div>
       <TabBar />
-  </>
+    </>
   );
 };
 

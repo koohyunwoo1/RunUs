@@ -29,7 +29,6 @@ import RedirectRoute from "./components/common/RedirectRoute";
 import SoloModeCountDown from "./pages/Running/Solo/SoloModeCountDown";
 import SoloModeStart from "./pages/Running/Solo/SoloModeStart";
 import axios from "axios";
-import TabBar from "./components/common/TabBar"; // TabBar import
 
 axios.defaults.baseURL = process.env.VITE_API_URL;
 
