@@ -29,6 +29,7 @@ import RedirectRoute from "./components/common/RedirectRoute";
 import SoloModeCountDown from "./pages/Running/Solo/SoloModeCountDown";
 import SoloModeStart from "./pages/Running/Solo/SoloModeStart";
 import axios from "axios";
+import TabBar from "./components/common/TabBar"; // TabBar import
 
 axios.defaults.baseURL = process.env.VITE_API_URL;
 
@@ -61,7 +62,7 @@ const AppContent = () => {
   }, [userData, userId]);
 
   return (
-    <div>
+    <div className="app-content">
       <Routes>
         <Route
           path="/signin"
@@ -202,6 +203,7 @@ const AppContent = () => {
           }
         />
       </Routes>
+      {/* <TabBar /> TabBar를 페이지 콘텐츠 하단에 배치 */}
     </div>
   );
 };

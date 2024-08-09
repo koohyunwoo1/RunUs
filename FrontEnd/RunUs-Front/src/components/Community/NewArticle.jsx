@@ -3,7 +3,7 @@ import axios from "axios";
 import { UserContext } from "../../hooks/UserContext";
 import "../../styles/Community/NewArticle.css";
 import { useNavigate } from "react-router-dom";
-import Header from "../common/Header";
+import TabBar from "../common/TabBar";
 
 const NewArticle = () => {
   const [title, setTitle] = useState("");
@@ -104,7 +104,7 @@ const NewArticle = () => {
 
   return (
     <div>
-      <Header/>
+      <TabBar/>
       <div className="NewArticle">
         <h2>글쓰기</h2>
         <form onSubmit={handleSubmit}>

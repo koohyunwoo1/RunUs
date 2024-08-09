@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import Header from "../../components/common/Header";
+import Header from "../../components/common/TabBar";
 import "../../styles/MyPage/MyPageEdit.css";
 import Button from "../../components/common/Button";
 import { useNavigate } from "react-router-dom";

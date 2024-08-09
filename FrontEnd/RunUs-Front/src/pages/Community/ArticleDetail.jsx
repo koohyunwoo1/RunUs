@@ -5,7 +5,7 @@ import "../../styles/Community/ArticleDetail.css";
 import CommentSection from "../../components/Community/CommentSection";
 import Button from "../../components/common/Button";
 import { UserContext } from "../../hooks/UserContext";
-import Header from "../../components/common/Header";
+import TabBar from "../../components/common/TabBar";
 
 // 날짜와 시간을 포맷하는 함수
 const formatDate = (dateString) => {
@@ -97,7 +97,7 @@ const ArticleDetail = () => {
   if (!article) return <p>글을 찾을 수 없습니다.</p>;
 
   return (
-    <div><Header />
+    <div><TabBar />
     <div className="article-detail-container">
       
       <h1>{article.title}</h1>
