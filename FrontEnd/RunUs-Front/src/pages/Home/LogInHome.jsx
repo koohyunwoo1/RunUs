@@ -8,6 +8,7 @@ import { UserContext } from "../../hooks/UserContext";
 import Weather from "../../components/common/Weather";
 import LoginHomeMapView from "../../components/Home/LoginHomeMapView";
 import "../../styles/Home/LoginHomeCustomSwal.css";
+import Header from "../../components/common/Header";
 
 const LogInHome = () => {
   const navigate = useNavigate();
@@ -117,12 +118,13 @@ const LogInHome = () => {
       const { roomOwnerId } = response.data.data;
       const { partyId } = response.data.data;
 
-      navigate(`/team-create/${roomId}/${partyId}/${roomOwnerId}`, { state: { roomOwnerId } });
+      navigate(`/team-create/${roomId}/${partyId}/${roomOwnerId}`, {
+        state: { roomOwnerId },
+      });
     } catch (err) {
       console.error(err);
     }
   };
-
 
   const handleJoinTeamClick = () => {
     Swal.close();
@@ -131,6 +133,7 @@ const LogInHome = () => {
 
   return (
     <div>
+      <Header />
       <div className="LoginHome-container">
         <Weather />
         <div className="LoginHomeMapView">
