@@ -10,13 +10,15 @@ import { UserContext } from "../../../hooks/UserContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import WebSocketManager from "./WebSocketManager";
-import MapComponent from '../../../components/Running/Team/MapComponent';
+import MapComponent from '../../../components/Running/Team/MapComponent'; // 카카오맵 컴포넌트
+import axios from "axios";
 
 Modal.setAppElement("#root");
 
 const TeamPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { party } = useParams(); 
   const { userData } = useContext(UserContext);
   const [waitingRoomId, setWaitingRoomId] = useState(id || null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -64,7 +66,7 @@ const TeamPage = () => {
           const userList = messageContent.split("현재 방에 있는 사용자: ")[1];
           const userNames = userList ? userList.split(", ") : [];
           localStorage.setItem("userNames", JSON.stringify(userNames));
-          setUserNames(userNames);
+          setUserNames(userNames.map(user => ({ name: user, distance: "0.00 km" })));
         } else if (receivedData.type === "ROOM_CLOSED") {
           alert("방장이 방을 종료했습니다. 방을 나가겠습니다.");
           navigate("/home");
@@ -72,12 +74,43 @@ const TeamPage = () => {
           const { sender, longitude, latitude, userId } = receivedData;
           // 방장이면 닉네임에 !!를 붙임
           const displayName = userId === roomOwnerId ? `${sender}` : sender;
+
+          
+          // Extract distance from the message
+          const distanceMatch = message.match(/총 이동 거리: ([0-9.]+) km/);
+          const distance = distanceMatch ? `${distanceMatch[1]} km` : "0.00 km";
+          
+          // Update user position
           setUserPositions(prevPositions => ({
             ...prevPositions,
             [userId]: { nickname: displayName, latitude, longitude, userId },
           }));
+
+          // Update user distance in the list
+          setUserNames(prevUserNames => 
+            prevUserNames.map(user => 
+              user.name === sender ? { ...user, distance } : user
+            )
+          );
         } else if (receivedData.type === "START") {
           setIsRunning(true);
+        } else if (receivedData.type === "QUIT"){
+            try {
+              const response = axios.post('api/v1/record/result_save', null, {
+                params: {
+                  user_id: userData.userId,
+                  party_id: party,
+                  distance: totalDistance, 
+                  time: elapsedTime,
+                  kcal : totalCalories,
+                }
+              });        
+              console.log(response);
+
+              navigate(`/home`);
+            } catch (err) {
+              console.error(err);
+            }
         }
       });
 
@@ -141,12 +174,13 @@ const TeamPage = () => {
     }
   };
 
-  const handleStop = () => {
+  const handleQuit = () => {
     if (WebSocketManager.ws && WebSocketManager.ws.readyState === WebSocket.OPEN) {
       const stopMessage = {
-        type: 'STOP',
+        type: 'QUIT',
         roomId: waitingRoomId,
         sender: userData.nickname,
+        message: "방장이 종료 버튼을 눌렀습니다.",
         userId : userData.userId,
       };
       WebSocketManager.send(stopMessage);
@@ -251,6 +285,13 @@ const TeamPage = () => {
           <div>Total Calories: {totalCalories} kcal</div>
           <div>Elapsed Time: {elapsedTime} s</div>
         </div>
+
+        {isRunning && (
+          <button onClick={handleQuit} className="TeamCreateButton">
+            Quit
+          </button>
+        )}
+
       </div>
     </div>
   );
