@@ -1,129 +1,144 @@
+/* src/styles/Community/CommentSection.css */
+
 .comment-section {
-  width: 80%;
-  max-width: 700px;
-  margin: 20px auto;
+  font-family: Arial, sans-serif;
   padding: 20px;
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
-  background-color: #ffffff;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
 }
 
 .comment-section h3 {
-  font-size: 1.6em;
-  margin-bottom: 20px;
+  margin: 0 0 20px 0;
+  font-size: 20px;
   color: #333;
-  text-align: center;
-}
-
-.comment-section ul {
-  list-style: none;
   padding: 0;
-  margin: 0;
 }
 
-.comment-section li {
-  margin-bottom: 20px;
-  padding-bottom: 15px;
+.comment-list-ul {
+  padding: 0;
+}
+
+.comment-container {
+  position: relative;
+  padding: 10px;
   border-bottom: 1px solid #e0e0e0;
+  background-color: white;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  width: 100%;
 }
 
-.comment-section li:last-child {
-  border-bottom: none;
+.menu-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #555;
+  position: absolute;
+  margin: 0 20px 0 0;
+  top: 10px;
+  transition: color 0.3s;
 }
 
-.comment-section p {
-  margin: 0;
-  line-height: 1.6;
+.menu-button:hover {
+  color: #98bae3;
 }
 
-.comment-section textarea {
-  width: 90%;
-  padding: 12px;
-  margin: 10px 0;
+.comment-options {
+  display: none;
+  position: absolute;
+  top: 40px;
+  right: 10px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  width: 120px;
+}
+
+.comment-options.show {
+  display: block;
+}
+
+.comment-options button {
+  background: none;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  font-size: 14px;
+  color: #555;
+}
+
+.comment-options button:hover {
+  background-color: #f5f5f5;
+}
+
+.reply-button {
+  background-color: #98bae3;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  margin-left: 250px;
+  align-self: flex-end;
+  transition: background-color 0.3s;
+}
+
+.reply-button:hover {
+  background-color: #1b65bf;
+}
+
+.textarea-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* 오른쪽 하단 정렬 */
+  margin-bottom: 10px;
+}
+
+.comment-writer {
+  width: 100%;
+  height: 80px;
+  padding: 10px;
   border: 1px solid #ccc;
-  border-radius: 6px;
+  border-radius: 10px;
+  box-sizing: border-box;
   resize: vertical;
+  margin-bottom: 10px;
 }
 
-.comment-section .submit-container {
+.submit-container {
   display: flex;
   justify-content: flex-end;
-  margin-top: 10px;
+  align-items: center;
+  width: 100%;
 }
 
-.comment-section .create-comment {
-  background-color: #007bff;
+.create-comment, .cancel-reply {
+  background-color: #98bae3;
   color: white;
-  padding: 8px 16px;
   border: none;
-  border-radius: 6px;
+  padding: 8px 12px;
+  border-radius: 10px;
   cursor: pointer;
   transition: background-color 0.3s;
+  font-size: 12px;
 }
 
-.comment-section .create-comment:hover {
-  background-color: #0056b3;
+.create-comment:hover, .cancel-reply:hover {
+  background-color: #1b65bf;
 }
 
-.comment-section .cancel-reply {
-  background-color: #dc3545;
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+.cancel-reply {
+  padding: 6px 12px; /* 크기 조정 */
+  margin-left: 8px; /* 버튼 사이의 간격 */
+}
+
+.date {
   margin-left: 10px;
-}
-
-.comment-section .cancel-reply:hover {
-  background-color: #c82333;
-}
-
-.comment-section .date {
-  font-size: 0.85em;
-  color: #888;
-  margin-top: 5px;
-}
-
-.comment-section .comment-container {
-  display: flex;
-  gap: 3px;
-  margin-top: 10px;
-}
-
-.comment-section .comment-container button {
-  /* background-color: #28a745; */
-  color: white;
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.comment-section .comment-container button:hover {
-  background-color: #218838;
-}
-
-.comment-section button {
-  background-color: #6c757d;
-  color: white;
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin: 3px 5px;
-  transition: background-color 0.3s;
-}
-
-.comment-section button:hover {
-  background-color: #5a6268;
-}
-
-.comment-section .nested-comment {
-  margin-left: 20px;
-  padding-left: 10px;
-  margin-top: 15px;
+  font-size: 12px;
+  color: #666;
 }
