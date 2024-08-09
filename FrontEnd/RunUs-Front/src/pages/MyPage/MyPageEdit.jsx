@@ -4,6 +4,7 @@ import "../../styles/MyPage/MyPageEdit.css";
 import Button from "../../components/common/Button";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Logout from "../../components/Home/Logout";
 
 const MyPageEdit = () => {
   const [form, setForm] = useState({
@@ -214,6 +215,14 @@ const MyPageEdit = () => {
           </div>
           <Button text={"수정 완료"} />
         </form>
+      </div>
+      <div
+        style={{
+          marginTop: "80px",
+          textAlign: "right",
+        }}
+      >
+        <Logout />
       </div>
       <TabBar />
     </div>

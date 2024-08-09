@@ -33,7 +33,8 @@
 .SoloModeStartButtons {
   display: flex;
   justify-content: center;
-  gap: 20px;
+  padding-top: 100px;
+  gap: 60px;
 }
 
 .iconButton {

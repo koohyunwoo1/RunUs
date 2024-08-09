@@ -7,7 +7,7 @@ import runIcon from "../../assets/speed.png";
 import communityIcon from "../../assets/group.png";
 import profileIcon from "../../assets/user.png";
 
-const TabBar = () => {
+const TabBar = ({ onRunClick }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -27,28 +27,31 @@ const TabBar = () => {
         <span>홈</span>
       </div>
       <div
-        className={`tab-item ${location.pathname === "/report-home" ? "active" : ""}`}
+        className={`tab-item ${
+          location.pathname === "/report-home" ? "active" : ""
+        }`}
         onClick={() => handleTabClick("/report-home")}
       >
         <img src={reportIcon} alt="Report" />
         <span>리포트</span>
       </div>
-      <div
-        className={`tab-item ${location.pathname === "/run" ? "active" : ""}`}
-        onClick={() => handleTabClick("/run")}
-      >
+      <div className={`tab-item tab-item-run`} onClick={onRunClick}>
         <img src={runIcon} alt="Run" />
-        <span>Run</span>
+        <span>런</span>
       </div>
       <div
-        className={`tab-item ${location.pathname === "/article-home" ? "active" : ""}`}
+        className={`tab-item ${
+          location.pathname === "/article-home" ? "active" : ""
+        }`}
         onClick={() => handleTabClick("/article-home")}
       >
         <img src={communityIcon} alt="Community" />
         <span>커뮤니티</span>
       </div>
       <div
-        className={`tab-item ${location.pathname === "/my-page-home" ? "active" : ""}`}
+        className={`tab-item ${
+          location.pathname === "/my-page-home" ? "active" : ""
+        }`}
         onClick={() => handleTabClick("/my-page-home")}
       >
         <img src={profileIcon} alt="Profile" />

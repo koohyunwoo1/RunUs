@@ -1,20 +1,7 @@
 .LoginHome-container {
-  margin-top: 20px;
+  padding-top: 100px;
   padding-left: 10px;
   padding-right: 10px;
-}
-
-.Today_item,
-.Today_km {
-  text-align: center;
-}
-
-.MainButton-container {
-  text-align: center;
-  display: flex;
-  justify-content: space-evenly;
-  /* margin-top: 300px; */
-  margin-top: 500px;
 }
 
 .LoginHomeMapView {
@@ -50,7 +37,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-   /* 이미지가 원 밖으로 나가지 않도록 */
+  /* 이미지가 원 밖으로 나가지 않도록 */
   overflow: hidden;
   background-color: #ffffff; /* 원의 배경색 */
   cursor: pointer; /* 클릭 가능하도록 포인터 커서 */

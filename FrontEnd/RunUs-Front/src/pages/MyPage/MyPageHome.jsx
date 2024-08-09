@@ -6,7 +6,7 @@ import EditIcon from "../../assets/editIcon.png";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
-import Logout from "../../components/Home/Logout";
+// import Logout from "../../components/Home/Logout";
 
 const MyPageHome = () => {
   const navigate = useNavigate();
@@ -18,11 +18,13 @@ const MyPageHome = () => {
   return (
     <div>
       <div className="MyPageHome">
-        <img
-          src={EditIcon}
-          className="MyPageEditIcon"
-          onClick={handleEditIconClick}
-        />
+        <div>
+          <img
+            src={EditIcon}
+            className="MyPageEditIcon"
+            onClick={handleEditIconClick}
+          />
+        </div>
         <div>
           <MyPageProfile />
         </div>
@@ -30,17 +32,16 @@ const MyPageHome = () => {
           {/* <h3 className="MyPageh3">러닝 티어</h3> */}
           <MyPageTier />
         </div>
-        <div
+        {/* <div
           style={{
             marginTop: "100px",
-            // marginRight: "20px",
             textAlign: "right",
           }}
         >
           <Logout />
-        </div>
+        </div> */}
       </div>
-    <TabBar />
+      <TabBar />
     </div>
   );
 };
