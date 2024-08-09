@@ -212,8 +212,10 @@ const TeamPage = () => {
 
   const teamCreatePageUrl = `https://i11e103.p.ssafy.io/team-create/${waitingRoomId}/${party}/${roomOwnerId}`;
 
-  const isRoomOwner = roomOwnerId === Number(localStorage.getItem("userId"));
-
+  const isRoomOwner = roomOwnerId == Number(localStorage.getItem("userId").trim());
+  console.log(roomOwnerId)
+  console.log(localStorage.getItem("userId"))
+  console.log(isRoomOwner);
   useEffect(() => {
     let stopSendingLocation;
 
