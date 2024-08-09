@@ -151,7 +151,6 @@ export const TeamQR = () => {
   return (
     <div>
       <TabBar />
-      <h1 className="TeamQR">QR 코드를 찍어주세요!</h1>
       <div className="qr-reader-container">
         <video ref={ref} autoPlay style={{ height: "400px", width: "300px" }} />
       </div>

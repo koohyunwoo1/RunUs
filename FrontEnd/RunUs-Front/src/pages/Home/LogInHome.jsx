@@ -3,11 +3,6 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import "../../styles/Home/LogInHome.css";
 import TabBar from "../../components/common/TabBar";
-import Button2 from "../../components/common/Button2";
-import SoloProfile from "../../assets/SoloProfile2.png";
-import TeamProfile from "../../assets/TeamProfile2.png";
-import Speed from "../../assets/speed.png";
-import Sprint from "../../assets/sprint.png";
 import axios from "axios";
 import { UserContext } from "../../hooks/UserContext";
 import Weather from "../../components/common/Weather";
@@ -15,15 +10,67 @@ import LoginHomeMapView from "../../components/Home/LoginHomeMapView";
 import "../../styles/Home/LoginHomeCustomSwal.css";
 
 const LogInHome = () => {
-  const [distance, setDistance] = useState("0km"); // 기본값
-  const teamProfileRef = useRef(null);
   const navigate = useNavigate();
   const { userData } = useContext(UserContext);
 
-  // 팀 프로필 클릭 핸들러
-  const handleTeamProfileClick = async () => {
+  const handleRunClick = async () => {
     const result = await Swal.fire({
-      title: "팀 옵션을 선택해주세요 !",
+      title: "모드를 선택해주세요!",
+      html: `
+        <div class="swal2-button-container2">
+          <button id="soloMode" class="swal2-confirm2 swal2-styled2">솔로 모드</button>
+          <button id="teamMode" class="swal2-cancel2 swal2-styled2">팀 모드</button>
+        </div>
+      `,
+      showConfirmButton: false,
+      showCancelButton: false,
+      customClass: {
+        popup: "custom-swal-popup2",
+        title: "custom-swal-title2",
+      },
+      didOpen: () => {
+        document
+          .getElementById("soloMode")
+          .addEventListener("click", handleSoloModeClick);
+        document
+          .getElementById("teamMode")
+          .addEventListener("click", handleTeamModeClick);
+      },
+      willClose: () => {
+        document
+          .getElementById("soloMode")
+          .removeEventListener("click", handleSoloModeClick);
+        document
+          .getElementById("teamMode")
+          .removeEventListener("click", handleTeamModeClick);
+      },
+    });
+  };
+
+  const handleSoloModeClick = async () => {
+    Swal.close();
+    const result = await Swal.fire({
+      title: "Run?",
+      showCancelButton: true,
+      confirmButtonText: "예",
+      cancelButtonText: "아니오",
+      customClass: {
+        popup: "custom-swal-popup2",
+        title: "custom-swal-title2",
+        confirmButtonText: "swal2-confirm2",
+        cancelButtonText: "swal2-cancel2",
+      },
+    });
+
+    if (result.isConfirmed) {
+      navigate("/countdown");
+    }
+  };
+
+  const handleTeamModeClick = async () => {
+    Swal.close();
+    const result = await Swal.fire({
+      title: "팀 옵션을 선택해주세요!",
       html: `
         <div class="swal2-button-container2">
           <button id="createTeam" class="swal2-confirm2 swal2-styled2">팀 생성</button>
@@ -76,30 +123,10 @@ const LogInHome = () => {
     }
   };
 
-  // 팀 입장 클릭 핸들러
+
   const handleJoinTeamClick = () => {
     Swal.close();
     navigate("/team-QR");
-  };
-
-  // 솔로 프로필 클릭 핸들러
-  const handleSoloProfileClick = async () => {
-    const result = await Swal.fire({
-      title: "Run ?",
-      showCancelButton: true,
-      confirmButtonText: "예",
-      cancelButtonText: "아니오",
-      customClass: {
-        popup: "custom-swal-popup2",
-        title: "custom-swal-title2",
-        confirmButtonText: "swal2-confirm2",
-        cancelButtonText: "Swal2-cancel2",
-      },
-    });
-
-    if (result.isConfirmed) {
-      navigate("/countdown");
-    }
   };
 
   return (
@@ -109,24 +136,8 @@ const LogInHome = () => {
         <div className="LoginHomeMapView">
           <LoginHomeMapView />
         </div>
-        <div className="MainButton-container">
-          {/* <div className="circle-button" onClick={() => navigate("/speed")}>
-            <img src={Speed} alt="Speed" />
-            </div>
-            <div className="circle-button" onClick={() => navigate("/sprint")}>
-            <img src={Sprint} alt="Sprint" />
-            </div> */}
-          <Button2 src={SoloProfile} onClick={handleSoloProfileClick} />
-          {
-            <Button2
-              src={TeamProfile}
-              onClick={handleTeamProfileClick}
-              ref={teamProfileRef}
-            />
-          }
-        </div>
       </div>
-      <TabBar />
+      <TabBar onRunClick={handleRunClick} />
     </div>
   );
 };

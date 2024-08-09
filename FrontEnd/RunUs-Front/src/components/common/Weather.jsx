@@ -73,6 +73,9 @@ const Weather = () => {
       width: "80%",
       confirmButtonText: "닫기",
       showCloseButton: true,
+      customClass: {
+        title: "WeatherForecast2",
+      },
       didOpen: () => {
         ReactDOM.createRoot(document.getElementById("forecast-root")).render(
           <WeatherForecast />
@@ -122,7 +125,7 @@ const Weather = () => {
       </h2>
       <div className="Weather">
         <img
-          style={{ width: "60px", height: "60px" }}
+          style={{ width: "50px", height: "50px" }}
           src={iconUrl}
           alt={description}
         />
@@ -131,9 +134,8 @@ const Weather = () => {
         <p>풍속: {weatherData.wind.speed} m/s</p>
         <img
           src={WeatherImage}
-          style={{ width: "60px", height: "45px", cursor: "pointer" }}
+          style={{ width: "50px", height: "40px", cursor: "pointer" }}
           onClick={handleWeatherDetail}
-          alt="Weather Forecast"
         />
       </div>
     </div>

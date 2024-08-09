@@ -52,9 +52,11 @@
   margin-left: 15px;
 }
 
-.head {
+.Report-head {
   margin-top: -20px;
   margin-bottom: -20px;
   margin-left: 15px;
   font-family: "PreBold";
+  font-size: 40px;
+  font-style: oblique;
 }
