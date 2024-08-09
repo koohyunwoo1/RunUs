@@ -14,7 +14,7 @@ public class ApiResponse<T> {
     private T data;
     private String message;
 
-    public void setSuccess(T data, String message) {
+    public void setResponseTrue(T data, String message) {
         this.success = true;
         this.data = data;
         this.message = message;

@@ -5,15 +5,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import runus.runus.api.NotFoundException;
+import runus.runus.api.NotFoundElementException;
 import runus.runus.board.dto.CommentRequestDTO;
 import runus.runus.board.dto.CommentResponseDTO;
 import runus.runus.board.entity.CommentEntity;
 import runus.runus.board.repository.CommentRepository;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -36,9 +34,9 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void updateComment(CommentRequestDTO commentRequest) {
         CommentEntity comment = commentRepository.findById(commentRequest.getCommentId())
-                .orElseThrow(() -> new NotFoundException("Comment not found"));
+                .orElseThrow(() -> new NotFoundElementException("Comment not found"));
         if (comment.getIsDeleted() == '1') {
-            throw new NotFoundException("Cannot update a deleted comment");
+            throw new NotFoundElementException("Cannot update a deleted comment");
         }
         comment.setContent(commentRequest.getContent());
         comment.setUpdatedAt(LocalDateTime.now());
@@ -48,7 +46,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void deleteComment(CommentRequestDTO commentRequest) {
         CommentEntity comment = commentRepository.findById(commentRequest.getCommentId())
-                .orElseThrow(() -> new NotFoundException("Comment not found"));
+                .orElseThrow(() -> new NotFoundElementException("Comment not found"));
         comment.setIsDeleted('1');
         comment.setDeletedAt(LocalDateTime.now());
         commentRepository.save(comment);

@@ -26,7 +26,7 @@ public class RegionController {
         List<RegionMajorDTO> regions = regionService.getAllMajorRegions();
 
         ApiResponse<List<RegionMajorDTO>> response = new ApiResponse<>();
-        response.setSuccess(regions, "시도 목록 조회");
+        response.setResponseTrue(regions, "시도 목록 조회");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -36,7 +36,7 @@ public class RegionController {
         List<RegionMinorDTO> regions = regionService.getMinorRegionsByMajorId(majorId);
 
         ApiResponse<List<RegionMinorDTO>> response = new ApiResponse<>();
-        response.setSuccess(regions, "시군구 목록 조회");
+        response.setResponseTrue(regions, "시군구 목록 조회");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -45,7 +45,7 @@ public class RegionController {
         RegionMinorDTO regionMinorDTO = regionService.getMajorRegionByMinorId(minorId);
 
         ApiResponse<RegionMinorDTO> response = new ApiResponse<>();
-        response.setSuccess(regionMinorDTO, "시군구 상세 정보 조회");
+        response.setResponseTrue(regionMinorDTO, "시군구 상세 정보 조회");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

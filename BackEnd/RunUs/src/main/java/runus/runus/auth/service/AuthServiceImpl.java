@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import runus.runus.api.DuplicateException;
 import runus.runus.api.InvalidDataException;
-import runus.runus.api.NotFoundException;
+import runus.runus.api.NotFoundElementException;
 import runus.runus.user.dto.UserDto;
 import runus.runus.user.entity.User;
 import runus.runus.user.repository.UserRepository;
@@ -49,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public User signin(String email, String password) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("계정 정보가 없습니다."));
+                .orElseThrow(() -> new NotFoundElementException("계정 정보가 없습니다."));
 
         if (password.equals(user.getPassword())) {
             httpSession.setAttribute("user", user);

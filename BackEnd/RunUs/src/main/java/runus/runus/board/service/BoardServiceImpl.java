@@ -5,27 +5,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import runus.runus.api.NotFoundException;
+import runus.runus.api.NotFoundElementException;
 import runus.runus.board.dto.BoardRequestDTO;
 import runus.runus.board.dto.BoardResponseDTO;
-import runus.runus.board.dto.CommentResponseDTO;
 import runus.runus.board.entity.BoardEntity;
-import runus.runus.board.entity.CommentEntity;
 import runus.runus.board.repository.BoardRepository;
 import runus.runus.board.repository.CommentRepository;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class BoardServiceImpl implements BoardService {
 
     @Autowired
     private BoardRepository boardRepository;
-    @Autowired
-    private CommentRepository commentRepository;
 
     @Override
     public int createBoard(BoardRequestDTO boardRequest) {
@@ -87,9 +81,9 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public void updateBoard(int boardId, BoardRequestDTO boardRequest) {
         BoardEntity board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new NotFoundException("Board not found"));
+                .orElseThrow(() -> new NotFoundElementException("Board not found"));
         if (board.getIsDeleted() == '1') {
-            throw new NotFoundException("Cannot update a deleted board");
+            throw new NotFoundElementException("Cannot update a deleted board");
         }
         board.setTitle(boardRequest.getTitle());
         board.setContent(boardRequest.getContent());
@@ -104,9 +98,9 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public BoardResponseDTO getBoardDetails(int boardId) {
         Optional<BoardResponseDTO> optionalBoard = Optional.ofNullable(boardRepository.findByIdDetail(boardId));
-        BoardResponseDTO board = optionalBoard.orElseThrow(() -> new NotFoundException("Not Found"));
+        BoardResponseDTO board = optionalBoard.orElseThrow(() -> new NotFoundElementException("Not Found"));
         if (board.getIsDeleted() == '1') {
-            throw new NotFoundException("Board has been deleted");
+            throw new NotFoundElementException("Board has been deleted");
         }
         return board;
     }
@@ -114,7 +108,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public void deleteBoard(int boardId) {
         BoardEntity board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new NotFoundException("Board not found"));
+                .orElseThrow(() -> new NotFoundElementException("Board not found"));
         board.setIsDeleted('1');
         board.setDeletedAt(LocalDateTime.now());
         boardRepository.save(board);

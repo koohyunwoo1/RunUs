@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import runus.runus.api.NotFoundException;
+import runus.runus.api.NotFoundElementException;
 import runus.runus.user.dto.UserDto;
 import runus.runus.user.entity.User;
 import runus.runus.user.repository.UserRepository;
@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserEntityById(Integer id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("계정 정보가 없습니다."));
+                .orElseThrow(() -> new NotFoundElementException("계정 정보가 없습니다."));
     }
 
     @Override
@@ -62,14 +62,14 @@ public class UserServiceImpl implements UserService {
     public String searchEmail(String phoneNumber) {
         return userRepository.findByPhoneNumber(phoneNumber)
                 .map(User::getEmail)
-                .orElseThrow(() -> new NotFoundException("계정 정보가 없습니다."));
+                .orElseThrow(() -> new NotFoundElementException("계정 정보가 없습니다."));
     }
 
     @Override
     public String searchPassword(String email, String phoneNumber) {
         return userRepository.findByEmailAndPhoneNumber(email, phoneNumber)
                 .map(User::getPassword)
-                .orElseThrow(() -> new NotFoundException("계정 정보가 없습니다."));
+                .orElseThrow(() -> new NotFoundElementException("계정 정보가 없습니다."));
     }
 
     @Override

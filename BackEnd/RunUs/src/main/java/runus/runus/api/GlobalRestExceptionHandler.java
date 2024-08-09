@@ -11,8 +11,8 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 @RestControllerAdvice
 public class GlobalRestExceptionHandler {
 
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ApiResponse<Void>> handleUserNotFoundException(NotFoundException e) {
+    @ExceptionHandler(NotFoundElementException.class)
+    public ResponseEntity<ApiResponse<Void>> handleUserNotFoundException(NotFoundElementException e) {
         ApiResponse<Void> response = new ApiResponse<>();
         response.setFail(null, e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
@@ -43,6 +43,7 @@ public class GlobalRestExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
         ApiResponse<Void> response = new ApiResponse<>();
         response.setFail(null, "Missing required parameter: " + e.getParameterName());
+        System.out.println("HTE");
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 

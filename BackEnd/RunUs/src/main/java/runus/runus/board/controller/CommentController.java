@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import runus.runus.api.ApiResponse;
 import runus.runus.api.InvalidDataException;
 import runus.runus.board.common.ApiCommentResponse;
-import runus.runus.board.common.ResponseMessage;
 import runus.runus.board.dto.CommentRequestDTO;
 import runus.runus.board.dto.CommentResponseDTO;
 import runus.runus.board.service.CommentService;
@@ -31,7 +30,7 @@ public class CommentController {
         commentService.createComment(commentRequest);
 
         ApiResponse<Integer> response = new ApiResponse<>();
-        response.setSuccess(null, "댓글 작성 성공");
+        response.setResponseTrue(null, "댓글 작성 성공");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -44,7 +43,7 @@ public class CommentController {
         commentService.updateComment(commentRequest);
         
         ApiResponse<Integer> response = new ApiResponse<>();
-        response.setSuccess(null, "댓글 수정 성공");
+        response.setResponseTrue(null, "댓글 수정 성공");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -54,7 +53,7 @@ public class CommentController {
         commentService.deleteComment(commentRequest);
         
         ApiResponse<Integer> response = new ApiResponse<>();
-        response.setSuccess(null, "댓글 삭제 성공");
+        response.setResponseTrue(null, "댓글 삭제 성공");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
