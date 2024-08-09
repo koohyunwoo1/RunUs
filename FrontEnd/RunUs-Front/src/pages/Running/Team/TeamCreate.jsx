@@ -10,7 +10,7 @@ import { UserContext } from "../../../hooks/UserContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import WebSocketManager from "./WebSocketManager";
-import MapComponent from '../../../components/Running/Team/MapComponent'; // 카카오맵 컴포넌트
+import MapComponent from '../../../components/Running/Team/MapComponent';
 
 Modal.setAppElement("#root");
 
@@ -30,10 +30,9 @@ const TeamPage = () => {
   const location = useLocation();
   const [roomOwnerId, setRoomOwnerId] = useState(
     location.state?.roomOwnerId || null
-  );    
+  );
 
   useEffect(() => {
-    
     if (!userData) {
       console.log("User data is null");
       return;
@@ -41,7 +40,7 @@ const TeamPage = () => {
 
     console.log(userData);
     if (waitingRoomId) {
-      WebSocketManager.connect(waitingRoomId); // Use singleton WebSocketManager
+      WebSocketManager.connect(waitingRoomId);
 
       WebSocketManager.on("open", () => {
         console.log("WebSocket connection opened");
@@ -70,13 +69,14 @@ const TeamPage = () => {
           alert("방장이 방을 종료했습니다. 방을 나가겠습니다.");
           navigate("/home");
         } else if (receivedData.type === "LOCATION") {
-          const { sender, longitude, latitude, message } = receivedData;
+          const { sender, longitude, latitude, userId } = receivedData;
+          // 방장이면 닉네임에 !!를 붙임
+          const displayName = userId === roomOwnerId ? `${sender}` : sender;
           setUserPositions(prevPositions => ({
             ...prevPositions,
-            [sender]: { latitude, longitude },
+            [userId]: { nickname: displayName, latitude, longitude, userId },
           }));
         } else if (receivedData.type === "START") {
-          // Start sending location updates when "START" message is received
           setIsRunning(true);
         }
       });
@@ -95,12 +95,12 @@ const TeamPage = () => {
         WebSocketManager.close();
       };
     }
-  }, [waitingRoomId, userData, navigate]);
+  }, [waitingRoomId, userData, navigate, roomOwnerId]);
 
   const startSendingLocation = () => {
     const updateLocation = () => {
       if (isWebSocketConnected) {
-        const baseLatitude = 37.5665; // Example coordinates
+        const baseLatitude = 37.5665;
         const baseLongitude = 126.978;
         const latitude = baseLatitude + (Math.random() - 0.5) * 0.01;
         const longitude = baseLongitude + (Math.random() - 0.5) * 0.01;
@@ -135,7 +135,7 @@ const TeamPage = () => {
     if (WebSocketManager.ws && WebSocketManager.ws.readyState === WebSocket.OPEN) {
       WebSocketManager.send(startMessage);
       setIsRunning(true);
-      setIsWebSocketConnected(true); // Ensure WebSocket is connected before starting location updates
+      setIsWebSocketConnected(true);
     } else {
       console.warn("WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.");
     }
@@ -246,16 +246,11 @@ const TeamPage = () => {
           />
         </Modal>
         <div>
-          <MapComponent positions={userPositions} />
+          <MapComponent positions={userPositions} roomOwnerId={roomOwnerId} />
           <div>Total Distance: {totalDistance} km</div>
           <div>Total Calories: {totalCalories} kcal</div>
-          <div>Elapsed Time: {elapsedTime} seconds</div>
+          <div>Elapsed Time: {elapsedTime} s</div>
         </div>
-        {isRunning && (
-          <button onClick={handleStop} className="TeamCreateButton">
-            Stop
-          </button>
-        )}
       </div>
     </div>
   );
