@@ -95,7 +95,7 @@ body {
   /* margin: 15px 0; */
   font-size: 18px;
   color: #999;
-  font-family: "Times New Roman", Times, serif;
+  font-family: "PreBold";
   font-weight: 300;
   cursor: pointer;
   transition: color 0.3s ease, font-weight 0.3s ease;

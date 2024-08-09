@@ -20,12 +20,14 @@
   justify-content: space-between;
 }
 .mode_indicator {
+  font-family: "PreRegular";
   font-size: 18px;
   margin-bottom: 15px;
   font-weight: normal;
 }
 
 .record_date {
+  font-family: "PreRegular";
   font-size: 18px;
   margin-bottom: 15px;
   font-weight: normal;
@@ -36,12 +38,13 @@
   justify-content: space-between;
   align-items: center;
   margin-top: 10px;
-  gap: 20px;
+  gap: 10px;
 }
 
 .distance,
 .kcal,
 .time {
+  font-family: "PreBold";
   font-size: 18px;
   display: flex;
   font-weight: bold;

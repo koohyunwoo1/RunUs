@@ -16,7 +16,6 @@ const ReportItem = () => {
         const response = await axios.get("api/v1/record/all", {
           params: { user_id: userId },
         });
-
         const data = response.data.data || [];
         const sortedData = data.sort(
           (a, b) => new Date(b.recordDate) - new Date(a.recordDate)
@@ -51,7 +50,9 @@ const ReportItem = () => {
 
   return (
     <div>
-      <h3 className="recent_active">최근 활동</h3>
+      <h2 className="recent_active" style={{ fontFamily: "PreSemiBold" }}>
+        최근 활동
+      </h2>
       {Array.isArray(reportData) && reportData.length > 0 ? (
         reportData.map((item, index) => (
           <div className="report_container" key={index}>

@@ -125,10 +125,12 @@ const ReportGraph = () => {
 
   return (
     <div>
-      <h1 className="head">
+      <h1 className="head" style={{ fontStyle: "oblique" }}>
         {graphTotalData ? convertDistance(graphTotalData) : "0"} km
       </h1>
-      <h5 className="subhead">총 러닝 거리</h5>
+      <h5 className="subhead" style={{ fontFamily: "PreBold" }}>
+        총 러닝 거리
+      </h5>
       <select
         onChange={handleYearChange}
         className="Report-Graph-Option"

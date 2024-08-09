@@ -89,6 +89,8 @@ const LogInHome = () => {
       customClass: {
         popup: "custom-swal-popup2",
         title: "custom-swal-title2",
+        confirmButtonText: "swal2-confirm2",
+        cancelButtonText: "Swal2-cancel2",
       },
     });
 
