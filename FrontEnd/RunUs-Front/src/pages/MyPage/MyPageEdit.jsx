@@ -4,6 +4,7 @@ import "../../styles/MyPage/MyPageEdit.css";
 import Button from "../../components/common/Button";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { UserContext } from "../../hooks/UserContext";
 
 const MyPageEdit = () => {
   const [form, setForm] = useState({
@@ -13,6 +14,7 @@ const MyPageEdit = () => {
     password: "",
     confirmPassword: "",
     weight: "",
+    regionMajor: "", // 시/도
     regionId: "",
   });
 
@@ -21,6 +23,58 @@ const MyPageEdit = () => {
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
   const token = localStorage.getItem("AuthToken");
+  const [regionMajorOptions, setRegionMajorOptions] = useState([]);
+  const [regionMinorOptions, setRegionMinorOptions] = useState([]);
+  const { setUserData } = useContext(UserContext) // setUserData 가져오기
+
+  // 시/도 목록 가져오기
+  useEffect(() => {
+    const fetchRegionMajor = async () => {
+      try {
+        const response = await axios.get('/api/v1/region-major');
+        setRegionMajorOptions(response.data.data);
+      } catch (error) {
+        console.error('Error fetching region major data:', error);
+      }
+    };
+
+    fetchRegionMajor();
+  }, []);
+
+  // 시/군/구 목록 가져오기
+  useEffect(() => {
+    const fetchRegionMinor = async (majorId) => {
+      try {
+        const response = await axios.get(`/api/v1/region-major/${majorId}`);
+        setRegionMinorOptions(response.data.data);
+      } catch (error) {
+        console.error('Error fetching region minor data:', error);
+      }
+    };
+
+    if (form.regionMajor) {
+      fetchRegionMinor(form.regionMajor);
+    } else {
+      setRegionMinorOptions([]);
+    }
+  }, [form.regionMajor]);
+
+  const handleSelectChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+
+    if (e.target.name === 'regionId') {
+      const selectedRegion = regionMinorOptions.find(option => option.name === e.target.value);
+      if (selectedRegion) {
+        setForm({
+          ...form,
+          regionId: selectedRegion.id, // ID로 설정
+        })
+      }
+    }
+  };
 
   useEffect(() => {
     if (userId) {
@@ -94,8 +148,8 @@ const MyPageEdit = () => {
       errors.confirmPassword = "비밀번호가 일치하지 않습니다.";
     if (!form.weight || isNaN(form.weight) || form.weight <= 0)
       errors.weight = "체중은 양의 숫자로 입력해야 합니다.";
-    if (!form.regionId || isNaN(form.regionId) || form.regionId <= 0)
-      errors.regionId = "사는 지역은 유효한 숫자로 입력해야 합니다.";
+    if (!form.regionMajor) errors.regionMajor = "사는 지역은 필수입니다.";
+    if (!form.regionId) errors.regionId = "시/군/구는 필수입니다.";
     return errors;
   };
 
@@ -117,6 +171,15 @@ const MyPageEdit = () => {
 
         if (response.data.success) {
           console.log("회원 정보 수정 성공");
+
+          // 수정된 정보를 UserContext에 반영
+          setUserData(prevData => ({
+            ...prevData,
+            nickname: form.nickname,
+            phoneNumber: form.phoneNumber,
+            weight: form.weight,
+            regionId: form.regionId
+          }));
           navigate("/my-page-home");
         } else {
           console.error("회원 정보 수정 실패", response.data.message);
@@ -200,19 +263,38 @@ const MyPageEdit = () => {
             )}
           </div>
           <div className="memberEditDiv">
-            <label className="MyPageEditLabel">사는 지역</label>
-            <input
-              type="number"
-              name="regionId"
-              className="MyPageEditInput"
-              value={form.regionId}
-              onChange={handleChange}
-            />
-            {errors.regionId && (
-              <p className="MyPageEditError">{errors.regionId}</p>
-            )}
+            <select
+            name="regionMajor"
+            className="SignUpInput"
+            value={form.regionMajor}
+            onChange={handleSelectChange}
+          >
+            <option value="">시/도 선택</option>
+            {regionMajorOptions.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.name}
+              </option>
+            ))}
+          </select>
+          {errors.regionMajor && <p className="SignUpError">{errors.regionMajor}</p>}
+        </div>
+        <div className="inputDiv">
+          <select
+            name="regionId"
+            className="SignUpInput"
+            value={form.regionId}
+            onChange={handleSelectChange}
+          >
+            <option value="">시/군/구 선택</option>
+            {regionMinorOptions.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.name}
+              </option>
+            ))}
+          </select>
+          {errors.regionId && <p className="SignUpError">{errors.regionId}</p>}
           </div>
-          <Button text={"수정 완료"} />
+          <Button className={"MyPageEditButton"} text={"수정 완료"} />
         </form>
       </div>
       <TabBar />
