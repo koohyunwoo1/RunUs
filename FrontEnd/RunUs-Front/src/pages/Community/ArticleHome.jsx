@@ -106,13 +106,6 @@ const ArticleHome = () => {
               onClick={() => nav('/article-create')}/>
           </div>
         </div>
-        <div className="right-button">
-          <Button
-            className="article-create-button"
-            text={"글 쓰기"}
-            onClick={() => nav('/article-create')}
-            />
-        </div>
       </div>
 
       <ArticleList articles={articles} />

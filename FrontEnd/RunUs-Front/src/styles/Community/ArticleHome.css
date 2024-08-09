@@ -1,11 +1,11 @@
 /* 전체 컨테이너 스타일 */
 .ArticleHome {
-  padding: 20px; /* 페이지 내부 여백 추가 */
+  padding: 20px 20px; /* 페이지 내부 여백 추가 */
   border-radius: 8px; /* 테두리 둥글게 (작게 설정) */
   max-width: 1200px; /* 최대 넓이 제한 */
-  margin: 0 auto; /* 가운데 정렬 */
+  margin-left: auto;
+  margin-right: auto;
   box-sizing: border-box; /* padding과 border를 포함한 전체 크기 설정 */
-  padding-bottom: 90px; /* TabBar 높이만큼 하단 여백 추가 */
 }
 
 /* 검색 폼 스타일 */
@@ -82,3 +82,7 @@
   /* border-top: 1px solid #ddd; 상단 테두리 */
   /* z-index: 1000; 다른 요소 위에 표시 */
 /* } */
+
+.pagination{
+  padding-bottom: 90px;
+}
