@@ -34,7 +34,7 @@ public class ChatRoom {
     private FCMService fcmService;
 
     // 방장과 멀어지는 거리 100 M
-    private static final double MAX_DISTANCE = 0.1; // 최대 허용 거리 (km)
+    private static final double  MAX_DISTANCE = 0.1; // 최대허용 거리 (km)
 
 
     @Builder
@@ -86,16 +86,21 @@ public class ChatRoom {
 
         } else if (chatMessage.getType().equals(ChatMessage.MessageType.QUIT)) {
             sendMessage(chatMessage, chatServiceImpl);
-            sessions.remove(session);
-            users.remove(userName);
-            chatMessage.setMessage(userName + "님이 퇴장했습니다.");
 
-            chatServiceImpl.exitUserStatus(partyId, userId, '3');
-            log.info(userId + " ststus 3으로 변경 끝");
             chatServiceImpl.exitPartyStatus(partyId, '3');
             log.info(partyId + " party status 3으로 변경 끝");
 
+            // 모든 사용자에게 QUIT 메시지 브로드캐스트
+            ChatMessage quitBroadcastMessage = new ChatMessage();
+            quitBroadcastMessage.setType(ChatMessage.MessageType.QUIT);
+            quitBroadcastMessage.setRoomId(chatMessage.getRoomId());
+            quitBroadcastMessage.setSender("SYSTEM");
+            quitBroadcastMessage.setMessage("종료되었습니다.");
 
+            sendMessage(quitBroadcastMessage, chatServiceImpl);
+
+            sessions.remove(session);
+            users.remove(userName);
 
         } else if (chatMessage.getType().equals(ChatMessage.MessageType.START)) {
             if (userId == roomOwnerId) {
@@ -116,6 +121,7 @@ public class ChatRoom {
             chatMessage.setMessage(userName + ": " + chatMessage.getMessage());
 
         } else if (chatMessage.getType().equals(ChatMessage.MessageType.LOCATION)) {
+            double ownerDistance = 0;
             if (userId == roomOwnerId) {
                 // 방장일 경우 위치 업데이트
                 this.ownerLatitude = latitude;
@@ -187,6 +193,7 @@ public class ChatRoom {
             try {
                 if (session.isOpen()) {
                     chatServiceImpl.sendMessage(session, message);
+                    log.info("Message sent to session " + session.getId() + ": " + message);
                 }
             } catch (IllegalStateException e) {
                 log.error("Failed to send message to session: " + session.getId(), e);
