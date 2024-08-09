@@ -123,24 +123,29 @@ public class ChatRoom {
                 this.ownerLatitude = latitude;
                 this.ownerLongitude = longitude;
                 log.info("방장 위치 업데이트: 위도=" + ownerLatitude + ", 경도=" + ownerLongitude);
+                System.out.println("방장 위치 업데이트: 위도=" + ownerLatitude + ", 경도=" + ownerLongitude);
                 chatMessage.setMessage(userName + "의 위치가 업데이트되었습니다. 방장으로서의 위치: 위도=" + latitude + ", 경도=" + longitude);
 
                 chatServiceImpl.updateMemberLocation(partyId, userName, longitude, latitude);
                 double totalDistance = chatServiceImpl.getTotalDistanceForMember(partyId, userName);
                 log.info(userName + "의 총 이동 거리: " + String.format("%.5f", totalDistance) + " km");
+                System.out.println(userName + "의 총 이동 거리: " + String.format("%.5f", totalDistance) + " km");
                 chatMessage.setMessage(userName + "의 총 이동 거리: " + String.format("%.5f", totalDistance) + " km");
 
             } else {
                 // 방장이 아닌 경우 거리 계산
                 double distance = calculateDistance(ownerLatitude, ownerLongitude, latitude, longitude);
                 log.info(userName + " 위치 업데이트: 위도=" + latitude + ", 경도=" + longitude);
+                System.out.println(userName + " 위치 업데이트: 위도=" + latitude + ", 경도=" + longitude);
                 log.info(userName + "님과 방장의 거리: " + String.format("%.5f", distance) + " km");
+                System.out.println(userName + "님과 방장의 거리: " + String.format("%.5f", distance) + " km");
                 chatMessage.setMessage(userName + "의 위치가 업데이트되었습니다. 방장과의 거리: " + String.format("%.5f", distance) + " km");
 
                 // 사용자 이동 거리 계산
                 chatServiceImpl.updateMemberLocation(partyId, userName, longitude, latitude);
                 double totalDistance = chatServiceImpl.getTotalDistanceForMember(partyId, userName);
                 log.info(userName + "의 총 이동 거리: " + String.format("%.5f", totalDistance) + " km");
+                System.out.println(userName + "의 총 이동 거리: " + String.format("%.5f", totalDistance) + " km");
                 chatMessage.setMessage(userName + "의 총 이동 거리: " + String.format("%.5f", totalDistance) + " km");
                 sendMessage(chatMessage, chatServiceImpl);
 
@@ -202,6 +207,7 @@ public class ChatRoom {
 
         if (fcmService == null) {
             log.error("FCMService is not initialized. FCMService is null. Cannot send notification.");
+            System.out.println("FCMService is not initialized. FCMService is null. Cannot send notification.");
             return;
         }
 
@@ -214,8 +220,10 @@ public class ChatRoom {
             NotificationDTO notification = new NotificationDTO(title, body);
             fcmService.sendNotification(String.valueOf(userId), notification);
             log.info("Distance alert sent to user: {}", userId);
+            System.out.println("Distance alert sent to user: " + userId);
         } catch (Exception e) {
             log.error("Failed to send distance alert to user: " + userId, e);
+            System.out.println("Failed to send distance alert to user: " + userId + e);
         }
     }
 }
