@@ -12,6 +12,7 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import WebSocketManager from "./WebSocketManager";
 import MapComponent from '../../../components/Running/Team/MapComponent'; // 카카오맵 컴포넌트
 import axios from "axios";
+import Running from "../Running";
 
 Modal.setAppElement("#root");
 
@@ -27,19 +28,23 @@ const TeamPage = () => {
   const [userPositions, setUserPositions] = useState({});
   const [totalDistance, setTotalDistance] = useState(0);
   const [totalCalories, setTotalCalories] = useState(0);
-  const [elapsedTime, setElapsedTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
   const location = useLocation();
+  const [distance, setDistance] = useState(0);
+  const [calories, setCalories] = useState(0);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [time, setTime] = useState(0);
   // const [roomOwnerId, setRoomOwnerId] = useState(
   //   location.state?.roomOwnerId || null
   // );
-
+  
   useEffect(() => {
     if (!userData) {
       console.log("User data is null");
       return;
     }
+    
 
     console.log(userData);
     if (waitingRoomId) {
@@ -282,9 +287,7 @@ const TeamPage = () => {
         </Modal>
         <div>
           <MapComponent positions={userPositions} roomOwnerId={roomOwnerId} />
-          <div>Total Distance: {totalDistance} km</div>
-          <div>Total Calories: {totalCalories} kcal</div>
-          <div>Elapsed Time: {elapsedTime} s</div>
+          
         </div>
 
         {isRunning && (
@@ -292,7 +295,21 @@ const TeamPage = () => {
             Quit
           </button>
         )}
+        
 
+        <div>
+      <Running 
+        distance={distance}
+        setDistance={setDistance}
+        calories={calories}
+        setCalories={setCalories}
+        time={time}
+        setTime={setTime}
+      />
+      <p>{time}</p>
+      <p>{distance} </p>
+      <p>{calories} </p>
+    </div>
       </div>
     </div>
   );
