@@ -39,7 +39,7 @@ const WeatherForecast = () => {
       })
       .then((data) => {
         const dailyForecasts = processDailyForecasts(data.list);
-        setForecastData(dailyForecasts.slice(0, 3)); // 3일치 데이터만 추출
+        setForecastData(dailyForecasts.slice(1, 3)); // 3일치 데이터만 추출
         setLoading(false);
       })
       .catch((error) => {

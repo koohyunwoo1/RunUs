@@ -1,9 +1,9 @@
 .logoutFooter {
   /* width: 100%; */
-  border: 1px #f3f3f3 solid;
+  border: none;
 }
 
 .logoutText {
   margin: 15px;
-  color: rgb(224, 51, 51);
+  color: black;
 }

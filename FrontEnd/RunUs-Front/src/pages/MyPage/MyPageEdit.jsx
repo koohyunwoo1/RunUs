@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import Header from "../../components/common/TabBar";
+import TabBar from "../../components/common/TabBar";
 import "../../styles/MyPage/MyPageEdit.css";
 import Button from "../../components/common/Button";
 import { useNavigate } from "react-router-dom";
@@ -131,7 +131,6 @@ const MyPageEdit = () => {
 
   return (
     <div>
-      <Header />
       <div className="MyPageEdit">
         <h1>회원 정보 수정</h1>
         <form onSubmit={handleSubmit} className="MyPageEditForm">
@@ -216,6 +215,7 @@ const MyPageEdit = () => {
           <Button text={"수정 완료"} />
         </form>
       </div>
+      <TabBar />
     </div>
   );
 };

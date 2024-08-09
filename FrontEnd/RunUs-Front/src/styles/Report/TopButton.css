@@ -1,5 +1,6 @@
 .top-button {
   position: fixed;
+  /* bottom: 20px; */
   bottom: 80px; /* TabBar의 높이 (70px) + 추가 여백 (10px) */
   right: 20px;
   z-index: 1000;
