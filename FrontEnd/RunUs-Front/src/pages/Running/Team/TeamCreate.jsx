@@ -71,11 +71,9 @@ const TeamPage = () => {
           alert("방장이 방을 종료했습니다. 방을 나가겠습니다.");
           navigate("/home");
         } else if (receivedData.type === "LOCATION") {
-          const { sender, longitude, latitude, userId } = receivedData;
+          const { sender, longitude, latitude, userId, message } = receivedData;
           // 방장이면 닉네임에 !!를 붙임
           const displayName = userId === roomOwnerId ? `${sender}` : sender;
-
-          
           // Extract distance from the message
           const distanceMatch = message.match(/총 이동 거리: ([0-9.]+) km/);
           const distance = distanceMatch ? `${distanceMatch[1]} km` : "0.00 km";
