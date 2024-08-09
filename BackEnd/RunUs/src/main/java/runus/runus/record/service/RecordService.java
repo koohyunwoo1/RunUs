@@ -128,9 +128,9 @@ public class RecordService {
             }
 
             if (partyId == null) {
-                user.setExp(user.getExp() + distance * 10);
+                user.setExp(user.getExp() + distance * 10 / 1000);
             } else {
-                user.setExp(user.getExp() + (int) (distance * 1.3));
+                user.setExp(user.getExp() + (int) (distance * 13 / 1000));
             }
 
             userRepository.save(user);
