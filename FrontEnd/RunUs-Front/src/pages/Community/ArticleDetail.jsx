@@ -5,7 +5,7 @@ import "../../styles/Community/ArticleDetail.css";
 import CommentSection from "../../components/Community/CommentSection";
 import Button from "../../components/common/Button";
 import { UserContext } from "../../hooks/UserContext";
-import Header from "../../components/common/Header";
+import TabBar from "../../components/common/TabBar";
 
 // 날짜와 시간을 포맷하는 함수
 const formatDate = (dateString) => {
@@ -18,7 +18,6 @@ const formatDate = (dateString) => {
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-      second: "2-digit",
       hour12: false // 24시간제 사용
     };
     return new Date(dateString).toLocaleString(undefined, options);
@@ -97,47 +96,46 @@ const ArticleDetail = () => {
   if (!article) return <p>글을 찾을 수 없습니다.</p>;
 
   return (
-    <div><Header />
-    <div className="article-detail-container">
-      
-      <h1>{article.title}</h1>
-
-    <div className="author">
-      <p>
-        <strong>작성자:</strong> {article.nickname || "익명"}
-      </p>
-      <p>
-        <strong>작성 시간:</strong> {formatDate(article.createdAt)}
-      </p>
-    </div>
-      
-      <div className="article-content">
-        <p>
-          <strong>출발 시간 :</strong> {article.meetingTime ? formatDate(article.meetingTime) : "미정"}
-        </p>
-        <p>
-          <strong>장소 :</strong> {regionName}
-        </p>
-        <br/>
-          {article.content}
-      </div>
-      {isAuthor && (
-        <div className="board-button-container">
-          <Button
-            text="수정"
-            onClick={handleEdit}
-            className="article-edit-button"
-          />
-          <Button
-            text="삭제"
-            onClick={handleDelete}
-            className="article-delete-button"
-          />
+    <div>
+      <div className="article-detail-container">
+        <h1>{article.title}</h1>
+        <div className="author">
+          <p>
+            <strong>작성자:</strong> {article.nickname || "익명"}
+          </p>
+          <p>
+            <strong>작성 시간:</strong> {formatDate(article.createdAt)}
+          </p>
         </div>
-      )}
-      <CommentSection comments={comments} articleId={id} />
-      <Button text="목록" onClick={() => nav("/article-home")} />
-    </div>
+        <div className="article-content">
+          <p>
+            <strong>출발 시간 :</strong> {article.meetingTime ? formatDate(article.meetingTime) : "미정"}
+          </p>
+          <p>
+            <strong>장소 :</strong> {regionName}
+          </p>
+          <br />
+          {article.content}
+        </div>
+        {/* 댓글 섹션을 콘텐츠 아래로 이동 */}
+        <CommentSection comments={comments} articleId={id} />
+        {isAuthor && (
+          <div className="board-button-container">
+            <Button
+              text="수정"
+              onClick={handleEdit}
+              className="article-edit-button"
+            />
+            <Button
+              text="삭제"
+              onClick={handleDelete}
+              className="article-delete-button"
+            />
+          </div>
+        )}
+        <Button text="목록" onClick={() => nav("/article-home")} />
+      </div>
+      <TabBar />
     </div>
   );
 };

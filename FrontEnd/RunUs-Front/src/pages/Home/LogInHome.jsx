@@ -2,10 +2,12 @@ import React, { useState, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import "../../styles/Home/LogInHome.css";
-import Header from "../../components/common/Header";
+import TabBar from "../../components/common/TabBar";
 import Button2 from "../../components/common/Button2";
 import SoloProfile from "../../assets/SoloProfile2.png";
 import TeamProfile from "../../assets/TeamProfile2.png";
+import Speed from "../../assets/speed.png";
+import Sprint from "../../assets/sprint.png";
 import axios from "axios";
 import { UserContext } from "../../hooks/UserContext";
 import Weather from "../../components/common/Weather";
@@ -101,21 +103,29 @@ const LogInHome = () => {
 
   return (
     <div>
-      <Header />
       <div className="LoginHome-container">
         <Weather />
         <div className="LoginHomeMapView">
           <LoginHomeMapView />
         </div>
         <div className="MainButton-container">
+          {/* <div className="circle-button" onClick={() => navigate("/speed")}>
+            <img src={Speed} alt="Speed" />
+            </div>
+            <div className="circle-button" onClick={() => navigate("/sprint")}>
+            <img src={Sprint} alt="Sprint" />
+            </div> */}
           <Button2 src={SoloProfile} onClick={handleSoloProfileClick} />
-          <Button2
-            src={TeamProfile}
-            onClick={handleTeamProfileClick}
-            ref={teamProfileRef}
-          />
+          {
+            <Button2
+              src={TeamProfile}
+              onClick={handleTeamProfileClick}
+              ref={teamProfileRef}
+            />
+          }
         </div>
       </div>
+      <TabBar />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import Header from "../../../components/common/Header";
+import TabBar from "../../../components/common/TabBar";
 import QRCode from "qrcode.react";
 import "../../../styles/Running/Team/TeamCreate.css";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -65,16 +65,29 @@ const TeamPage = () => {
           const userList = messageContent.split("현재 방에 있는 사용자: ")[1];
           const userNames = userList ? userList.split(", ") : [];
           localStorage.setItem("userNames", JSON.stringify(userNames));
-          setUserNames(userNames);
+          setUserNames(userNames.map(user => ({ name: user, distance: "0.00 km" })));
         } else if (receivedData.type === "ROOM_CLOSED") {
           alert("방장이 방을 종료했습니다. 방을 나가겠습니다.");
           navigate("/home");
         } else if (receivedData.type === "LOCATION") {
           const { sender, longitude, latitude, message } = receivedData;
+          
+          // Extract distance from the message
+          const distanceMatch = message.match(/총 이동 거리: ([0-9.]+) km/);
+          const distance = distanceMatch ? `${distanceMatch[1]} km` : "0.00 km";
+          
+          // Update user position
           setUserPositions(prevPositions => ({
             ...prevPositions,
             [sender]: { latitude, longitude },
           }));
+
+          // Update user distance in the list
+          setUserNames(prevUserNames => 
+            prevUserNames.map(user => 
+              user.name === sender ? { ...user, distance } : user
+            )
+          );
         } else if (receivedData.type === "START") {
           // Start sending location updates when "START" message is received
           setIsRunning(true);
@@ -195,7 +208,7 @@ const TeamPage = () => {
 
   return (
     <div>
-      <Header />
+      <TabBar />
       <div className="TeamCreate">
         <div>
           <button

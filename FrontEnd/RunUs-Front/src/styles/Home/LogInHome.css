@@ -1,5 +1,5 @@
 .LoginHome-container {
-  margin-top: 100px;
+  margin-top: 20px;
   padding-left: 10px;
   padding-right: 10px;
 }
@@ -36,4 +36,27 @@
     rgba(0, 0, 0, 0) 55%
   );
   z-index: 0;
+}
+
+.speed-image {
+  width: 100px;
+  height: 100px;
+}
+
+.circle-button {
+  width: 100px; /* 원의 너비 */
+  height: 100px; /* 원의 높이 */
+  border-radius: 50%; /* 원형으로 만들기 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+   /* 이미지가 원 밖으로 나가지 않도록 */
+  overflow: hidden;
+  background-color: #ffffff; /* 원의 배경색 */
+  cursor: pointer; /* 클릭 가능하도록 포인터 커서 */
+}
+
+.circle-button img {
+  width: 80%; /* 이미지 크기 */
+  height: 80%;
 }

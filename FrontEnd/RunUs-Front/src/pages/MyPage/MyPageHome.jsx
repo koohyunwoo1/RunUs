@@ -1,4 +1,4 @@
-import Header from "../../components/common/Header";
+import TabBar from "../../components/common/TabBar";
 import "../../styles/MyPage/MyPageHome.css";
 import MyPageProfile from "../../components/MyPage/MyPageProfile";
 import MyPageTier from "../../components/MyPage/MyPageTier";
@@ -17,7 +17,6 @@ const MyPageHome = () => {
 
   return (
     <div>
-      <Header />
       <div className="MyPageHome">
         <img
           src={EditIcon}
@@ -41,6 +40,7 @@ const MyPageHome = () => {
           <Logout />
         </div>
       </div>
+    <TabBar />
     </div>
   );
 };
