@@ -19,6 +19,7 @@ const TeamPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { party } = useParams(); 
+  const { roomOwnerId } = useParams();
   const { userData } = useContext(UserContext);
   const [waitingRoomId, setWaitingRoomId] = useState(id || null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -30,9 +31,9 @@ const TeamPage = () => {
   const [isRunning, setIsRunning] = useState(false);
   const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
   const location = useLocation();
-  const [roomOwnerId, setRoomOwnerId] = useState(
-    location.state?.roomOwnerId || null
-  );
+  // const [roomOwnerId, setRoomOwnerId] = useState(
+  //   location.state?.roomOwnerId || null
+  // );
 
   useEffect(() => {
     if (!userData) {
@@ -209,7 +210,7 @@ const TeamPage = () => {
     setModalIsOpen((prevState) => !prevState);
   };
 
-  const teamCreatePageUrl = `https://i11e103.p.ssafy.io/team-create/${waitingRoomId}`;
+  const teamCreatePageUrl = `https://i11e103.p.ssafy.io/team-create/${waitingRoomId}/${party}/${roomOwnerId}`;
 
   const isRoomOwner = roomOwnerId === Number(localStorage.getItem("userId"));
 
