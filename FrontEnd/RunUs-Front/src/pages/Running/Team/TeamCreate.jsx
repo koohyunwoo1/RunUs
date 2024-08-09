@@ -11,12 +11,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import WebSocketManager from "./WebSocketManager";
 import MapComponent from '../../../components/Running/Team/MapComponent'; // 카카오맵 컴포넌트
+import axios from "axios";
+import Running from "../Running";
 
 Modal.setAppElement("#root");
 
 const TeamPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { party } = useParams(); 
+  const { roomOwnerId } = useParams();
   const { userData } = useContext(UserContext);
   const [waitingRoomId, setWaitingRoomId] = useState(id || null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -24,24 +28,27 @@ const TeamPage = () => {
   const [userPositions, setUserPositions] = useState({});
   const [totalDistance, setTotalDistance] = useState(0);
   const [totalCalories, setTotalCalories] = useState(0);
-  const [elapsedTime, setElapsedTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
   const location = useLocation();
-  const [roomOwnerId, setRoomOwnerId] = useState(
-    location.state?.roomOwnerId || null
-  );    
-
+  const [distance, setDistance] = useState(0);
+  const [calories, setCalories] = useState(0);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [time, setTime] = useState(0);
+  // const [roomOwnerId, setRoomOwnerId] = useState(
+  //   location.state?.roomOwnerId || null
+  // );
+  
   useEffect(() => {
-    
     if (!userData) {
       console.log("User data is null");
       return;
     }
+    
 
     console.log(userData);
     if (waitingRoomId) {
-      WebSocketManager.connect(waitingRoomId); // Use singleton WebSocketManager
+      WebSocketManager.connect(waitingRoomId);
 
       WebSocketManager.on("open", () => {
         console.log("WebSocket connection opened");
@@ -70,8 +77,9 @@ const TeamPage = () => {
           alert("방장이 방을 종료했습니다. 방을 나가겠습니다.");
           navigate("/home");
         } else if (receivedData.type === "LOCATION") {
-          const { sender, longitude, latitude, message } = receivedData;
-          
+          const { sender, longitude, latitude, userId, message } = receivedData;
+          // 방장이면 닉네임에 !!를 붙임
+          const displayName = userId === roomOwnerId ? `${sender}` : sender;
           // Extract distance from the message
           const distanceMatch = message.match(/총 이동 거리: ([0-9.]+) km/);
           const distance = distanceMatch ? `${distanceMatch[1]} km` : "0.00 km";
@@ -79,7 +87,7 @@ const TeamPage = () => {
           // Update user position
           setUserPositions(prevPositions => ({
             ...prevPositions,
-            [sender]: { latitude, longitude },
+            [userId]: { nickname: displayName, latitude, longitude, userId },
           }));
 
           // Update user distance in the list
@@ -89,8 +97,24 @@ const TeamPage = () => {
             )
           );
         } else if (receivedData.type === "START") {
-          // Start sending location updates when "START" message is received
           setIsRunning(true);
+        } else if (receivedData.type === "QUIT"){
+            try {
+              const response = axios.post('api/v1/record/result_save', null, {
+                params: {
+                  user_id: userData.userId,
+                  party_id: party,
+                  distance: totalDistance, 
+                  time: elapsedTime,
+                  kcal : totalCalories,
+                }
+              });        
+              console.log(response);
+
+              navigate(`/home`);
+            } catch (err) {
+              console.error(err);
+            }
         }
       });
 
@@ -108,12 +132,12 @@ const TeamPage = () => {
         WebSocketManager.close();
       };
     }
-  }, [waitingRoomId, userData, navigate]);
+  }, [waitingRoomId, userData, navigate, roomOwnerId]);
 
   const startSendingLocation = () => {
     const updateLocation = () => {
       if (isWebSocketConnected) {
-        const baseLatitude = 37.5665; // Example coordinates
+        const baseLatitude = 37.5665;
         const baseLongitude = 126.978;
         const latitude = baseLatitude + (Math.random() - 0.5) * 0.01;
         const longitude = baseLongitude + (Math.random() - 0.5) * 0.01;
@@ -148,18 +172,19 @@ const TeamPage = () => {
     if (WebSocketManager.ws && WebSocketManager.ws.readyState === WebSocket.OPEN) {
       WebSocketManager.send(startMessage);
       setIsRunning(true);
-      setIsWebSocketConnected(true); // Ensure WebSocket is connected before starting location updates
+      setIsWebSocketConnected(true);
     } else {
       console.warn("WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.");
     }
   };
 
-  const handleStop = () => {
+  const handleQuit = () => {
     if (WebSocketManager.ws && WebSocketManager.ws.readyState === WebSocket.OPEN) {
       const stopMessage = {
-        type: 'STOP',
+        type: 'QUIT',
         roomId: waitingRoomId,
         sender: userData.nickname,
+        message: "방장이 종료 버튼을 눌렀습니다.",
         userId : userData.userId,
       };
       WebSocketManager.send(stopMessage);
@@ -190,10 +215,12 @@ const TeamPage = () => {
     setModalIsOpen((prevState) => !prevState);
   };
 
-  const teamCreatePageUrl = `https://i11e103.p.ssafy.io/team-create/${waitingRoomId}`;
+  const teamCreatePageUrl = `https://i11e103.p.ssafy.io/team-create/${waitingRoomId}/${party}/${roomOwnerId}`;
 
-  const isRoomOwner = roomOwnerId === Number(localStorage.getItem("userId"));
-
+  const isRoomOwner = roomOwnerId == Number(localStorage.getItem("userId").trim());
+  console.log(roomOwnerId)
+  console.log(localStorage.getItem("userId"))
+  console.log(isRoomOwner);
   useEffect(() => {
     let stopSendingLocation;
 
@@ -259,16 +286,30 @@ const TeamPage = () => {
           />
         </Modal>
         <div>
-          <MapComponent positions={userPositions} />
-          <div>Total Distance: {totalDistance} km</div>
-          <div>Total Calories: {totalCalories} kcal</div>
-          <div>Elapsed Time: {elapsedTime} seconds</div>
+          <MapComponent positions={userPositions} roomOwnerId={roomOwnerId} />
+          
         </div>
+
         {isRunning && (
-          <button onClick={handleStop} className="TeamCreateButton">
-            Stop
+          <button onClick={handleQuit} className="TeamCreateButton">
+            Quit
           </button>
         )}
+        
+
+        <div>
+      <Running 
+        distance={distance}
+        setDistance={setDistance}
+        calories={calories}
+        setCalories={setCalories}
+        time={time}
+        setTime={setTime}
+      />
+      <p>{time}</p>
+      <p>{distance} </p>
+      <p>{calories} </p>
+    </div>
       </div>
     </div>
   );
