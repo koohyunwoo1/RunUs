@@ -9,10 +9,22 @@
   background-color: #ffffff;
   display: flex;
   flex-direction: column;
-  margin-top: 15%;
+  /* margin-top: 15%; */
   gap: 20px; /* 내부 요소 간의 간격 */
   /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
   box-sizing: border-box;
+  font-family: "PreRegular";
+  position: relative;
+}
+
+.article-detail-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 20px; /* 왼쪽 여백 */
+  right: 20px; /* 오른쪽 여백 */
+  height: 1px; /* 선의 두께 */
+  background-color: #eaeaea; /* 선의 색상 */
 }
 
 /* 목록 버튼 스타일 */
@@ -111,4 +123,18 @@
 
 .comment-submit-button:hover {
   background-color: #218838; /* 댓글 작성 버튼 호버 색상 */
+}
+
+.article-detail-back-button {
+  display: inline-block; /* 버튼을 인라인 블록으로 설정 */
+  cursor: pointer; /* 클릭 가능한 느낌을 주기 위해 포인터 커서 사용 */
+  text-decoration: none; /* 링크의 기본 밑줄 제거 */
+  width: 10%;
+
+}
+
+.back-button {
+  width: 80%;
+  margin-top: 10px;
+  margin-left: 20px;
 }
