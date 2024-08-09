@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.WebSocketSession;
+import runus.runus.fcm.dto.NotificationDTO;
+import runus.runus.fcm.service.FCMService;
+import runus.runus.fcm.service.FCMServiceImpl;
 import runus.runus.record.service.RecordService;
 import runus.runus.webSocket.service.ChatServiceImpl;
 
@@ -26,6 +29,12 @@ public class ChatRoom {
     private double ownerLongitude; // 방 생성자의 경도
 
     private RecordService recordService;
+
+    // FCM 사용
+    private FCMService fcmService;
+
+    // 방장과 멀어지는 거리 100 M
+    private static final double  MAX_DISTANCE = 0.1; // 최대허용 거리 (km)
 
 
     @Builder
@@ -77,16 +86,21 @@ public class ChatRoom {
 
         } else if (chatMessage.getType().equals(ChatMessage.MessageType.QUIT)) {
             sendMessage(chatMessage, chatServiceImpl);
-            sessions.remove(session);
-            users.remove(userName);
-            chatMessage.setMessage(userName + "님이 퇴장했습니다.");
 
-            chatServiceImpl.exitUserStatus(partyId, userId, '3');
-            log.info(userId + " ststus 3으로 변경 끝");
             chatServiceImpl.exitPartyStatus(partyId, '3');
             log.info(partyId + " party status 3으로 변경 끝");
 
+            // 모든 사용자에게 QUIT 메시지 브로드캐스트
+            ChatMessage quitBroadcastMessage = new ChatMessage();
+            quitBroadcastMessage.setType(ChatMessage.MessageType.QUIT);
+            quitBroadcastMessage.setRoomId(chatMessage.getRoomId());
+            quitBroadcastMessage.setSender("SYSTEM");
+            quitBroadcastMessage.setMessage("종료되었습니다.");
 
+            sendMessage(quitBroadcastMessage, chatServiceImpl);
+
+            sessions.remove(session);
+            users.remove(userName);
 
         } else if (chatMessage.getType().equals(ChatMessage.MessageType.START)) {
             if (userId == roomOwnerId) {
@@ -107,6 +121,7 @@ public class ChatRoom {
             chatMessage.setMessage(userName + ": " + chatMessage.getMessage());
 
         } else if (chatMessage.getType().equals(ChatMessage.MessageType.LOCATION)) {
+            double ownerDistance = 0;
             if (userId == roomOwnerId) {
                 // 방장일 경우 위치 업데이트
                 this.ownerLatitude = latitude;
@@ -132,6 +147,14 @@ public class ChatRoom {
                 log.info(userName + "의 총 이동 거리: " + String.format("%.5f", totalDistance) + " km");
                 chatMessage.setMessage(userName + "의 총 이동 거리: " + String.format("%.5f", totalDistance) + " km");
                 sendMessage(chatMessage, chatServiceImpl);
+
+                
+                // 멀어진 팀원 및 팀장에게 알림 24.08.05 이형준
+                if (distance > MAX_DISTANCE) {
+                    sendDistanceAlert(userId, userName, distance, false);
+                    sendDistanceAlert(roomOwnerId, userName, distance, true);
+                    System.out.println("call distance with leader and member");
+                }
             }
 
         } else if (chatMessage.getType().equals(ChatMessage.MessageType.WAIT_EXIT)) { //대기방에서 나가는 경우
@@ -170,10 +193,28 @@ public class ChatRoom {
             try {
                 if (session.isOpen()) {
                     chatServiceImpl.sendMessage(session, message);
+                    log.info("Message sent to session " + session.getId() + ": " + message);
                 }
             } catch (IllegalStateException e) {
                 log.error("Failed to send message to session: " + session.getId(), e);
             }
         });
+    }
+
+
+    private void sendDistanceAlert(int userId, String userName, double distance, boolean isOwner) {
+        try {
+            String title = isOwner ? "팀원 거리 경고" : "거리 경고";
+            String body = isOwner
+                    ? userName + "님이 " + String.format("%.2f", distance) + "km 떨어졌습니다."
+                    : "방장과의 거리가 " + String.format("%.2f", distance) + "km로 멀어졌습니다.";
+
+            NotificationDTO notification = new NotificationDTO(title, body);
+            fcmService.sendNotification(String.valueOf(userId), notification);
+            System.out.println("call sendDistanceAlert (ChatRoom)");
+        } catch (Exception e) {
+            log.error("Failed to send distance alert to user: " + userId, e);
+            System.out.println("call sendDistanceAlert (ChatRoom)");
+        }
     }
 }

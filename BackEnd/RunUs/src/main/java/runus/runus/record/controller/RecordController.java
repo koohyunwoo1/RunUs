@@ -96,12 +96,17 @@ public class RecordController {
 
     // 러닝 데이터 저장
     @PostMapping("/result_save")
-    public ResponseEntity<?> resultSave(@RequestBody RecordSaveRequestDTO requestDTO) {
-        RecordEntity record = recordService.saveRecord(requestDTO);
-
-        ApiResponse<RecordEntity> response = new ApiResponse<>();
-        response.setResponseTrue(record, "달리기 기록 저장");
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity<?> resultSave(
+            @RequestParam("user_id") Integer userId,
+            @RequestParam(value = "party_id", required = false) Integer partyId,
+            @RequestParam(value = "distance", required = false) Integer distance,
+            @RequestParam(value = "time", required = false) Integer time,
+            @RequestParam(value = "kcal", required = false) Integer kcal) {
+        // 기본값 설정
+//        if (partyId == null) {
+//            partyId = 0;
+//        }
+        Map<String, Object> response = recordService.saveRecord(userId, partyId, distance, time, kcal);
+        return ResponseEntity.ok(response);
     }
-
 }

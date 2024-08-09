@@ -17,6 +17,7 @@ public class ChatMessage {
     private String sender; //메세지 보낸 사람
     private String message; //메시지
     private int userId; // 사용자 ID 필드 추가
+    private double distance;
 
     private double longitude;
     private double latitude;
