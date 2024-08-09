@@ -13,12 +13,13 @@
   text-align: center;
   display: flex;
   justify-content: space-evenly;
-  margin-top: 300px;
+  /* margin-top: 300px; */
+  margin-top: 500px;
 }
 
 .LoginHomeMapView {
   position: absolute; /* 절대 위치 지정 */
-  margin-top: 100px;
+  margin-top: 220px;
   top: 0; /* 부모 컨테이너의 상단에 위치 */
   left: 0; /* 부모 컨테이너의 왼쪽에 위치 */
   height: 100vh; /* 뷰포트의 전체 높이를 채우도록 설정 */
@@ -31,8 +32,8 @@
   );
   -webkit-mask-image: radial-gradient(
     circle,
-    rgba(0, 0, 0, 0.5) 5%,
-    rgba(0, 0, 0, 0) 45%
+    rgba(0, 0, 0, 0.5) 10%,
+    rgba(0, 0, 0, 0) 55%
   );
   z-index: 0;
 }

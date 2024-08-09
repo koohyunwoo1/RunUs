@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2";
+import ReactDOM from "react-dom";
 import "../../styles/Common/Weather.css";
 import WeatherForecast from "./WeatherForecast";
+import WeatherImage from "../../assets/Weather.png";
+
 const Weather = () => {
   const [weatherData, setWeatherData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -59,6 +63,27 @@ const Weather = () => {
       });
   }, []);
 
+  const handleWeatherDetail = () => {
+    const forecastDiv = document.createElement("div");
+    document.body.appendChild(forecastDiv);
+
+    Swal.fire({
+      title: "일기 예보",
+      html: `<div id="forecast-root"></div>`,
+      width: "80%",
+      confirmButtonText: "닫기",
+      showCloseButton: true,
+      didOpen: () => {
+        ReactDOM.createRoot(document.getElementById("forecast-root")).render(
+          <WeatherForecast />
+        );
+      },
+      willClose: () => {
+        document.body.removeChild(forecastDiv);
+      },
+    });
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -80,9 +105,21 @@ const Weather = () => {
 
   return (
     <div>
-      {/* <h2 style={{ textAlign: "center", margin: "10px 0" }}>나의 위치</h2> */}
-      <h1 style={{ textAlign: "center", margin: "5px 0" }}>{cityName}</h1>
-      <h2 style={{ fontSize : "30px",textAlign: "center", margin: "10px 0" }}>{temperature}°C</h2>
+      <h1
+        style={{ textAlign: "center", margin: "5px 0", fontFamily: "PreBold" }}
+      >
+        {cityName}
+      </h1>
+      <h2
+        style={{
+          fontSize: "30px",
+          textAlign: "center",
+          margin: "10px 0",
+          fontFamily: "PreBold",
+        }}
+      >
+        {temperature}°C
+      </h2>
       <div className="Weather">
         <img
           style={{ width: "60px", height: "60px" }}
@@ -92,8 +129,13 @@ const Weather = () => {
         <p>{description}</p>
         <p>체감 온도: {feelsLike}°C</p>
         <p>풍속: {weatherData.wind.speed} m/s</p>
+        <img
+          src={WeatherImage}
+          style={{ width: "60px", height: "45px", cursor: "pointer" }}
+          onClick={handleWeatherDetail}
+          alt="Weather Forecast"
+        />
       </div>
-      <WeatherForecast />
     </div>
   );
 };
