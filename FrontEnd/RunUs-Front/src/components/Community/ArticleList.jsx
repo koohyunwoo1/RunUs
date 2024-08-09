@@ -9,16 +9,16 @@ const ArticleList = ({ articles }) => {
   return (
     
     <div className="ArticleList">
-      
       <div className="article-wrapper">
         <ul>
           {articles.length > 0 ? (
             articles.map(post => (
               <ArticleItem
                 key={post.boardId}
-                id={post.boardId} // 이 부분 확인
+                id={post.boardId}
                 title={post.title}
                 content={post.content}
+                className={`ArticleItem ${post.boardId % 2 === 0 ? 'even' : 'odd'}`} // 클래스 이름 조건부 설정
               />
             ))
           ) : (

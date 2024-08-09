@@ -6,7 +6,7 @@
   border-radius: 12px; /* 둥근 테두리 */
   max-width: 1200px; /* 최대 넓이 설정 */
   margin: auto; /* 가운데 정렬 */
-  
+  font-family: "PreRegular";
 }
 
 /* 필터 및 버튼 스타일 */
