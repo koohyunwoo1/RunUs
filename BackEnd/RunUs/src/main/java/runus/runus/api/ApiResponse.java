@@ -13,4 +13,16 @@ public class ApiResponse<T> {
     private boolean success;
     private T data;
     private String message;
+
+    public void setResponseTrue(T data, String message) {
+        this.success = true;
+        this.data = data;
+        this.message = message;
+    }
+
+    public void setFail(T data, String message) {
+        this.success = false;
+        this.data = data;
+        this.message = message;
+    }
 }

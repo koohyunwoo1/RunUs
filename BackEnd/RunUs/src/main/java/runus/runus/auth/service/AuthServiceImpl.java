@@ -3,6 +3,9 @@ package runus.runus.auth.service;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import runus.runus.api.DuplicateException;
+import runus.runus.api.InvalidDataException;
+import runus.runus.api.NotFoundElementException;
 import runus.runus.user.dto.UserDto;
 import runus.runus.user.entity.User;
 import runus.runus.user.repository.UserRepository;
@@ -22,7 +25,7 @@ public class AuthServiceImpl implements AuthService {
     public UserDto signup(UserDto userDto) {
         // 이메일 중복 체크
         if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
-            throw new RuntimeException("이미 존재하는 이메일입니다.");
+            throw new DuplicateException("이미 존재하는 이메일입니다.");
         }
 
         User user = new User();
@@ -46,14 +49,14 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public User signin(String email, String password) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundElementException("계정 정보가 없습니다."));
 
         if (password.equals(user.getPassword())) {
             httpSession.setAttribute("user", user);
             System.out.println("로그인 성공");
             return user;
         } else {
-            throw new RuntimeException("Invalid password");
+            throw new InvalidDataException("패스워드가 일치하지 않습니다.");
         }
     }
 
