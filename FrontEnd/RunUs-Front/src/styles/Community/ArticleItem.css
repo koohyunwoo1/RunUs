@@ -15,6 +15,7 @@
   display: flex; /* 아이템을 수평으로 배열 */
   flex-direction: column; /* 세로 방향으로 배열 */
   gap: 12px; /* 각 요소 간의 간격 */
+  margin: 0 20px 0 20px;
 }
 
 /* 제목 스타일 */
@@ -54,4 +55,19 @@
 
 .info-section button:hover {
   background-color: #0056b3; /* 버튼 호버 시 색상 */
+}
+
+/* 홀수 ArticleItem 스타일 */
+.ArticleItem.odd .info-section {
+  background-color: #A9A9A9; /* 회색 */
+}
+
+/* 짝수 ArticleItem 스타일 */
+.ArticleItem.even .info-section {
+  background-color: #D3D3D3; /* 연회색 */
+}
+
+/* 기존 스타일은 유지 */
+.ArticleItem {
+  margin-bottom: 20px; /* 아이템 간의 여백 */
 }
