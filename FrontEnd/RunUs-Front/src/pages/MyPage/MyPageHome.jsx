@@ -6,6 +6,7 @@ import EditIcon from "../../assets/editIcon.png";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
+import Header from "../../components/common/Header";
 // import Logout from "../../components/Home/Logout";
 
 const MyPageHome = () => {

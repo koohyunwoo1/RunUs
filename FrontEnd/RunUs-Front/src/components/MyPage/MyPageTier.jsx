@@ -50,7 +50,7 @@ const MyPageTier = () => {
     <>
       <div className={`card ${currentTier.color}`}>
         <div className="tier-header">
-          <h2>{currentTier.name}</h2>
+          <h2 style={{ fontFamily: "VitroCore" }}>{currentTier.name}</h2>
           <div>
             <CiCircleQuestion className="tierHelp" onClick={openModal} />
           </div>
