@@ -18,6 +18,7 @@ Modal.setAppElement("#root");
 const TeamPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { party } = useParams(); 
   const { userData } = useContext(UserContext);
   const [waitingRoomId, setWaitingRoomId] = useState(id || null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -32,9 +33,6 @@ const TeamPage = () => {
   const [roomOwnerId, setRoomOwnerId] = useState(
     location.state?.roomOwnerId || null
   );    
-  const [partyId, setPartyId] = useState(
-    location.state?.partyId || null
-  );
 
   useEffect(() => {
     
@@ -100,7 +98,7 @@ const TeamPage = () => {
               const response = axios.post('api/v1/record/result_save', null, {
                 params: {
                   user_id: userData.userId,
-                  party_id: partyId,
+                  party_id: party,
                   distance: totalDistance, 
                   time: elapsedTime,
                   kcal : totalCalories,

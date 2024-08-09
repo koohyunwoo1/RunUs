@@ -68,7 +68,7 @@ const LogInHome = () => {
       const { roomOwnerId } = response.data.data;
       const { partyId } = response.data.data;
 
-      navigate(`/team-create/${roomId}`, { state: { roomOwnerId, partyId } });
+      navigate(`/team-create/${roomId}/${partyId}`, { state: { roomOwnerId } });
     } catch (err) {
       console.error(err);
     }
