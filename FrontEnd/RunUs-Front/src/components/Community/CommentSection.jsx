@@ -12,9 +12,9 @@ const CommentSection = ({ articleId }) => {
   const [page, setPage] = useState(0);
   const [size] = useState(10);
   const [hasMoreComments, setHasMoreComments] = useState(true);
-  const [replyingTo, setReplyingTo] = useState(null); // 댓글을 작성할 때 답글 대상
+  const [replyingTo, setReplyingTo] = useState(null);
+  const [dropdownCommentId, setDropdownCommentId] = useState(null);
 
-  // 댓글 목록을 가져오는 함수
   const fetchComments = async (pageNumber = 0) => {
     try {
       const response = await axios.get(`/api/v1/boards/${articleId}/comments`, {
@@ -25,7 +25,6 @@ const CommentSection = ({ articleId }) => {
           setHasMoreComments(false);
         }
         setCommentList((prevComments) => {
-          // 댓글 중복 제거
           const newComments = [...prevComments, ...response.data.data];
           const uniqueComments = Array.from(new Set(newComments.map(comment => comment.commentId)))
               .map(id => {
@@ -58,13 +57,13 @@ const CommentSection = ({ articleId }) => {
         content: newComment,
         userId: userData.userId,
         nickname: userData.nickname,
-        parentId: replyingTo // 답글 대상 댓글의 ID 설정
+        parentId: replyingTo
       });
       setNewComment("");
-      setReplyingTo(null); // 댓글 작성 후 답글 대상 초기화
-      setPage(0); // 댓글 작성 후 페이지 초기화
-      setCommentList([]); // 댓글 작성 후 목록을 초기화하여 재로딩
-      await fetchComments(); // 작성 후 최신 댓글 목록을 가져옵니다.
+      setReplyingTo(null);
+      setPage(0);
+      setCommentList([]);
+      await fetchComments();
     } catch (err) {
       console.error("댓글 작성 실패: ", err);
     }
@@ -73,6 +72,7 @@ const CommentSection = ({ articleId }) => {
   const handleEditComment = (commentId, content) => {
     setEditingCommentId(commentId);
     setEditingContent(content);
+    setDropdownCommentId(null);
   };
 
   const handleUpdateComment = async (commentId) => {
@@ -83,9 +83,9 @@ const CommentSection = ({ articleId }) => {
       });
       setEditingCommentId(null);
       setEditingContent("");
-      setPage(0); // 댓글 수정 후 페이지 초기화
-      setCommentList([]); // 댓글 수정 후 목록을 초기화하여 재로딩
-      await fetchComments(); // 수정 후 최신 댓글 목록을 가져옵니다.
+      setPage(0);
+      setCommentList([]);
+      await fetchComments();
     } catch (err) {
       console.error("댓글 수정 실패: ", err);
     }
@@ -94,9 +94,9 @@ const CommentSection = ({ articleId }) => {
   const handleDeleteComment = async (commentId) => {
     try {
       await axios.delete(`/api/v1/boards/${articleId}/comments/${commentId}`);
-      setPage(0); // 댓글 삭제 후 페이지 초기화
-      setCommentList([]); // 댓글 삭제 후 목록을 초기화하여 재로딩
-      await fetchComments(); // 삭제 후 최신 댓글 목록을 가져옵니다.
+      setPage(0);
+      setCommentList([]);
+      await fetchComments();
     } catch (err) {
       console.error("댓글 삭제 실패: ", err);
     }
@@ -108,8 +108,14 @@ const CommentSection = ({ articleId }) => {
     }
   };
 
-  const handleReply = (commentId) => {
+  const handleReply = (commentId, e) => {
+    e.stopPropagation();
     setReplyingTo(commentId);
+    setDropdownCommentId(null);
+  };
+
+  const toggleDropdown = (commentId) => {
+    setDropdownCommentId((prevId) => (prevId === commentId ? null : commentId));
   };
 
   const formatDate = (dateString) => {
@@ -137,29 +143,42 @@ const CommentSection = ({ articleId }) => {
       .map(comment => (
         <div key={comment.commentId} className={level > 0 ? "nested-comment" : ""}>
           {editingCommentId === comment.commentId ? (
-            <div>
+            <div className="comment-container">
               <textarea
+                className="comment-writer"
                 value={editingContent}
                 onChange={(e) => setEditingContent(e.target.value)}
               />
-              <button onClick={() => handleUpdateComment(comment.commentId)}>수정 완료</button>
+              <button
+                className="create-comment"
+                onClick={() => handleUpdateComment(comment.commentId)}
+              >
+                수정 완료
+              </button>
             </div>
           ) : (
-            <div>
-              <p>
-                {comment.nickname}
-              </p>
-              <p>
-                <strong>{comment.content}</strong>
-              </p>
-              <span className="date">{formatDate(comment.createdAt)}</span>
+            <div className="comment-container">
+              <div>
+                <p><strong>{comment.nickname}</strong> <span className="date">{formatDate(comment.createdAt)}</span></p>
+                <p>{comment.content}</p>
+              </div>
               {userData.userId === comment.userId && (
-                <div className="comment-container">
-                  <button onClick={() => handleEditComment(comment.commentId, comment.content)}>수정</button>
-                  <button onClick={() => handleDeleteComment(comment.commentId)}>삭제</button>
-                </div>
+                <>
+                  <button
+                    className="menu-button"
+                    onClick={() => toggleDropdown(comment.commentId)}
+                  >
+                    ⋮
+                  </button>
+                  <div className={`comment-options ${dropdownCommentId === comment.commentId ? 'show' : ''}`}>
+                    <button onClick={() => handleEditComment(comment.commentId, comment.content)}>
+                      수정
+                    </button>
+                    <button onClick={() => handleDeleteComment(comment.commentId)}>삭제</button>
+                  </div>
+                </>
               )}
-              <button onClick={() => handleReply(comment.commentId)}>답글</button>
+              <button onClick={(e) => handleReply(comment.commentId, e)} className="reply-button">답글</button>
             </div>
           )}
           {renderComments(comments, comment.commentId, level + 1)}
@@ -170,20 +189,31 @@ const CommentSection = ({ articleId }) => {
   return (
     <div className="comment-section">
       <h3>댓글</h3>
-      <ul>
+      <ul className="comment-list-ul">
         {renderComments(commentList)}
       </ul>
       <form onSubmit={handleCommentSubmit}>
-        <textarea
-          value={newComment}
-          onChange={handleCommentChange}
-          placeholder={replyingTo ? "답글을 입력하세요..." : "댓글을 입력하세요..."}
-        />
-        <div className="submit-container">
-          <button type="submit" className="create-comment">
-            {replyingTo ? "답글 작성" : "댓글 작성"}
-          </button>
-          {replyingTo && <button onClick={() => setReplyingTo(null)} className="cancel-reply">취소</button>}
+        <div className="textarea-container">
+          <textarea
+            className="comment-writer"
+            value={newComment}
+            onChange={handleCommentChange}
+            placeholder={replyingTo ? "답글을 입력하세요..." : "댓글을 입력하세요..."}
+          />
+          <div className="submit-container">
+            <button type="submit" className="create-comment">
+              {replyingTo ? "답글" : "댓글"}
+            </button>
+            {replyingTo && (
+              <button
+                type="button"
+                onClick={() => setReplyingTo(null)}
+                className="cancel-reply"
+              >
+                취소
+              </button>
+            )}
+          </div>
         </div>
       </form>
       {hasMoreComments && (
