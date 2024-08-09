@@ -95,7 +95,8 @@ public class RecordService {
 
             if(partyId != null ) {
                 record.setParty_id(partyId);
-                chatService.updatePartyStatus(partyId, '3');
+                chatService.updatePartyStatus(partyId, '3'); //파티 완주 완료
+                chatService.exitUserStatus(partyId, userId, '3'); //유저 완주 완료
             }
             record.setDistance(distance != null ? distance : 0);
             record.setTime(time != null ? time : 0);
