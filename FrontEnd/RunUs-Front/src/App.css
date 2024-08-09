@@ -1,0 +1,6 @@
+.app-content {
+    padding-bottom: 60px; /* TabBar의 높이와 동일하게 설정 */
+    min-height: 100vh; /* 최소 높이를 100vh로 설정하여 화면 전체를 덮도록 함 */
+    box-sizing: border-box; /* padding과 border가 요소의 전체 크기에 포함되도록 설정 */
+  }
+  
