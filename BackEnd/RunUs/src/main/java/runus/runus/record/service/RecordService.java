@@ -47,9 +47,6 @@ public class RecordService {
     // 지금까지 달린 총 거리 계산
     public Integer getTotalDistance(Integer userId) {
         Integer totalDistance = recordRepository.sumDistanceByUserId(userId);
-        if (totalDistance == null) {
-            throw new RuntimeException("TFAIL");
-        }
         return totalDistance;
     }
 
