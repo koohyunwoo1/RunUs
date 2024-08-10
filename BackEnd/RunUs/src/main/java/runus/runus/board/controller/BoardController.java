@@ -67,7 +67,10 @@ public class BoardController {
             @PathVariable("boardId") int boardId,
             @RequestBody BoardRequestDTO boardRequest) {
         boardService.updateBoard(boardId, boardRequest);
-        return ResponseEntity.ok(new ApiResponse<>(true, null, "게시글 수정 성공"));
+        
+        ApiResponse<Void> response = new ApiResponse<>();
+        response.setResponseTrue(null, "게시글 수정 성공");
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/{boardId}")
