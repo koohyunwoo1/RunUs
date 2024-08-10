@@ -38,6 +38,12 @@ dependencies {
     // 모니터링 추가
     implementation 'io.micrometer:micrometer-registry-prometheus'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // firebase(FCM) 08.02 추가, 이형준
+    // https://mvnrepository.com/artifact/com.google.firebase/firebase-admin
+    implementation group: 'com.google.firebase', name: 'firebase-admin', version: '9.3.0'
+
+
 }
 
 tasks.named('test') {

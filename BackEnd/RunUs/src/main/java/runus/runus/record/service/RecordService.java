@@ -84,17 +84,53 @@ public class RecordService {
         return monthlyStats.values().stream().collect(Collectors.toList());
     }
 
-    // 러닝한 데이터를 저장
-    public Record saveRecord(int userId, int partyId, Integer distance, Integer time, Integer kcal) {
-        Record record = new Record();
-        record.setUser_id(userId);
-        record.setParty_id(partyId);
-        record.setDistance(distance != null ? distance : 0);
-        record.setTime(time != null ? time : 0);
-        record.setKcal(kcal != null ? kcal : 0);
-        record.setRecord_date(LocalDateTime.now());
-        chatService.updatePartyStatus(partyId, '3');
-        return recordRepository.save(record);
+    public Map<String, Object> saveRecord(Integer userId, Integer partyId, Integer distance, Integer time, Integer kcal) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Record record = new Record();
+            record.setUser_id(userId);
+
+            if(partyId != null ) {
+                record.setParty_id(partyId);
+                chatService.updatePartyStatus(partyId, '3'); //파티 완주 완료
+                chatService.exitUserStatus(partyId, userId, '3'); //유저 완주 완료
+            }
+            record.setDistance(distance != null ? distance : 0);
+            record.setTime(time != null ? time : 0);
+            record.setKcal(kcal != null ? kcal : 0);
+            record.setRecord_date(LocalDateTime.now());
+
+            Record savedRecord = recordRepository.save(record);
+
+            updateUserExperience(userId, partyId, distance != null ? distance : 0);
+
+            response.put("success", true);
+            response.put("data", savedRecord);
+            response.put("message", "기록 저장 성공");
+
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("data", e.getMessage());
+            response.put("message", "기록 저장 실패");
+        }
+        return response;
     }
 
+    private void updateUserExperience(Integer userId, Integer partyId, Integer distance) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (user.getExp() == null) {
+                user.setExp(0); // 기본값 설정
+            }
+
+            if (partyId == null) {
+                user.setExp(user.getExp() + distance * 10 / 1000);
+            } else {
+                user.setExp(user.getExp() + (int) (distance * 13 / 1000));
+            }
+
+            userRepository.save(user);
+        }
+    }
 }
