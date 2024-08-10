@@ -240,20 +240,20 @@ const SoloModeStart = () => {
               <h1 style={{ fontSize: "30px" }}>
                 {formatTime(time)} <br />
               </h1>
-              시간
+              running time
             </div>
             <div>
               <h1 style={{ fontSize: "30px" }}>
                 {parseInt(calories.toFixed(2))} <br />
               </h1>
-              칼로리
+              kcal
             </div>
           </div>
 
           <div className="SoloModeStartDistance">
             <p>
               {(distance / 1000).toFixed(2)} <br />
-              <span style={{ fontSize: "20px" }}>킬로미터</span>
+              <span style={{ fontSize: "20px" }}>km</span>
             </p>
           </div>
 
