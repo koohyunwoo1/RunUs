@@ -3,7 +3,7 @@ import axios from "axios";
 import { UserContext } from "../../hooks/UserContext";
 import "../../styles/Community/NewArticle.css";
 import { useNavigate } from "react-router-dom";
-import Header from "../common/Header";
+import TabBar from "../common/TabBar";
 
 const NewArticle = () => {
   const [title, setTitle] = useState("");
@@ -59,7 +59,6 @@ const NewArticle = () => {
 
   return (
     <div>
-      <Header />
       <div className="NewArticle">
         <h2>글쓰기</h2>
         <form onSubmit={handleSubmit}>
@@ -71,7 +70,7 @@ const NewArticle = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
-            />
+              />
           </div>
           <div className="form-group">
             <label htmlFor="content">내용</label>
@@ -80,7 +79,7 @@ const NewArticle = () => {
               value={content}
               onChange={(e) => setContent(e.target.value)}
               required
-            />
+              />
           </div>
           <div className="form-group">
             <label htmlFor="meetingDay">날짜</label>
@@ -90,7 +89,7 @@ const NewArticle = () => {
               value={meetingDay}
               onChange={(e) => setMeetingDay(e.target.value)}
               required
-            />
+              />
           </div>
           <div className="form-group">
             <label htmlFor="meetingTime">출발 시간</label>
@@ -100,11 +99,12 @@ const NewArticle = () => {
               value={meetingTime}
               onChange={(e) => setMeetingTime(e.target.value)}
               required
-            />
+              />
           </div>
           <button type="submit">등록</button>
         </form>
       </div>
+    <TabBar/>
     </div>
   );
 };

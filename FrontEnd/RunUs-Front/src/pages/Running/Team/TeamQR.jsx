@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useContext } from "react";
 import { BrowserMultiFormatReader } from "@zxing/library";
 import "../../../styles/Running/Team/TeamQR.css";
-import Header from "../../../components/common/Header";
+import TabBar from "../../../components/common/TabBar";
 import { UserContext } from "../../../hooks/UserContext";
 
 // 사용자 정의 훅: QR 코드 스캐닝
@@ -150,8 +150,7 @@ export const TeamQR = () => {
 
   return (
     <div>
-      <Header />
-      <h1 className="TeamQR">QR 코드를 찍어주세요!</h1>
+      <TabBar />
       <div className="qr-reader-container">
         <video ref={ref} autoPlay style={{ height: "400px", width: "300px" }} />
       </div>

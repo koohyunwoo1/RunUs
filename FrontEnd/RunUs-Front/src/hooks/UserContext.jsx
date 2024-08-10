@@ -299,6 +299,7 @@ const UserProvider = ({ children }) => {
     <UserContext.Provider
       value={{
         userData,
+        setUserData,
         userId,
         error,
         roomUsers,

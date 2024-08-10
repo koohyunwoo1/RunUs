@@ -50,12 +50,20 @@ const MyPageTier = () => {
     <>
       <div className={`card ${currentTier.color}`}>
         <div className="tier-header">
-          <h2>{currentTier.name}</h2>
+          <h2 style={{ fontFamily: "VitroCore" }}>{currentTier.name}</h2>
           <div>
             <CiCircleQuestion className="tierHelp" onClick={openModal} />
           </div>
         </div>
-        <p>경험치: {xp}</p>
+        <p
+          style={{
+            fontFamily: "VitroCore",
+            fontSize: "40px",
+            fontStyle: "oblique",
+          }}
+        >
+          {xp}
+        </p>
         <div className="experience-bar">
           <div
             className="filler"
@@ -80,7 +88,6 @@ const MyPageTier = () => {
       {showModal && (
         <div className="tier_modal-overlay">
           <div className="tier_modal-content">
-            <h2>티어</h2>
             {/* <div className="expExplain">
               <p>팀모드 : 러닝 거리(km) * 1.3 (점)</p>
               <p>솔로모드 : 러닝 거리(km) * 1 (점)</p>

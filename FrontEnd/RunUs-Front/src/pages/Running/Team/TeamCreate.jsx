@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
+import TabBar from "../../../components/common/TabBar";
 import QRCode from "qrcode.react";
 import "../../../styles/Running/Team/TeamCreate.css";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -250,7 +251,7 @@ const TeamPage = () => {
   };
   return (
     <div>
-     
+      <TabBar />
       <div className="TeamCreate">
         <div>
           <button

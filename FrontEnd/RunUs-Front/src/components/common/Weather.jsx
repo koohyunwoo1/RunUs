@@ -9,6 +9,7 @@ const Weather = () => {
   const weatherDescriptionMap = {
     "clear sky": "맑음",
     "few clouds": "약간의 구름",
+    "overcast clouds": "짙은 구름",
     "scattered clouds": "흐림",
     "broken clouds": "구름이 많이 낀",
     mist: "안개",
@@ -80,9 +81,10 @@ const Weather = () => {
 
   return (
     <div>
-      {/* <h2 style={{ textAlign: "center", margin: "10px 0" }}>나의 위치</h2> */}
       <h1 style={{ textAlign: "center", margin: "5px 0" }}>{cityName}</h1>
-      <h2 style={{ fontSize : "30px",textAlign: "center", margin: "10px 0" }}>{temperature}°C</h2>
+      <h2 style={{ fontSize: "30px", textAlign: "center", margin: "10px 0" }}>
+        {temperature}°C
+      </h2>
       <div className="Weather">
         <img
           style={{ width: "60px", height: "60px" }}
