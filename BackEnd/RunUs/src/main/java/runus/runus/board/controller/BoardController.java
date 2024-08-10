@@ -1,7 +1,9 @@
 package runus.runus.board.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import runus.runus.api.ApiResponse;
@@ -14,10 +16,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/boards")
-@RequiredArgsConstructor
 public class BoardController {
 
-    private final BoardService boardService;
+    @Autowired
+    private BoardService boardService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<Integer>> createBoard(@RequestBody BoardRequestDTO boardRequest) {
@@ -55,15 +57,9 @@ public class BoardController {
             }
         }
 
-        return ResponseEntity.ok(
-                new ApiBoardResponse<>(
-                        true,
-                        boards.stream().toList(),
-                        "게시글 정보 조회",
-                        boards.getTotalPages(),
-                        boards.getTotalElements(),
-                        boards.getNumber(),
-                        boards.getSize()));
+        ApiBoardResponse<List<BoardResponseDTO>> response = new ApiBoardResponse<>();
+        response.setResponseTrue(boards.stream().toList(), boards, "게시글 정보 조회");
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PutMapping("/{boardId}")
