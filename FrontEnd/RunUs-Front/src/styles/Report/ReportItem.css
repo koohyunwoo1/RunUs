@@ -1,6 +1,3 @@
-/* ReportItem.css */
-
-/* 공통 스타일 */
 .report_container {
   border: 1px solid #ddd;
   border-radius: 12px;
@@ -32,19 +29,14 @@
 .record_details {
   display: flex;
   justify-content: space-between;
-  align-items: center; /* 아이콘과 텍스트를 수직 정렬 */
 }
 
 .distance,
 .kcal,
 .time {
   font-size: 18px;
-  display: flex;
-  align-items: center; /* 아이콘과 텍스트를 수직 정렬 */
-}
-
-.record_details svg {
-  margin-right: 8px; /* 아이콘과 텍스트 사이의 간격 */
+  text-align: center;
+  margin: 0 8px;
 }
 
 .record_details div {
@@ -57,13 +49,7 @@
   text-align: center;
 }
 
-.recent_active {
+.recent_active{
   margin-left: 15px;
   margin-top: 40px;
-}
-
-.noReport {
-  margin-left: 15px;
-  font-size: 18px;
-  font-weight: bold;
 }

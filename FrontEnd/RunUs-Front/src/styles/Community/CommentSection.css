@@ -1,129 +1,59 @@
+/* src/styles/Community/CommentSection.css */
 .comment-section {
-  width: 80%;
-  max-width: 700px;
-  margin: 20px auto;
-  padding: 20px;
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
-  background-color: #ffffff;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+  padding: 10px;
+  border-top: 1px solid #ddd;
 }
 
 .comment-section h3 {
-  font-size: 1.6em;
-  margin-bottom: 20px;
-  color: #333;
-  text-align: center;
+  margin-bottom: 10px;
 }
 
 .comment-section ul {
-  list-style: none;
+  list-style-type: none;
   padding: 0;
-  margin: 0;
 }
 
-.comment-section li {
-  margin-bottom: 20px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #e0e0e0;
+.comment-section ul li {
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #f1f1f1;
+  border-radius: 5px;
 }
 
-.comment-section li:last-child {
-  border-bottom: none;
+.comment-section ul li div {
+  margin-bottom: 5px;
 }
 
-.comment-section p {
-  margin: 0;
-  line-height: 1.6;
+.comment-section form {
+  margin-top: 10px;
+}
+
+.textarea-container {
+  position: relative;
 }
 
 .comment-section textarea {
-  width: 90%;
-  padding: 12px;
-  margin: 10px 0;
+  width: 100%;
+  height: 80px;
+  padding: 10px 50px 10px 10px; /* 버튼 공간을 고려하여 패딩 조정 */
+  margin-bottom: 10px;
   border: 1px solid #ccc;
-  border-radius: 6px;
-  resize: vertical;
+  border-radius: 5px;
+  box-sizing: border-box;
 }
 
-.comment-section .submit-container {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 10px;
-}
-
-.comment-section .create-comment {
-  background-color: #007bff;
-  color: white;
-  padding: 8px 16px;
+.comment-submit-button {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  background: none;
   border: none;
-  border-radius: 6px;
+  color: #EAEAEA;
   cursor: pointer;
-  transition: background-color 0.3s;
+  font-size: 14px;
 }
 
-.comment-section .create-comment:hover {
-  background-color: #0056b3;
-}
-
-.comment-section .cancel-reply {
-  background-color: #dc3545;
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  margin-left: 10px;
-}
-
-.comment-section .cancel-reply:hover {
-  background-color: #c82333;
-}
-
-.comment-section .date {
-  font-size: 0.85em;
-  color: #888;
-  margin-top: 5px;
-}
-
-.comment-section .comment-container {
-  display: flex;
-  gap: 3px;
-  margin-top: 10px;
-}
-
-.comment-section .comment-container button {
-  /* background-color: #28a745; */
-  color: white;
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.comment-section .comment-container button:hover {
-  background-color: #218838;
-}
-
-.comment-section button {
-  background-color: #6c757d;
-  color: white;
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin: 3px 5px;
-  transition: background-color 0.3s;
-}
-
-.comment-section button:hover {
-  background-color: #5a6268;
-}
-
-.comment-section .nested-comment {
-  margin-left: 20px;
-  padding-left: 10px;
-  margin-top: 15px;
+.submit-button:hover {
+  color: #ccc; /* 호버 시 색상 변경 */
 }

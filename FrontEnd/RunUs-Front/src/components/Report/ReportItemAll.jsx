@@ -2,31 +2,40 @@ import "../../styles/Report/ReportItem.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { IoMdTime } from "react-icons/io";
-import { FaRunning, FaFire } from "react-icons/fa";
+import { FaRunning } from "react-icons/fa";
+import { FaFire } from "react-icons/fa";
 
 const ReportItem = () => {
+  // API에서 가져온 데이터를 저장할 상태
   const [reportData, setReportData] = useState([]);
   const [error, setError] = useState(null);
 
+  // localStorage에서 userId 가져오기
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
+    // 비동기 함수 정의
     const fetchData = async () => {
       try {
         const response = await axios.get("api/v1/record/all", {
-          params: { user_id: userId },
+          params: { user_id: userId }, // userId를 파라미터로 전달
         });
 
+        // console.log(response.data); // 응답 데이터 구조 확인
+
+        // 응답 데이터에서 배열 추출 (응답 데이터 구조에 맞게 수정)
         const data = response.data.data || [];
+
+        // 날짜별로 오름차순 정렬
         const sortedData = data.sort(
           (a, b) => new Date(b.recordDate) - new Date(a.recordDate)
         );
 
         setReportData(sortedData);
-        setError(null);
+        setError(null); // 오류 초기화
       } catch (err) {
         setError(err.message);
-        setReportData([]);
+        setReportData([]); // 오류 발생 시 빈 배열로 설정
       }
     };
 
@@ -62,25 +71,16 @@ const ReportItem = () => {
               </div>
               <div className="record_details">
                 <div className="distance">
-                  <FaRunning />
-                  {convertDistance(item.distance)} km
+                <FaRunning /> {convertDistance(item.distance)} km
                 </div>
-                <div className="kcal">
-                  <FaFire />
-                  {item.kcal} kcal
-                </div>
-                <div className="time">
-                  <IoMdTime />
-                  {convertTime(item.time)}
-                </div>
+                <div className="kcal"><FaFire /> {item.kcal} kcal</div>
+                <div className="time"><IoMdTime /> {convertTime(item.time)}</div>
               </div>
             </div>
           </div>
         ))
       ) : (
-        <div>
-          <p className="noReport">데이터가 없습니다.</p>
-        </div>
+        <div>데이터가 없습니다.</div>
       )}
     </div>
   );

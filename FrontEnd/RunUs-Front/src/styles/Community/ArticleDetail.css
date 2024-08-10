@@ -4,14 +4,13 @@
   max-width: 800px; /* 최대 넓이 제한 */
   margin: 0 auto; /* 가운데 정렬 */
   padding: 20px;
-  /*border: 1px solid #ddd;*/
-  /*border-radius: 8px;*/
+  border: 1px solid #ddd;
+  border-radius: 8px;
   background-color: #ffffff;
   display: flex;
   flex-direction: column;
-  margin-top: 15%;
   gap: 20px; /* 내부 요소 간의 간격 */
-  /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
   box-sizing: border-box;
 }
 
@@ -68,28 +67,18 @@
   cursor: pointer;
 }
 
-.board-button-container{
-  display: flex; /* Flexbox 레이아웃을 활성화합니다 */
-  justify-content: space-between; /* 버튼을 양쪽에 나란히 정렬합니다 */
-  align-items: center; /* 수직 중앙 정렬을 유지합니다 */
-  gap: 10px; /* 버튼 간격을 설정합니다 */
-}
-
 .article-edit-button {
-  background-color: #98bae3; /* 수정 버튼 색상 */
+  background-color: #28a745; /* 수정 버튼 색상 */
   color: #fff;
-  width: 25%;
 }
 
 .article-edit-button:hover {
-  background-color: #82ace0; /* 수정 버튼 호버 색상 */
-  
+  background-color: #218838; /* 수정 버튼 호버 색상 */
 }
 
 .article-delete-button {
   background-color: #dc3545; /* 삭제 버튼 색상 */
   color: #fff;
-  width: 25%;
 }
 
 .article-delete-button:hover {
