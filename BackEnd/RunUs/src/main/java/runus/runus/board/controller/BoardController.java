@@ -1,5 +1,6 @@
 package runus.runus.board.controller;
 
+import com.google.protobuf.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -85,6 +86,9 @@ public class BoardController {
     @DeleteMapping("/{boardId}")
     public ResponseEntity<ApiResponse<Void>> deleteBoard(@PathVariable("boardId") int boardId) {
         boardService.deleteBoard(boardId);
-        return ResponseEntity.ok(new ApiResponse<>(true, null, "게시글 삭제 성공"));
+
+        ApiResponse<Void> response = new ApiResponse<>();
+        response.setResponseTrue(null, "게시글 삭제 성공");
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
