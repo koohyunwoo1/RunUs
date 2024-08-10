@@ -75,7 +75,6 @@ public class ChatRoom {
         double latitude = chatMessage.getLatitude();
         int userId = chatMessage.getUserId(); // 사용자 ID
 
-
         if (chatMessage.getType().equals(ChatMessage.MessageType.ENTER)) {
             sessions.add(session);
             users.add(userName);
@@ -124,16 +123,28 @@ public class ChatRoom {
             double ownerDistance = 0;
             if (userId == roomOwnerId) {
                 // 방장일 경우 위치 업데이트
+                double previousOwnerLatitude = this.ownerLatitude;
+                double previousOwnerLongitude = this.ownerLongitude;
                 this.ownerLatitude = latitude;
                 this.ownerLongitude = longitude;
-                log.info("방장 위치 업데이트: 위도=" + ownerLatitude + ", 경도=" + ownerLongitude);
-                chatMessage.setMessage(userName + "의 위치가 업데이트되었습니다. 방장으로서의 위치: 위도=" + latitude + ", 경도=" + longitude);
 
-                chatServiceImpl.updateMemberLocation(partyId, userName, longitude, latitude);
-                double totalDistance = chatServiceImpl.getTotalDistanceForMember(partyId, userName);
-                log.info(userName + "의 총 이동 거리: " + String.format("%.5f", totalDistance) + " km");
-                chatMessage.setMessage(userName + "의 총 이동 거리: " + String.format("%.5f", totalDistance) + " km");
+                // 위치가 변경되지 않았다면 거리 증가하지 않도록 처리
+                if (previousOwnerLatitude != latitude && previousOwnerLongitude != longitude) {
+                    double distanceTraveled = calculateDistance(previousOwnerLatitude, previousOwnerLongitude, latitude, longitude);
+                    log.info("방장 위치 업데이트: 위도=" + ownerLatitude + ", 경도=" + ownerLongitude);
+                    log.info("방장 이동 거리: " + String.format("%.5f", distanceTraveled) + " km");
 
+                    // 방장 이동 거리 저장
+                    chatServiceImpl.updateMemberLocation(partyId, userName, longitude, latitude);
+                    double totalDistance = chatServiceImpl.getTotalDistanceForMember(partyId, userName);
+                    log.info(userName + "의 총 이동 거리: " + String.format("%.5f", totalDistance) + " km");
+                    chatMessage.setMessage(userName + "의 총 이동 거리: " + String.format("%.5f", totalDistance) + " km");
+
+                } else {
+                    log.info("위치가 변경되지 않았으므로 이동 거리를 증가시키지 않습니다.");
+                }
+
+                sendMessage(chatMessage, chatServiceImpl);
             } else {
                 // 방장이 아닌 경우 거리 계산
                 double distance = calculateDistance(ownerLatitude, ownerLongitude, latitude, longitude);
