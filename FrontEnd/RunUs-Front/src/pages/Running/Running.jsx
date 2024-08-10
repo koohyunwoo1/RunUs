@@ -11,6 +11,7 @@ const Running = ({
   time,
   setTime,
   onLocationUpdate,
+  isRunningStarted,
 }) => {
   const [location, setLocation] = useState({ latitude: null, longitude: null });
   const [isRunning, setIsRunning] = useState(true);
@@ -30,6 +31,7 @@ const Running = ({
       return;
     }
 
+    if (isRunningStarted) {
     const handleSuccess = (position) => {
       const { latitude, longitude, speed } = position.coords;
       const currentTime = Date.now();
@@ -103,7 +105,7 @@ const Running = ({
       maximumAge: 0,
     };
 
-    if (isRunning) {
+  
       navigator.geolocation.getCurrentPosition(
         handleSuccess,
         handleError,
@@ -117,10 +119,10 @@ const Running = ({
 
       return () => navigator.geolocation.clearWatch(watchId);
     }
-  }, [isRunning, distance, onLocationUpdate]);
+  }, [isRunningStarted, distance, onLocationUpdate]);
 
   useEffect(() => {
-    if (isRunning) {
+    if (isRunningStarted) {
       timerRef.current = setInterval(() => {
         setTime((prevTime) => prevTime + 1);
       }, 1000);
@@ -135,7 +137,7 @@ const Running = ({
         clearInterval(timerRef.current);
       }
     };
-  }, [isRunning]);
+  }, [isRunningStarted]);
 
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
