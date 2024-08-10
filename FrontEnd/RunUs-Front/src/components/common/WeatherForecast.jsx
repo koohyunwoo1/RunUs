@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/Common/Weather.css";
-
 const WeatherForecast = () => {
   const [forecastData, setForecastData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -88,10 +87,6 @@ const WeatherForecast = () => {
     return dailyForecasts;
   };
 
-  const handleClick = () => {
-    window.location.href = `/src/assets/곤지암움짤.mp4`;
-  };
-
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -101,7 +96,7 @@ const WeatherForecast = () => {
   }
 
   return (
-    <div className="WeatherForecast" onClick={handleClick}>
+    <div className="WeatherForecast">
       {forecastData.map((day, index) => (
         <div key={index} className="ForecastItem">
           <h3>{day.date}</h3>

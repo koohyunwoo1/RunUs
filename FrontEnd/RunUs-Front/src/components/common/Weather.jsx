@@ -81,8 +81,8 @@ const Weather = () => {
   return (
     <div>
       {/* <h2 style={{ textAlign: "center", margin: "10px 0" }}>나의 위치</h2> */}
-      <h4 style={{ textAlign: "center", margin: "5px 0" }}>{cityName}</h4>
-      <h2 style={{ textAlign: "center", margin: "10px 0" }}>{temperature}°C</h2>
+      <h1 style={{ textAlign: "center", margin: "5px 0" }}>{cityName}</h1>
+      <h2 style={{ fontSize : "30px",textAlign: "center", margin: "10px 0" }}>{temperature}°C</h2>
       <div className="Weather">
         <img
           style={{ width: "60px", height: "60px" }}

@@ -1,6 +1,9 @@
-.LogoutButton {
-  padding-top: 20px;
-  color: #999;
-  font-family: "Times New Roman", Times, serif;
-  cursor: pointer;
+.logoutFooter {
+  /* width: 100%; */
+  border: 1px #f3f3f3 solid;
+}
+
+.logoutText {
+  margin: 15px;
+  color: rgb(224, 51, 51);
 }

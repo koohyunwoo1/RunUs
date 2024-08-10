@@ -4,6 +4,7 @@
   justify-content: center;
   gap: 10px;
   font-weight: 100;
+  z-index: 1;
 }
 
 .WeatherForecast {
@@ -29,6 +30,7 @@
   height: 150px;
   box-sizing: border-box;
   overflow: hidden;
+  z-index: 1;
 }
 
 .ForecastItem img {
