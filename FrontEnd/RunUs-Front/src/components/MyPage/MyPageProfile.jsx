@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import "../../styles/MyPage/MyPageProfile.css";
 import NormalProfile from "../../assets/profile(normal).png";
+import profileEditIcon from "../../assets/pencil.png"; // 아이콘 파일 경로
 import axios from "axios";
 
 const BASE_URL = "https://i11e103.p.ssafy.io:8001"; // 서버의 베이스 URL
@@ -73,11 +74,19 @@ const MyPageProfile = () => {
 
   return (
     <div className="profile-container">
-      <img
-        src={profileImage || NormalProfile}
-        className="profile-image"
-        onClick={handleImageClick}
-      />
+      <div className="profile-image-wrapper">
+        <img
+          src={profileImage || NormalProfile}
+          className="profile-image"
+          alt="Profile"
+        />
+        <img
+          src={profileEditIcon}
+          className="profile-edit-icon"
+          alt="Edit Profile"
+          onClick={handleImageClick}
+        />
+      </div>
       <input
         type="file"
         id="file"
@@ -86,7 +95,7 @@ const MyPageProfile = () => {
         onChange={handleImageChange}
         ref={fileInputRef}
       />
-      <h1 style={{ fontFamily: "PreBold" }}>{nickname}</h1>
+      <h1>{nickname}</h1>
     </div>
   );
 };
