@@ -170,15 +170,11 @@ public class ChatServiceImpl implements ChatService {
 
         // 이전 위치가 있는 경우 거리 계산
         if (previousLocation != null) {
-            // 이전 위치와 현재 위치의 위도, 경도가 다를 때만 거리 계산
-            if (previousLocation.getX() != longitude && previousLocation.getY() != latitude) {
-                double distanceValue = calculateDistance(previousLocation, new Point(longitude, latitude));
+            double distanceValue = calculateDistance(previousLocation, new Point(longitude, latitude));
 
-                // 누적 거리 업데이트
-                updateTotalDistance(distanceKey, memberName, distanceValue);
-            }
+            // 누적 거리 업데이트
+            updateTotalDistance(distanceKey, memberName, distanceValue);
         }
-
     }
 
     // 두 점 간의 거리 계산 (Haversine formula 사용)
@@ -194,16 +190,19 @@ public class ChatServiceImpl implements ChatService {
 
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-        return earthRadius * c; // 소수점 반올림 제거
+        double distance = earthRadius * c;
+
+        // 소수점 5째 자리까지 포맷팅
+        return Math.round(distance * 100000.0) / 100000.0;
     }
 
     // 누적 거리 업데이트 메서드
     private void updateTotalDistance(String distanceKey, String memberName, double distanceValue) {
         Double currentDistance = (Double) redisTemplate.opsForHash().get(distanceKey, memberName);
         double newTotalDistance = (currentDistance != null ? currentDistance : 0.0) + distanceValue;
-        redisTemplate.opsForHash().put(distanceKey, memberName, newTotalDistance); // 소수점 반올림 제거
+        newTotalDistance = Math.round(newTotalDistance * 100000.0) / 100000.0; // 소수점 5째 자리까지 포맷팅
+        redisTemplate.opsForHash().put(distanceKey, memberName, newTotalDistance);
     }
-
 
     // 한번만 주석해봄
 
@@ -215,7 +214,7 @@ public class ChatServiceImpl implements ChatService {
         Map<String, Double> distances = new HashMap<>();
         for (Map.Entry<Object, Object> entry : entries.entrySet()) {
             double distance = (Double) entry.getValue();
-            distances.put((String) entry.getKey(), distance); // 소수점 반올림 제거
+            distances.put((String) entry.getKey(), Math.round(distance * 100000.0) / 100000.0); // 소수점 5째 자리까지 포맷팅
         }
         return distances;
     }
@@ -224,7 +223,7 @@ public class ChatServiceImpl implements ChatService {
     public double getTotalDistanceForMember(int partyId, String memberName) {
         String distanceKey = "team:" + partyId + ":distances";
         Double distance = (Double) redisTemplate.opsForHash().get(distanceKey, memberName);
-        return (distance != null) ? distance : 0.0; // 소수점 반올림 제거
+        return (distance != null) ? Math.round(distance * 100000.0) / 100000.0 : 0.0; // 소수점 5째 자리까지 포맷팅
     }
 
     public void exitPartyStatus(int partyId, Character status) {

@@ -1,25 +1,30 @@
 import "../../styles/Report/ReportItem.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { IoMdTime } from "react-icons/io";
-import { FaRunning, FaFire } from "react-icons/fa";
 
 const ReportItem = ({ onDistanceChange }) => {
+  // API에서 가져온 데이터를 저장할 상태
   const [reportData, setReportData] = useState([]);
   const [error, setError] = useState(null);
 
+  // localStorage에서 userId 가져오기
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
+    // 비동기 함수 정의
     const fetchData = async () => {
       try {
         const response = await axios.get("api/v1/record/recent", {
-          params: { user_id: userId },
+          params: { user_id: userId }, // userId를 파라미터로 전달
         });
 
-        setReportData(response.data.data || []);
-        setError(null);
+        // console.log(response.data); // 응답 데이터 구조 확인
 
+        // 응답 데이터에서 배열 추출 (응답 데이터 구조에 맞게 수정)
+        setReportData(response.data.data || []);
+        setError(null); // 오류 초기화
+
+        // 가장 최근 데이터에서 거리 값을 가져와서 부모 컴포넌트에 전달
         if (response.data.data && response.data.data.length > 0) {
           const latestDistance = response.data.data[0].distance;
           const convertedDistance = (latestDistance / 1000).toFixed(2) + " km";
@@ -64,23 +69,16 @@ const ReportItem = ({ onDistanceChange }) => {
               </div>
               <div className="record_details">
                 <div className="distance">
-                  <FaRunning />
                   {convertDistance(item.distance)} km
                 </div>
-                <div className="kcal">
-                  <FaFire />
-                  {item.kcal} kcal
-                </div>
-                <div className="time">
-                  <IoMdTime />
-                  {convertTime(item.time)}
-                </div>
+                <div className="kcal">{item.kcal} kcal</div>
+                <div className="time">{convertTime(item.time)}</div>
               </div>
             </div>
           </div>
         ))
       ) : (
-        <div></div>
+        <div>데이터가 없습니다.</div>
       )}
       <div className="pagination"></div>
     </div>
