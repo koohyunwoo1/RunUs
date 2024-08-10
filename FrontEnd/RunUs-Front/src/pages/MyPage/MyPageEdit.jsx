@@ -135,7 +135,7 @@ const MyPageEdit = () => {
       <div className="MyPageEdit">
         <h1>회원 정보 수정</h1>
         <form onSubmit={handleSubmit} className="MyPageEditForm">
-          <div>
+          <div className="memberEditDiv">
             <label className="MyPageEditLabel">닉네임</label>
             <input
               type="text"
@@ -148,8 +148,8 @@ const MyPageEdit = () => {
               <p className="MyPageEditError">{errors.nickname}</p>
             )}
           </div>
-          <div>
-            <label className="MyPageEditLabel">휴대폰 번호</label>
+          <div className="memberEditDiv">
+            <label className="MyPageEditLabel">휴대전화 번호</label>
             <input
               type="text"
               name="phoneNumber"
@@ -161,7 +161,7 @@ const MyPageEdit = () => {
               <p className="MyPageEditError">{errors.phoneNumber}</p>
             )}
           </div>
-          <div>
+          <div className="memberEditDiv">
             <label className="MyPageEditLabel">비밀번호</label>
             <input
               type="password"
@@ -174,7 +174,7 @@ const MyPageEdit = () => {
               <p className="MyPageEditError">{errors.password}</p>
             )}
           </div>
-          <div>
+          <div className="memberEditDiv">
             <label className="MyPageEditLabel">비밀번호 확인</label>
             <input
               type="password"
@@ -187,8 +187,8 @@ const MyPageEdit = () => {
               <p className="MyPageEditError">{errors.confirmPassword}</p>
             )}
           </div>
-          <div>
-            <label className="MyPageEditLabel">몸무게</label>
+          <div className="memberEditDiv">
+            <label className="MyPageEditLabel">몸무게 (kg)</label>
             <input
               type="number"
               name="weight"
@@ -200,7 +200,7 @@ const MyPageEdit = () => {
               <p className="MyPageEditError">{errors.weight}</p>
             )}
           </div>
-          <div>
+          <div className="memberEditDiv">
             <label className="MyPageEditLabel">사는 지역</label>
             <input
               type="number"

@@ -5,6 +5,8 @@ import ArticleList from "../../components/Community/ArticleList";
 import axios from "axios";
 import Button from "../../components/common/Button";
 import { UserContext } from "../../hooks/UserContext";
+import { useNavigate } from "react-router-dom";
+
 
 const ArticleHome = () => {
   const [articles, setArticles] = useState([]);
@@ -19,7 +21,7 @@ const ArticleHome = () => {
   const { userData } = useContext(UserContext); // UserContext에서 사용자 정보 가져오기
 
   const size = 10; // 페이지당 게시글 수
-
+  const nav = useNavigate();
   // console.log('UserData:', userData); // 사용자 데이터 로그 확인
 
   // 게시글을 가져오는 함수
@@ -94,14 +96,7 @@ const ArticleHome = () => {
     <div>
       <Header />
       <div className="ArticleHome">
-        <div className="article-filters">
-          <button onClick={handleCompletedOnly}>
-            {completedOnly ? "모든 글 보기" : "모집 완료된 글만 보기"}
-          </button>
-          <button onClick={handleSortByTime}>
-            {sortByTime ? "시간순" : "최신순"}
-          </button>
-        </div>
+
         <form onSubmit={handleSearch} className="search-form">
           <input 
             type="text" 
@@ -111,6 +106,25 @@ const ArticleHome = () => {
           />
           <button type="submit">검색</button>
         </form>
+
+        <div className="article-filters">
+          <div className="left-buttons">
+            <button onClick={handleCompletedOnly}>
+              {completedOnly ? "모든 글 보기" : "모집 가능한 글만 보기"}
+            </button>
+            <button onClick={handleSortByTime}>
+              {sortByTime ? "오래된순" : "최신순"}
+            </button>
+          </div>
+          <div className="right-button">  
+            <Button
+              className="article-create-button"
+              text={"글 쓰기"} 
+              onClick={() => nav('/article-create')}/>
+          </div>
+        </div>
+
+        
         <ArticleList articles={articles} />
         <div className="pagination">
           <Button 

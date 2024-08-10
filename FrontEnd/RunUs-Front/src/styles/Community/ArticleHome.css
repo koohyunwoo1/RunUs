@@ -5,7 +5,6 @@
   margin-top: 70px; /* 상단 여백을 70px로 설정 */
   padding: 20px 20px; /* 페이지 내부 여백 추가 */
   border-radius: 8px; /* 테두리 둥글게 (작게 설정) */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
   max-width: 1200px; /* 최대 넓이 제한 */
   margin-left: auto;
   margin-right: auto; /* 가운데 정렬 */
@@ -15,13 +14,13 @@
 .search-form {
   display: flex;
   align-items: center;
-  margin-bottom: 30px; /* 검색 폼과 다른 요소 간의 여백 */
+  margin-bottom: 12px; /* 검색 폼과 다른 요소 간의 여백 */
 }
 
 .search-form input {
   flex: 1;
-  max-width: 400px; /* 최대 넓이 줄이기 */
-  padding: 10px 14px; /* 패딩 줄이기 */
+  max-width: 275px; /* 최대 넓이 줄이기 */
+  padding: 10px 15px; /* 패딩 줄이기 */
   border: 1px solid #ddd; /* 연한 회색 테두리 */
   border-radius: 4px; /* 테두리 둥글게 (더 작게 설정) */
   font-size: 14px; /* 글자 크기 줄이기 */
@@ -37,7 +36,7 @@
 
 /* 버튼 스타일 */
 .search-form button {
-  padding: 10px 16px; /* 패딩 줄이기 */
+  padding: 10px 15px; /* 패딩 줄이기 */
   border: none;
   background-color: #6c757d; /* 회색 배경 */
   color: white; /* 흰색 글자 */
@@ -58,14 +57,14 @@
 }
 
 .article-filters button {
-  padding: 8px 16px; /* 패딩 줄이기 */
+  padding: 10px 15px; /* 패딩 줄이기 */
   border: 1px solid #6c757d; /* 버튼 테두리 색상 */
   background-color: white; /* 버튼 배경색 */
   color: #6c757d; /* 버튼 글자 색상 */
   border-radius: 4px; /* 버튼 테두리 둥글게 (더 작게 설정) */
   cursor: pointer; /* 커서 모양 변경 */
   font-size: 14px; /* 글자 크기 줄이기 */
-  margin-right: 8px; /* 버튼 간의 간격 줄이기 */
+  margin-right: -6px; /* 버튼 간의 간격 줄이기 */
   transition: background-color 0.3s ease, color 0.3s ease; /* 배경색 및 글자 색상 전환 효과 */
 }
 

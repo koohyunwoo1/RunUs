@@ -9,14 +9,14 @@ import org.springframework.transaction.annotation.Transactional;
 import runus.runus.record.dto.RecordDTO;
 import runus.runus.record.model.Record;
 import runus.runus.record.repository.RecordRepository;
-import runus.runus.user.entity.User;
-import runus.runus.user.repository.UserRepository;
-import runus.runus.user.service.UserService;
 import runus.runus.webSocket.service.ChatService;
 import runus.runus.webSocket.service.ChatServiceImpl;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,9 +26,6 @@ public class RecordService {
 
     @Autowired
     private ChatServiceImpl chatService;
-
-    @Autowired
-    private UserRepository userRepository;
 
     // 최근 기록 가져오기
     public List<Record> getRecentRecords(Integer userId, int limit) {

@@ -28,14 +28,14 @@ const MyPageHome = () => {
           <MyPageProfile />
         </div>
         <div className="MyPageTier">
-          <h3 className="MyPageh3">러닝 티어</h3>
+          {/* <h3 className="MyPageh3">러닝 티어</h3> */}
           <MyPageTier />
         </div>
         <div
           style={{
             marginTop: "100px",
-            marginRight: "20px",
-            textAlign: "right",
+            // marginRight: "20px",
+            textAlign: "left",
           }}
         >
           <Logout />
