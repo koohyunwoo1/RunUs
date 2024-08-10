@@ -1,22 +1,28 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // axios import
+import axios from "axios";
 import "../../styles/Running/Solo/SoloModeStart.css";
 
-const Running = ({distance, setDistance, calories, setCalories, time, setTime}) => {
-//   const [time, setTime] = useState(0); // 시간 상태
-//   const [distance, setDistance] = useState(0); // 이동 거리 상태
-  const [location, setLocation] = useState({ latitude: null, longitude: null }); // 현재 위치 상태
-  const [isRunning, setIsRunning] = useState(true); // 타이머 상태 자동 시작
-  const [error, setError] = useState(null); // 에러 메시지 상태
-//   const [calories, setCalories] = useState(0); // 칼로리 상태
+const Running = ({
+  distance,
+  setDistance,
+  calories,
+  setCalories,
+  time,
+  setTime,
+  onLocationUpdate,
+  isRunningStarted,
+}) => {
+  const [location, setLocation] = useState({ latitude: null, longitude: null });
+  const [isRunning, setIsRunning] = useState(true);
+  const [error, setError] = useState(null);
   const prevLocation = useRef({
     latitude: null,
     longitude: null,
     timestamp: null,
     speed: null,
-  }); // 이전 위치 정보
-  const timerRef = useRef(null); // 타이머 참조
+  });
+  const timerRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,6 +31,7 @@ const Running = ({distance, setDistance, calories, setCalories, time, setTime}) 
       return;
     }
 
+    if (isRunningStarted) {
     const handleSuccess = (position) => {
       const { latitude, longitude, speed } = position.coords;
       const currentTime = Date.now();
@@ -34,7 +41,7 @@ const Running = ({distance, setDistance, calories, setCalories, time, setTime}) 
         prevLocation.current.longitude !== null
       ) {
         const timeElapsed =
-          (currentTime - prevLocation.current.timestamp) / 1000; // 초 단위로 변환
+          (currentTime - prevLocation.current.timestamp) / 1000;
         const maxPossibleDistance =
           (prevLocation.current.speed || 0) * timeElapsed;
         const dist = calculateDistance(
@@ -59,6 +66,10 @@ const Running = ({distance, setDistance, calories, setCalories, time, setTime}) 
             speed,
           };
           setLocation(correctedLocation);
+          onLocationUpdate(
+            correctedLocation.latitude,
+            correctedLocation.longitude
+          );
         } else {
           setDistance((prevDistance) => prevDistance + dist);
           prevLocation.current = {
@@ -68,9 +79,9 @@ const Running = ({distance, setDistance, calories, setCalories, time, setTime}) 
             speed,
           };
           setLocation({ latitude, longitude });
+          onLocationUpdate(latitude, longitude); // Pass location to parent
         }
 
-        // 칼로리 계산 및 상태 업데이트
         const calculatedCalories = calculateCalories(distance);
         setCalories(calculatedCalories);
       } else {
@@ -81,6 +92,7 @@ const Running = ({distance, setDistance, calories, setCalories, time, setTime}) 
           speed,
         };
         setLocation({ latitude, longitude });
+        onLocationUpdate(latitude, longitude); // Pass location to parent
       }
     };
 
@@ -93,7 +105,7 @@ const Running = ({distance, setDistance, calories, setCalories, time, setTime}) 
       maximumAge: 0,
     };
 
-    if (isRunning) {
+  
       navigator.geolocation.getCurrentPosition(
         handleSuccess,
         handleError,
@@ -104,16 +116,15 @@ const Running = ({distance, setDistance, calories, setCalories, time, setTime}) 
         handleError,
         options
       );
-      0;
 
       return () => navigator.geolocation.clearWatch(watchId);
     }
-  }, [isRunning, distance]); // distance가 변경될 때마다 칼로리 계산
+  }, [isRunningStarted, distance, onLocationUpdate]);
 
   useEffect(() => {
-    if (isRunning) {
+    if (isRunningStarted) {
       timerRef.current = setInterval(() => {
-        setTime((prevTime) => prevTime + 1); // 매초 시간 증가
+        setTime((prevTime) => prevTime + 1);
       }, 1000);
     } else {
       if (timerRef.current) {
@@ -126,7 +137,7 @@ const Running = ({distance, setDistance, calories, setCalories, time, setTime}) 
         clearInterval(timerRef.current);
       }
     };
-  }, [isRunning]);
+  }, [isRunningStarted]);
 
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
@@ -162,7 +173,6 @@ const Running = ({distance, setDistance, calories, setCalories, time, setTime}) 
   };
 
   const calculateCalories = (distance, weight = 70) => {
-    // 간단한 계산 예시: 거리(킬로미터) * 체중(킬로그램) * 1.036 (칼로리/킬로그램/킬로미터)
     const distanceInKm = distance / 1000;
     const caloriesBurned = distanceInKm * weight * 1.036;
     return caloriesBurned;
@@ -178,7 +188,7 @@ const Running = ({distance, setDistance, calories, setCalories, time, setTime}) 
           <p>Latitude: {location.latitude}</p>
           <p>Longitude: {location.longitude}</p>
           <p>Distance traveled: {distance.toFixed(2)} meters</p>
-          <p>Calories burned: {calories.toFixed(2)} kcal</p>{" "}
+          <p>Calories burned: {calories.toFixed(2)} kcal</p>
         </>
       )}
     </div>
