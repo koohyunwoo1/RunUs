@@ -76,7 +76,10 @@ public class BoardController {
     @GetMapping("/{boardId}")
     public ResponseEntity<ApiResponse<BoardResponseDTO>> getBoardDetails(@PathVariable("boardId") int boardId) {
         BoardResponseDTO board = boardService.getBoardDetails(boardId);
-        return ResponseEntity.ok(new ApiResponse<>(true, board, "게시글 상세 내용 조회"));
+        
+        ApiResponse<BoardResponseDTO> response = new ApiResponse<>();
+        response.setResponseTrue(board, "게시글 상세 내용 조회");
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/{boardId}")
