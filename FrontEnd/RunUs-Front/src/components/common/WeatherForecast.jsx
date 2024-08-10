@@ -8,6 +8,7 @@ const WeatherForecast = () => {
   const weatherDescriptionMap = {
     "clear sky": "맑음",
     "few clouds": "약간의 구름",
+    "overcast clouds": "짙은 구름",
     "scattered clouds": "흐림",
     "broken clouds": "구름이 많이 낀",
     mist: "안개",
@@ -39,7 +40,7 @@ const WeatherForecast = () => {
       })
       .then((data) => {
         const dailyForecasts = processDailyForecasts(data.list);
-        setForecastData(dailyForecasts.slice(1, 3)); // 3일치 데이터만 추출
+        setForecastData(dailyForecasts.slice(0, 3)); // 3일치 데이터만 추출
         setLoading(false);
       })
       .catch((error) => {

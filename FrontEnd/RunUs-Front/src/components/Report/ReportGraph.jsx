@@ -10,6 +10,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
+import AnimatedDistance from "./ReportHeadAnimation"; // AnimatedDistance 컴포넌트 임포트
 
 const ReportGraph = () => {
   const [graphData, setGraphData] = useState(null);
@@ -36,9 +37,7 @@ const ReportGraph = () => {
             },
           }
         );
-        console.log(response.data.data);
 
-        // Initialize data for January to December
         const filledData = Array.from({ length: 12 }, (_, i) => {
           const monthData = response.data.data.find(
             (entry) => entry.month === i + 1
@@ -51,7 +50,6 @@ const ReportGraph = () => {
           };
         });
 
-        // Update state
         setGraphData(filledData);
       } catch (err) {
         console.log(err);
@@ -66,7 +64,6 @@ const ReportGraph = () => {
             year: selectedYear,
           },
         });
-        console.log(response.data.data);
         setGraphTotalData(response.data.data);
       } catch (err) {
         console.log(err);
@@ -77,17 +74,14 @@ const ReportGraph = () => {
     fetchTotalData();
   }, [selectedYear]);
 
-  // 드롭다운에서 년도 변경 시 호출되는 함수
   const handleYearChange = (event) => {
     setSelectedYear(event.target.value);
   };
 
-  // 거리 단위 변환 함수
   const convertDistance = (meters) => {
     return (meters / 1000).toFixed(2);
   };
 
-  // 시간 단위 변환 함수
   const convertTime = (seconds) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
@@ -100,12 +94,10 @@ const ReportGraph = () => {
     return `${hoursStr}:${minutesStr}:${secsStr}`;
   };
 
-  // X축 월 형식화
   const formatXAxisMonth = (month) => {
     return month + "월";
   };
 
-  // 툴팁 내용 렌더링
   const renderTooltipContent = (props) => {
     if (props.active && props.payload && props.payload.length) {
       const { recordCount, totalTime, totalDistance } =
@@ -125,8 +117,10 @@ const ReportGraph = () => {
 
   return (
     <div>
-      <h1 className="head" style={{ fontStyle: "oblique" }}>
-        {graphTotalData ? convertDistance(graphTotalData) : "0"} km
+      <h1 className="Report-head ">
+        <AnimatedDistance
+          targetDistance={graphTotalData ? convertDistance(graphTotalData) : 0}
+        />
       </h1>
       <h5 className="subhead" style={{ fontFamily: "PreBold" }}>
         총 러닝 거리
@@ -137,7 +131,7 @@ const ReportGraph = () => {
         value={selectedYear}
       >
         {years.map((year) => (
-          <option key={year} value={year}>
+          <option key={year} value={year} style={{ fontFamily: "PreSemiBold" }}>
             {year}
           </option>
         ))}
@@ -153,7 +147,7 @@ const ReportGraph = () => {
               <XAxis dataKey="month" tickFormatter={formatXAxisMonth} />
               <YAxis
                 width={10}
-                tickFormatter={(value) => convertDistance(value) + " km"}
+                tickFormatter={(value) => convertDistance(value)}
               />
               <Tooltip content={renderTooltipContent} />
               <CartesianGrid strokeDasharray="3 3" vertical={false} />

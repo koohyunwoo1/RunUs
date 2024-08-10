@@ -6,6 +6,7 @@ import CommentSection from "../../components/Community/CommentSection";
 import Button from "../../components/common/Button";
 import { UserContext } from "../../hooks/UserContext";
 import TabBar from "../../components/common/TabBar";
+import leftArrow from "../../assets/leftArrow.png"
 
 // 날짜와 시간을 포맷하는 함수
 const formatDate = (dateString) => {
@@ -97,6 +98,9 @@ const ArticleDetail = () => {
 
   return (
     <div>
+      <a className="article-detail-back-button" onClick={() => nav("/article-home")}>
+        <img src={leftArrow} alt="" className="back-button"></img>
+      </a>
       <div className="article-detail-container">
         <h1>{article.title}</h1>
         <div className="author">
@@ -133,7 +137,6 @@ const ArticleDetail = () => {
             />
           </div>
         )}
-        <Button text="목록" onClick={() => nav("/article-home")} />
       </div>
       <TabBar />
     </div>

@@ -15,6 +15,10 @@
   gap: 15px;
 }
 
+.WeatherForecast2 {
+  font-family: "VitroCore";
+}
+
 .ForecastItem {
   flex: 0 0 auto;
   width: 120px;
@@ -50,4 +54,7 @@
   margin: 0;
   padding: 3px;
   font-family: "PreRegular";
+}
+
+.WeatherForecast2 {
 }

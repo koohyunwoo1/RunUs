@@ -29,7 +29,6 @@ import RedirectRoute from "./components/common/RedirectRoute";
 import SoloModeCountDown from "./pages/Running/Solo/SoloModeCountDown";
 import SoloModeStart from "./pages/Running/Solo/SoloModeStart";
 import axios from "axios";
-import TabBar from "./components/common/TabBar"; // TabBar import
 
 axios.defaults.baseURL = process.env.VITE_API_URL;
 
@@ -99,7 +98,7 @@ const AppContent = () => {
 
         {/* 로그인 해야 접근 가능한 페이지 */}
         <Route
-          path="/team-create/:id"
+          path="/team-create/:id/:party/:roomOwnerId"
           element={
             <ProtectedRoute>
               <TeamCreate />
