@@ -26,8 +26,8 @@ public class ChatRoom {
 
     private int roomOwnerId = -1; // 방 생성자의 ID
     private double ownerDistance;
-//    private double ownerLatitude; // 방 생성자의 위도
-//    private double ownerLongitude; // 방 생성자의 경도
+    private double ownerLatitude; // 방 생성자의 위도
+    private double ownerLongitude; // 방 생성자의 경도
 
     private RecordService recordService;
 
@@ -72,8 +72,8 @@ public class ChatRoom {
 
     public void handleActions(WebSocketSession session, ChatMessage chatMessage, ChatServiceImpl chatServiceImpl) {
         String userName = chatMessage.getSender(); // 사용자 이름
-//        double longitude = chatMessage.getLongitude();
-//        double latitude = chatMessage.getLatitude();
+        double longitude = chatMessage.getLongitude();
+        double latitude = chatMessage.getLatitude();
         double distance = chatMessage.getDistance();
         int userId = chatMessage.getUserId(); // 사용자 ID
 
@@ -125,17 +125,38 @@ public class ChatRoom {
 
             if (userId == roomOwnerId) {
                 // 방장일 경우 위치 업데이트
+                double previousOwnerLatitude = this.ownerLatitude;
+                double previousOwnerLongitude = this.ownerLongitude;
+                this.ownerLatitude = latitude;
+                this.ownerLongitude = longitude;
+
                 double previousOwnerDistance = this.ownerDistance;
                 this.ownerDistance = distance;
 
                 log.info(userName + " (방장)의 위치 업데이트: 총 이동 거리 = " + String.format("%.5f", distance) + " km");
-                chatMessage.setMessage(userName + "(방장)의 총 이동 거리: " + String.format("%.5f", previousOwnerDistance) + " km");
-                sendMessage(chatMessage, chatServiceImpl);
+
+                ChatMessage OwnerLocationBroadcastMessage = new ChatMessage();
+                OwnerLocationBroadcastMessage.setType(ChatMessage.MessageType.LOCATION);
+                OwnerLocationBroadcastMessage.setRoomId(chatMessage.getRoomId());
+                OwnerLocationBroadcastMessage.setDistance(previousOwnerDistance);
+                OwnerLocationBroadcastMessage.setLatitude(previousOwnerLatitude);
+                OwnerLocationBroadcastMessage.setLongitude(previousOwnerLongitude);
+                log.info(userName + "(방장)의 위치 업데이트: 총 이동 거리 = " + String.format("%.5f", distance) + " km");
+                OwnerLocationBroadcastMessage.setMessage(userName + "(방장)의 총 이동 거리: " + String.format("%.5f", previousOwnerDistance) + " km");
+                sendMessage(OwnerLocationBroadcastMessage, chatServiceImpl);
             } else {
                 // 방장이 아닌 경우 거리 계산
+
+                ChatMessage LocationBroadcastMessage = new ChatMessage();
+                LocationBroadcastMessage.setType(ChatMessage.MessageType.LOCATION);
+                LocationBroadcastMessage.setRoomId(chatMessage.getRoomId());
+                LocationBroadcastMessage.setDistance(distance);
+                LocationBroadcastMessage.setLatitude(latitude);
+                LocationBroadcastMessage.setLongitude(longitude);
+                LocationBroadcastMessage.setMessage(userName + "의 총 이동 거리: " + String.format("%.5f", distance) + " km");
+                sendMessage(LocationBroadcastMessage, chatServiceImpl);
                 log.info(userName + "의 위치 업데이트: 총 이동 거리 = " + String.format("%.5f", distance) + " km");
-                chatMessage.setMessage(userName + "의 총 이동 거리: " + String.format("%.5f", distance) + " km");
-                sendMessage(chatMessage, chatServiceImpl);
+                sendMessage(LocationBroadcastMessage, chatServiceImpl);
                 
                 // 멀어진 팀원 및 팀장에게 알림 24.08.05 이형준
                 if (distance > MAX_DISTANCE) {
