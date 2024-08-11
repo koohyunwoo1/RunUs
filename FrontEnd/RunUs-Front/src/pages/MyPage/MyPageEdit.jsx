@@ -88,6 +88,7 @@ const MyPageEdit = () => {
           );
           if (response.data.success) {
             const userData = response.data.data;
+            console.log(userData)
             setForm({
               userId: userData.userId,
               nickname: userData.nickname || "",

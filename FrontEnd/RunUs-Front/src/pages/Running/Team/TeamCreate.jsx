@@ -10,7 +10,7 @@ import { UserContext } from "../../../hooks/UserContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import WebSocketManager from "./WebSocketManager";
-import MapComponent from '../../../components/Running/Team/MapComponent'; // 카카오맵 컴포넌트
+import MapComponent from "../../../components/Running/Team/MapComponent"; // 카카오맵 컴포넌트
 import axios from "axios";
 import Running from "../Running";
 
@@ -19,7 +19,7 @@ Modal.setAppElement("#root");
 const TeamPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { party } = useParams(); 
+  const { party } = useParams();
   const { roomOwnerId } = useParams();
   const { userData } = useContext(UserContext);
   const [waitingRoomId, setWaitingRoomId] = useState(id || null);
@@ -29,22 +29,24 @@ const TeamPage = () => {
   const [totalDistance, setTotalDistance] = useState(0);
   const [totalCalories, setTotalCalories] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  const [isRunningStarted, setIsRunningStarted] = useState(false);
   const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
   const location = useLocation();
   const [distance, setDistance] = useState(0);
   const [calories, setCalories] = useState(0);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [time, setTime] = useState(0);
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
   // const [roomOwnerId, setRoomOwnerId] = useState(
   //   location.state?.roomOwnerId || null
   // );
-  
+
   useEffect(() => {
     if (!userData) {
       console.log("User data is null");
       return;
     }
-    
 
     console.log(userData);
     if (waitingRoomId) {
@@ -59,7 +61,7 @@ const TeamPage = () => {
           roomId: waitingRoomId,
           sender: userData.nickname,
           message: "",
-          userId : userData.userId,
+          userId: userData.userId,
         };
         WebSocketManager.send(message);
       });
@@ -72,7 +74,9 @@ const TeamPage = () => {
           const userList = messageContent.split("현재 방에 있는 사용자: ")[1];
           const userNames = userList ? userList.split(", ") : [];
           localStorage.setItem("userNames", JSON.stringify(userNames));
-          setUserNames(userNames.map(user => ({ name: user, distance: "0.00 km" })));
+          setUserNames(
+            userNames.map((user) => ({ name: user, distance: "0.00 km" }))
+          );
         } else if (receivedData.type === "ROOM_CLOSED") {
           alert("방장이 방을 종료했습니다. 방을 나가겠습니다.");
           navigate("/home");
@@ -83,38 +87,38 @@ const TeamPage = () => {
           // Extract distance from the message
           const distanceMatch = message.match(/총 이동 거리: ([0-9.]+) km/);
           const distance = distanceMatch ? `${distanceMatch[1]} km` : "0.00 km";
-          
+
           // Update user position
-          setUserPositions(prevPositions => ({
+          setUserPositions((prevPositions) => ({
             ...prevPositions,
             [userId]: { nickname: displayName, latitude, longitude, userId },
           }));
 
           // Update user distance in the list
-          setUserNames(prevUserNames => 
-            prevUserNames.map(user => 
+          setUserNames((prevUserNames) =>
+            prevUserNames.map((user) =>
               user.name === sender ? { ...user, distance } : user
             )
           );
         } else if (receivedData.type === "START") {
           setIsRunning(true);
-        } else if (receivedData.type === "QUIT"){
-            try {
-              const response = axios.post('api/v1/record/result_save', null, {
-                params: {
-                  user_id: userData.userId,
-                  party_id: party,
-                  distance: totalDistance, 
-                  time: elapsedTime,
-                  kcal : totalCalories,
-                }
-              });        
-              console.log(response);
+        } else if (receivedData.type === "QUIT") {
+          try {
+            const response = axios.post("api/v1/record/result_save", null, {
+              params: {
+                user_id: userData.userId,
+                party_id: party,
+                distance: totalDistance,
+                time: elapsedTime,
+                kcal: totalCalories,
+              },
+            });
+            console.log(response);
 
-              navigate(`/home`);
-            } catch (err) {
-              console.error(err);
-            }
+            navigate(`/home`);
+          } catch (err) {
+            console.error(err);
+          }
         }
       });
 
@@ -137,17 +141,14 @@ const TeamPage = () => {
   const startSendingLocation = () => {
     const updateLocation = () => {
       if (isWebSocketConnected) {
-        const baseLatitude = 37.5665;
-        const baseLongitude = 126.978;
-        const latitude = baseLatitude + (Math.random() - 0.5) * 0.01;
-        const longitude = baseLongitude + (Math.random() - 0.5) * 0.01;
+
 
         const locationMessage = {
-          type: 'LOCATION',
+          type: "LOCATION",
           roomId: waitingRoomId,
           sender: userData.nickname,
           message: "",
-          userId : userData.userId,
+          userId: userData.userId,
           longitude,
           latitude,
         };
@@ -166,26 +167,33 @@ const TeamPage = () => {
       roomId: waitingRoomId,
       sender: userData.nickname,
       message: "",
-      userId : userData.userId,
+      userId: userData.userId,
     };
 
-    if (WebSocketManager.ws && WebSocketManager.ws.readyState === WebSocket.OPEN) {
+    if (
+      WebSocketManager.ws &&
+      WebSocketManager.ws.readyState === WebSocket.OPEN
+    ) {
       WebSocketManager.send(startMessage);
-      setIsRunning(true);
+      //setIsRunning(true);
       setIsWebSocketConnected(true);
+      setIsRunningStarted(true);
     } else {
       console.warn("WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.");
     }
   };
 
   const handleQuit = () => {
-    if (WebSocketManager.ws && WebSocketManager.ws.readyState === WebSocket.OPEN) {
+    if (
+      WebSocketManager.ws &&
+      WebSocketManager.ws.readyState === WebSocket.OPEN
+    ) {
       const stopMessage = {
-        type: 'QUIT',
+        type: "QUIT",
         roomId: waitingRoomId,
         sender: userData.nickname,
         message: "방장이 종료 버튼을 눌렀습니다.",
-        userId : userData.userId,
+        userId: userData.userId,
       };
       WebSocketManager.send(stopMessage);
       setIsRunning(false);
@@ -200,10 +208,13 @@ const TeamPage = () => {
       roomId: waitingRoomId,
       sender: userData.nickname,
       message: "",
-      userId : userData.userId,
+      userId: userData.userId,
     };
 
-    if (WebSocketManager.ws && WebSocketManager.ws.readyState === WebSocket.OPEN) {
+    if (
+      WebSocketManager.ws &&
+      WebSocketManager.ws.readyState === WebSocket.OPEN
+    ) {
       WebSocketManager.send(leaveMessage);
       localStorage.removeItem("userNames");
     }
@@ -217,9 +228,10 @@ const TeamPage = () => {
 
   const teamCreatePageUrl = `https://i11e103.p.ssafy.io/team-create/${waitingRoomId}/${party}/${roomOwnerId}`;
 
-  const isRoomOwner = roomOwnerId == Number(localStorage.getItem("userId").trim());
-  console.log(roomOwnerId)
-  console.log(localStorage.getItem("userId"))
+  const isRoomOwner =
+    roomOwnerId == Number(localStorage.getItem("userId").trim());
+  console.log(roomOwnerId);
+  console.log(localStorage.getItem("userId"));
   console.log(isRoomOwner);
   useEffect(() => {
     let stopSendingLocation;
@@ -233,6 +245,10 @@ const TeamPage = () => {
     };
   }, [isRunning, isWebSocketConnected]);
 
+  const handleLocationUpdate = (latitude, longitude) => {
+    setLatitude(latitude);
+    setLongitude(longitude);
+  };
   return (
     <div>
       <TabBar />
@@ -281,13 +297,12 @@ const TeamPage = () => {
         >
           <QRCode
             value={teamCreatePageUrl}
-            onClick={() => window.location.href = teamCreatePageUrl}
+            onClick={() => (window.location.href = teamCreatePageUrl)}
             style={{ cursor: "pointer", width: "300px", height: "300px" }}
           />
         </Modal>
         <div>
           <MapComponent positions={userPositions} roomOwnerId={roomOwnerId} />
-          
         </div>
 
         {isRunning && (
@@ -295,21 +310,24 @@ const TeamPage = () => {
             Quit
           </button>
         )}
-        
 
         <div>
-      <Running 
-        distance={distance}
-        setDistance={setDistance}
-        calories={calories}
-        setCalories={setCalories}
-        time={time}
-        setTime={setTime}
-      />
-      <p>{time}</p>
-      <p>{distance} </p>
-      <p>{calories} </p>
-    </div>
+          <Running
+            distance={distance}
+            setDistance={setDistance}
+            calories={calories}
+            setCalories={setCalories}
+            time={time}
+            setTime={setTime}
+            onLocationUpdate={handleLocationUpdate}
+            isRunningStarted={isRunningStarted}
+          />
+          {/* <p>{time}</p>
+          <p>{distance} </p>
+          <p>{calories} </p>
+          <p>{latitude} </p>
+          <p>{longitude} </p> */}
+        </div>
       </div>
     </div>
   );

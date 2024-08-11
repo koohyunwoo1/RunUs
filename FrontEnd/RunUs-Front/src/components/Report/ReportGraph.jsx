@@ -16,14 +16,7 @@ const ReportGraph = () => {
   const [graphData, setGraphData] = useState(null);
   const [graphTotalData, setGraphTotalData] = useState(null);
   const [selectedYear, setSelectedYear] = useState("2024");
-  const [years, setYears] = useState([
-    "2020",
-    "2021",
-    "2022",
-    "2023",
-    "2024",
-    "2025",
-  ]);
+  const [years, setYears] = useState(["2021", "2022", "2023", "2024"]);
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
@@ -131,7 +124,11 @@ const ReportGraph = () => {
         value={selectedYear}
       >
         {years.map((year) => (
-          <option key={year} value={year} style={{ fontFamily: "PreSemiBold" }}>
+          <option
+            key={year}
+            value={year}
+            style={{ fontFamily: "PreSemiBold", fontSize: "12px" }}
+          >
             {year}
           </option>
         ))}
@@ -147,7 +144,7 @@ const ReportGraph = () => {
               <XAxis dataKey="month" tickFormatter={formatXAxisMonth} />
               <YAxis
                 width={10}
-                tickFormatter={(value) => convertDistance(value) + " km"}
+                tickFormatter={(value) => convertDistance(value)}
               />
               <Tooltip content={renderTooltipContent} />
               <CartesianGrid strokeDasharray="3 3" vertical={false} />

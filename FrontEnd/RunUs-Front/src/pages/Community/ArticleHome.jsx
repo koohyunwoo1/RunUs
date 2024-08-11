@@ -7,6 +7,7 @@ import Button from "../../components/common/Button";
 import { UserContext } from "../../hooks/UserContext";
 import { useNavigate } from "react-router-dom";
 import Pagination from "../../components/Community/Pagination";
+import Header from "../../components/common/Header";
 
 const ArticleHome = () => {
   const [articles, setArticles] = useState([]);
@@ -37,7 +38,9 @@ const ArticleHome = () => {
       }
 
       const response = await axios.get(url, { params: { size, page } });
-      const filteredArticles = response.data.data.filter(article => article.isDeleted !== 1);
+      const filteredArticles = response.data.data.filter(
+        (article) => article.isDeleted !== 1
+      );
       setArticles(filteredArticles);
       setTotalPages(response.data.totalPages || 1);
     } catch (err) {
@@ -61,11 +64,11 @@ const ArticleHome = () => {
   }, [userData, page, sortByTime, completedOnly]);
 
   const handleSortByTime = () => {
-    setSortByTime(prev => !prev);
+    setSortByTime((prev) => !prev);
   };
 
   const handleCompletedOnly = () => {
-    setCompletedOnly(prev => !prev);
+    setCompletedOnly((prev) => !prev);
   };
 
   const handleSearch = (e) => {
@@ -79,18 +82,18 @@ const ArticleHome = () => {
 
   return (
     <>
-    <div>
-    <div className="ArticleHome">
-      <form onSubmit={handleSearch} className="search-form">
-        <input
-          type="text"
-          value={word}
-          onChange={(e) => setWord(e.target.value)}
-          placeholder="검색어를 입력하세요"
-          />
-        <button type="submit">검색</button>
-      </form>
-
+      <div>
+        <Header />
+        <div className="ArticleHome">
+          <form onSubmit={handleSearch} className="search-form">
+            <input
+              type="text"
+              value={word}
+              onChange={(e) => setWord(e.target.value)}
+              placeholder="검색어를 입력하세요"
+            />
+            <button type="submit">검색</button>
+          </form>
         <div className="article-filters">
           <div className="left-buttons">
             <button onClick={handleCompletedOnly}>
@@ -105,10 +108,9 @@ const ArticleHome = () => {
               className="article-create-button"
               text={"글 쓰기"} 
               onClick={() => nav('/article-create')}/>
+            </div>
           </div>
         </div>
-      </div>
-
       <ArticleList articles={articles}/>
       <Pagination
           page={page}
@@ -117,7 +119,7 @@ const ArticleHome = () => {
         />
     </div>
       <TabBar />
-  </>
+    </>
   );
 };
 

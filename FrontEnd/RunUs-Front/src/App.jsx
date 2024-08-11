@@ -29,8 +29,7 @@ import RedirectRoute from "./components/common/RedirectRoute";
 import SoloModeCountDown from "./pages/Running/Solo/SoloModeCountDown";
 import SoloModeStart from "./pages/Running/Solo/SoloModeStart";
 import axios from "axios";
-import TabBar from "./components/common/TabBar"; // TabBar import
-
+import TabBar from "./components/common/TabBar";
 axios.defaults.baseURL = process.env.VITE_API_URL;
 
 const AppContent = () => {
@@ -64,6 +63,13 @@ const AppContent = () => {
   return (
     <div className="app-content">
       <Routes>
+        <Route
+          element={
+            <RedirectRoute>
+              <TabBar />
+            </RedirectRoute>
+          }
+        ></Route>
         <Route
           path="/signin"
           element={

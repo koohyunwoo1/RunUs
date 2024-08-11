@@ -1,6 +1,5 @@
-/* 전체 컨테이너 스타일 */
 .ReportHome {
-  margin-top: 20px;
+  margin-top: 80px;
   padding: 20px;
   box-sizing: border-box; /* padding과 border를 포함한 전체 크기 설정 */
 }
