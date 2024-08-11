@@ -22,7 +22,24 @@
   transform-origin: bottom;
 }
 
+.tab-item2 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+  font-family: "PreBold";
+  transform-origin: bottom;
+}
+
 .tab-item img {
+  width: 28px;
+  height: 28px;
+  margin-bottom: 4px;
+}
+
+.tab-item2 img {
   width: 28px;
   height: 28px;
   margin-bottom: 4px;
@@ -32,7 +49,11 @@
   font-size: 14px;
 }
 
-.tab-item:hover {
+.tab-item2 span {
+  font-size: 14px;
+}
+
+.tab-item2:hover {
   transform: scale(1.8);
   background-color: lightgray;
 }
@@ -41,10 +62,14 @@
   color: #98bae3;
 }
 
+
+
 .tab-item.active img {
   filter: brightness(0) saturate(100%) invert(32%) sepia(4%) saturate(6400%)
     hue-rotate(144deg) brightness(94%) contrast(92%);
 }
+
+
 
 .tab-item-run {
   position: relative;
