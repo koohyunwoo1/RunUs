@@ -1,4 +1,4 @@
-package runus.runus.record.model;
+package runus.runus.record.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -11,19 +11,19 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Table(name = "record")
-public class Record {
+public class RecordEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     @Column(name = "record_id")
-    private Integer record_id;
+    private Integer recordId;
 
     @Column(name = "user_id", nullable = false)
-    private Integer user_id;
+    private Integer userId;
 
     @Column(name = "party_id", nullable = true)
-    private Integer party_id;
+    private Integer partyId;
 
     @Column(name = "distance", nullable = true, columnDefinition = "int default 0")
     private Integer distance;
@@ -35,11 +35,11 @@ public class Record {
     private Integer kcal;
 
     @Column(name = "record_date", nullable = true, columnDefinition = "timestamp default current_timestamp")
-    private LocalDateTime record_date;
+    private LocalDateTime recordDate;
 
 
 
     public LocalDate getRecordDate() {
-        return record_date != null ? record_date.toLocalDate() : null;
+        return recordDate != null ? recordDate.toLocalDate() : null;
     }
 }
