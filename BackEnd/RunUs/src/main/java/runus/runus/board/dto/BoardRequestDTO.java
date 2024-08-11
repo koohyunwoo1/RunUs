@@ -13,7 +13,7 @@ public class BoardRequestDTO {
     private int userId;
     private String title;
     private String content;
-    private int regionId;
+    private Integer regionId;
     private LocalDateTime meetingTime;
     private String meetingDay;
     private String nickname;

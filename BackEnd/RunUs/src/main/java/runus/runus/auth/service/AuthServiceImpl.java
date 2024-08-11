@@ -23,6 +23,26 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public UserDto signup(UserDto userDto) {
+        // DTO 필드 null 체크
+        if (userDto.getEmail() == null) {
+            throw new InvalidDataException("이메일은 필수 입력 항목입니다.");
+        }
+        if (userDto.getNickname() == null) {
+            throw new InvalidDataException("닉네임은 필수 입력 항목입니다.");
+        }
+        if (userDto.getPassword() == null) {
+            throw new InvalidDataException("비밀번호는 필수 입력 항목입니다.");
+        }
+        if (userDto.getPhoneNumber() == null) {
+            throw new InvalidDataException("전화번호는 필수 입력 항목입니다.");
+        }
+        if (userDto.getWeight() == null) {
+            throw new InvalidDataException("체중은 필수 입력 항목입니다.");
+        }
+        if (userDto.getRegionId() == null) {
+            throw new InvalidDataException("지역 ID는 필수 입력 항목입니다.");
+        }
+
         // 이메일 중복 체크
         if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
             throw new DuplicateException("이미 존재하는 이메일입니다.");
@@ -31,7 +51,6 @@ public class AuthServiceImpl implements AuthService {
         User user = new User();
         user.setNickname(userDto.getNickname());
         user.setEmail(userDto.getEmail());
-        user.setEmailDomain(userDto.getEmailDomain()); //
         user.setPassword(userDto.getPassword()); // 실제로는 비밀번호를 암호화해야 합니다
         user.setPhoneNumber(userDto.getPhoneNumber());
         user.setWeight(userDto.getWeight());

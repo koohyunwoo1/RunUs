@@ -82,16 +82,28 @@ public class BoardServiceImpl implements BoardService {
     public void updateBoard(int boardId, BoardRequestDTO boardRequest) {
         BoardEntity board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new NotFoundElementException("Board not found"));
+
         if (board.getIsDeleted() == '1') {
             throw new NotFoundElementException("Cannot update a deleted board");
         }
-        board.setTitle(boardRequest.getTitle());
-        board.setContent(boardRequest.getContent());
-        board.setRegionId(boardRequest.getRegionId());
+        if (boardRequest.getTitle() != null) {
+            board.setTitle(boardRequest.getTitle());
+        }
+        if (boardRequest.getContent() != null) {
+            board.setContent(boardRequest.getContent());
+        }
+        if (boardRequest.getRegionId() != null) {
+            board.setRegionId(boardRequest.getRegionId());
+        }
+        if (boardRequest.getMeetingTime() != null) {
+            board.setMeetingTime(boardRequest.getMeetingTime());
+        }
+        if (boardRequest.getMeetingDay() != null) {
+            board.setMeetingDay(boardRequest.getMeetingDay());
+        }
+
         board.setUpdatedAt(LocalDateTime.now());
-        board.setMeetingTime(boardRequest.getMeetingTime());
-        board.setMeetingDay(boardRequest.getMeetingDay());
-        board.setUserId(boardRequest.getUserId());
+
         boardRepository.save(board);
     }
 
