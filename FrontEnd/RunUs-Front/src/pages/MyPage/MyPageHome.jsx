@@ -6,7 +6,7 @@ import EditIcon from "../../assets/editIcon.png";
 import locationIcon from "../../assets/location.png";
 import Header from "../../components/common/Header";
 import { useNavigate } from "react-router-dom";
-
+import Logout from "../../components/Home/Logout";
 const MyPageHome = () => {
   const navigate = useNavigate();
 
@@ -14,9 +14,15 @@ const MyPageHome = () => {
     navigate("/my-page-edit", { replace: true });
   };
 
+  const handleLocationClick = () => {
+    navigate("/my-page-editLocation", {replace: true});
+  };
+
   return (
-    <div className="MyPageHome">
+    <div>
+
       <Header />
+    <div className="MyPageHome" style={{marginTop: "80px"}}>
       <div>
         <MyPageProfile />
       </div>
@@ -29,14 +35,17 @@ const MyPageHome = () => {
           <img src={EditIcon} alt="User Icon" className="edit-section-icon" />
           회원정보 수정
         </div>
-        <div className="MyPageEditSection" onClick={handleEditIconClick}>
+        <div className="MyPageEditSection" onClick={handleLocationClick}>
           <img src={locationIcon} alt="Location Icon" className="edit-section-icon" />
           위치 수정
         </div>
+        <div>
+          <Logout />
+        </div>
       </div>
-
       <div className="bottom-spacing"></div>
       <TabBar />
+    </div>
     </div>
   );
 };
