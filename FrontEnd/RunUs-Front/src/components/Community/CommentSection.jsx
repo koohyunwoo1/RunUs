@@ -17,8 +17,8 @@ const CommentSection = ({ articleId }) => {
 
   const fetchComments = async (pageNumber = 0) => {
     try {
-      const response = await axios.get(`/api/v1/boards/${articleId}/comments`, {
-        params: { size, page: pageNumber }
+      const response = await axios.get(`/api/v1/boards/comments`, {
+        params: { boardId: articleId, size, page: pageNumber }
       });
       if (response.data && response.data.data) {
         if (response.data.data.length < size) {
@@ -53,10 +53,10 @@ const CommentSection = ({ articleId }) => {
     if (!newComment.trim()) return;
 
     try {
-      await axios.post(`/api/v1/boards/${articleId}/comments`, {
+      await axios.post(`/api/v1/boards/comments`, {
         content: newComment,
         userId: userData.userId,
-        nickname: userData.nickname,
+        boardId: articleId,
         parentId: replyingTo
       });
       setNewComment("");
@@ -77,9 +77,9 @@ const CommentSection = ({ articleId }) => {
 
   const handleUpdateComment = async (commentId) => {
     try {
-      await axios.put(`/api/v1/boards/${articleId}/comments/${commentId}`, {
+      await axios.put(`/api/v1/boards/comments`, {
+        commentId,
         content: editingContent,
-        userId: userData.userId
       });
       setEditingCommentId(null);
       setEditingContent("");
@@ -93,7 +93,9 @@ const CommentSection = ({ articleId }) => {
 
   const handleDeleteComment = async (commentId) => {
     try {
-      await axios.delete(`/api/v1/boards/${articleId}/comments/${commentId}`);
+      await axios.delete(`/api/v1/boards/comments`,{
+       data: { commentId },
+      });
       setPage(0);
       setCommentList([]);
       await fetchComments();

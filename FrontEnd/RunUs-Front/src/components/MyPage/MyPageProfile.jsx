@@ -4,7 +4,7 @@ import NormalProfile from "../../assets/profile(normal).png";
 import profileEditIcon from "../../assets/pencil.png"; // 아이콘 파일 경로
 import axios from "axios";
 
-const BASE_URL = "https://i11e103.p.ssafy.io:8001"; // 서버의 베이스 URL
+const BASE_URL = "https://i11e103.p.ssafy.io:8003"; // 서버의 베이스 URL
 
 const MyPageProfile = () => {
   const [profileImage, setProfileImage] = useState(NormalProfile);
