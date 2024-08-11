@@ -15,7 +15,7 @@ class WebSocketManager {
       this.ws.close();
     }
 
-    this.ws = new WebSocket(`wss://i11e103.p.ssafy.io:8001/ws/chat?roomId=${roomId}`);
+    this.ws = new WebSocket(`wss://i11e103.p.ssafy.io:8004/ws/chat?roomId=${roomId}`);
 
     this.ws.onopen = () => {
       console.log("WebSocket connection opened");
