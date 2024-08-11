@@ -5,9 +5,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import runus.runus.api.NotFoundElementException;
 import runus.runus.record.dto.RecordDTO;
-import runus.runus.record.model.Record;
+import runus.runus.record.dto.RecordSaveRequestDTO;
+import runus.runus.record.entity.RecordEntity;
 import runus.runus.record.repository.RecordRepository;
 import runus.runus.user.entity.User;
 import runus.runus.user.repository.UserRepository;
@@ -31,37 +32,29 @@ public class RecordService {
     private UserRepository userRepository;
 
     // 최근 기록 가져오기
-    public List<Record> getRecentRecords(Integer userId, int limit) {
+    public List<RecordEntity> getRecentRecords(Integer userId, int limit) {
         Pageable pageable = PageRequest.of(0, limit);
         return recordRepository.findTopByUser_idOrderByRecordDateDesc(userId, pageable);
     }
 
-
-    // 전체 기록 가져오기
-    public List<Record> getAllRecords(Integer userId) {
-        List<Record> allRecords = new ArrayList<>();
-        Pageable pageable = PageRequest.of(0, 6);  // 페이지 크기를 6으로 설정
-        Page<Record> page;
-
-        do {
-            page = recordRepository.findByUser_id(userId, pageable);
-            allRecords.addAll(page.getContent());
-            pageable = pageable.next();
-        } while (page.hasNext());
-
-        return allRecords;
+    // 전체 기록 가져오기 - refactor
+    public Page<RecordDTO> getRecords(Integer userId, int size, int page) {
+        Pageable pageable1 = PageRequest.of(page, size);
+        Page<RecordDTO> records = recordRepository.findRecord(userId, pageable1);
+        return records;
     }
 
     // 지금까지 달린 총 거리 계산
-    public Integer getTotalDistance(Integer user_id) {
-        return recordRepository.sumDistanceByUser_id(user_id);
+    public Integer getTotalDistance(Integer userId) {
+        Integer totalDistance = recordRepository.sumDistanceByUserId(userId);
+        return totalDistance;
     }
 
     public List<Map<String, Object>> getMonthlyStatistics(Integer userId, Integer year) {
         LocalDateTime startOfYear = LocalDateTime.of(year, 1, 1, 0, 0);
         LocalDateTime endOfYear = LocalDateTime.of(year, 12, 31, 23, 59, 59);
 
-        List<Record> records = recordRepository.findByUserIdAndDateRange(userId, startOfYear, endOfYear);
+        List<RecordEntity> records = recordRepository.findByUserIdAndDateRange(userId, startOfYear, endOfYear);
 
         if (records == null || records.isEmpty()) {
             return Collections.emptyList();
@@ -73,8 +66,8 @@ public class RecordService {
                         Collectors.collectingAndThen(
                                 Collectors.toList(),
                                 monthRecords -> {
-                                    int totalDistance = monthRecords.stream().mapToInt(Record::getDistance).sum();
-                                    int totalTime = monthRecords.stream().mapToInt(Record::getTime).sum();
+                                    int totalDistance = monthRecords.stream().mapToInt(RecordEntity::getDistance).sum();
+                                    int totalTime = monthRecords.stream().mapToInt(RecordEntity::getTime).sum();
                                     int recordCount = monthRecords.size();
                                     return Map.of("month", monthRecords.get(0).getRecordDate().getMonthValue(),
                                             "totalDistance", totalDistance,
@@ -87,50 +80,39 @@ public class RecordService {
         return monthlyStats.values().stream().collect(Collectors.toList());
     }
 
-    public Map<String, Object> saveRecord(Integer userId, Integer partyId, Integer distance, Integer time, Integer kcal) {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            Record record = new Record();
-            record.setUser_id(userId);
+    public RecordEntity saveRecord(RecordSaveRequestDTO requestDTO) {
+        RecordEntity record = new RecordEntity();
+        record.setUserId(requestDTO.getUserId());
 
-            if(partyId != null ) {
-                record.setParty_id(partyId);
-                chatService.updatePartyStatus(partyId, '3'); //파티 완주 완료
-                chatService.exitUserStatus(partyId, userId, '3'); //유저 완주 완료
-            }
-            record.setDistance(distance != null ? distance : 0);
-            record.setTime(time != null ? time : 0);
-            record.setKcal(kcal != null ? kcal : 0);
-            record.setRecord_date(LocalDateTime.now());
-
-            Record savedRecord = recordRepository.save(record);
-
-            updateUserExperience(userId, partyId, distance != null ? distance : 0);
-
-            response.put("success", true);
-            response.put("data", savedRecord);
-            response.put("message", "기록 저장 성공");
-
-        } catch (Exception e) {
-            response.put("success", false);
-            response.put("data", e.getMessage());
-            response.put("message", "기록 저장 실패");
+        if(requestDTO.getPartyId() != null ) {
+            record.setPartyId(requestDTO.getPartyId());
+            chatService.updatePartyStatus(requestDTO.getPartyId(), '3'); //파티 완주 완료
+            chatService.exitUserStatus(requestDTO.getPartyId(), requestDTO.getUserId(), '3'); //유저 완주 완료
         }
-        return response;
+        record.setDistance(requestDTO.getDistance() != null ? requestDTO.getDistance() : 0);
+        record.setTime(requestDTO.getTime() != null ? requestDTO.getTime() : 0);
+        record.setKcal(requestDTO.getKcal() != null ? requestDTO.getKcal() : 0);
+        record.setRecordDate(LocalDateTime.now());
+
+        RecordEntity savedRecord = recordRepository.save(record);
+
+        updateUserExperience(requestDTO);
+
+        return savedRecord;
     }
 
-    private void updateUserExperience(Integer userId, Integer partyId, Integer distance) {
-        Optional<User> optionalUser = userRepository.findById(userId);
+    private void updateUserExperience(RecordSaveRequestDTO requestDTO) {
+        Optional<User> optionalUser = userRepository.findById(requestDTO.getUserId());
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             if (user.getExp() == null) {
                 user.setExp(0); // 기본값 설정
             }
 
-            if (partyId == null) {
-                user.setExp(user.getExp() + distance * 10 / 1000);
+            if (requestDTO.getPartyId() == null) {
+                user.setExp(user.getExp() + requestDTO.getDistance() * 10 / 1000);
             } else {
-                user.setExp(user.getExp() + (int) (distance * 13 / 1000));
+                user.setExp(user.getExp() + (int) (requestDTO.getDistance() * 13 / 1000));
             }
 
             userRepository.save(user);
