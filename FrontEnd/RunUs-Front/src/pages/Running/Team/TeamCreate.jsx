@@ -29,6 +29,7 @@ const TeamPage = () => {
   const [totalDistance, setTotalDistance] = useState(0);
   const [totalCalories, setTotalCalories] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  const [isRunningStarted, setIsRunningStarted] = useState(false);
   const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
   const location = useLocation();
   const [distance, setDistance] = useState(0);
@@ -140,10 +141,7 @@ const TeamPage = () => {
   const startSendingLocation = () => {
     const updateLocation = () => {
       if (isWebSocketConnected) {
-        const baseLatitude = 37.5665;
-        const baseLongitude = 126.978;
-        const latitude = baseLatitude + (Math.random() - 0.5) * 0.01;
-        const longitude = baseLongitude + (Math.random() - 0.5) * 0.01;
+
 
         const locationMessage = {
           type: "LOCATION",
@@ -177,8 +175,9 @@ const TeamPage = () => {
       WebSocketManager.ws.readyState === WebSocket.OPEN
     ) {
       WebSocketManager.send(startMessage);
-      setIsRunning(true);
+      //setIsRunning(true);
       setIsWebSocketConnected(true);
+      setIsRunningStarted(true);
     } else {
       console.warn("WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.");
     }
@@ -321,12 +320,13 @@ const TeamPage = () => {
             time={time}
             setTime={setTime}
             onLocationUpdate={handleLocationUpdate}
+            isRunningStarted={isRunningStarted}
           />
-          <p>{time}</p>
+          {/* <p>{time}</p>
           <p>{distance} </p>
           <p>{calories} </p>
           <p>{latitude} </p>
-          <p>{longitude} </p>
+          <p>{longitude} </p> */}
         </div>
       </div>
     </div>
