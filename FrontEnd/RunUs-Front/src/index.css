@@ -18,3 +18,7 @@
   font-family: "PreThin";
   src: url("/fonts/Pretendard-Thin.ttf") format("opentype");
 }
+@font-face {
+  font-family: "Cafe24";
+  src: url("/fonts/Cafe24Decoschool.ttf") format("opentype");
+}

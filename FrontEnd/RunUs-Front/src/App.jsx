@@ -41,9 +41,9 @@ const AppContent = () => {
 
     const setupFCM = async () => {
       if (userData) {
-        const token = await requestPermissionAndGetToken();
+        const token = await requestPermissionAndGetToken(userData.userId);
         if (token) {
-          await sendTokenToServer(userId, token);
+          // await sendTokenToServer(userId, token);
           messageHandler = setupMessageListener();
         }
       } else if (messageHandler) {
