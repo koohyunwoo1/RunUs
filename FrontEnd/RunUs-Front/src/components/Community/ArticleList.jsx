@@ -21,9 +21,7 @@ const ArticleList = ({ articles }) => {
                 className={`ArticleItem ${post.boardId % 2 === 0 ? 'even' : 'odd'}`} // 클래스 이름 조건부 설정
               />
             ))
-          ) : (
-            <p>게시글이 없습니다.</p>
-          )}
+          ) : null}
         </ul>
       </div>
     </div>
