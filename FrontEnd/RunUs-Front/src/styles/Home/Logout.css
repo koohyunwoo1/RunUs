@@ -4,6 +4,7 @@
 }
 
 .logoutText {
-  margin: 15px;
-  color: black;
+  text-align: right;
+  margin-right: 25px;
+  color: red;
 }
