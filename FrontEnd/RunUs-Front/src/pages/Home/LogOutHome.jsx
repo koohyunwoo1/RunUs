@@ -8,15 +8,17 @@ const LogOutHome = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       navigate("/signin");
-    }, 5000);
+    }, 2500);
+
     return () => clearTimeout(timer);
   }, [navigate]);
 
   return (
     <div className="LogOutHomeContainer">
       <div className="LogOutHome">
-        함께 뛰는 즐거움
-        <div className="LogOutHomeRunus">Run Us</div>
+        <div className="Runsubtitle">R u n</div>
+        <br />
+        <div className="Ussubtitle">U s</div>
       </div>
     </div>
   );
