@@ -9,7 +9,6 @@ const ReportItem = () => {
   const [error, setError] = useState(null);
   const [filteredData, setFilteredData] = useState([]);
   const [filterMode, setFilterMode] = useState("all"); // 'all', 'solo', 'team'
-  // filterMode 현재 선택된 모드
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
@@ -100,7 +99,7 @@ const ReportItem = () => {
               </div>
               <div className="record_details">
                 <div className="distance">
-                  <FaRunning />
+                  <FaRunning style={{ color: "gray" }} />
                   {convertDistance(item.distance)}
                   <span
                     style={{
