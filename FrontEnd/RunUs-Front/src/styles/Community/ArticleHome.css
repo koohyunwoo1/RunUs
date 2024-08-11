@@ -91,3 +91,8 @@
   display: flex;
   justify-content: space-evenly;
 }
+
+.page-font {
+  margin-top: 10px;
+  font-family: "PreBold";
+}

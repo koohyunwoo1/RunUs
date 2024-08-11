@@ -6,6 +6,7 @@ import axios from "axios";
 import Button from "../../components/common/Button";
 import { UserContext } from "../../hooks/UserContext";
 import { useNavigate } from "react-router-dom";
+import Pagination from "../../components/Community/Pagination";
 
 const ArticleHome = () => {
   const [articles, setArticles] = useState([]);
@@ -109,24 +110,11 @@ const ArticleHome = () => {
       </div>
 
       <ArticleList articles={articles}/>
-      <div className="pagination">
-        <Button
-          onClick={() => setPage(prev => Math.max(prev - 1, 0))}
-          disabled={page === 0}
-          text="이전"
-          />
-        <span> Page : {page + 1} </span>
-        <Button
-          onClick={() => {
-            setPage(prev => {
-              const newPage = prev + 1 <= totalPages ? prev + 1 : prev;
-              return newPage;
-            });
-          }}
-          disabled={page + 1 >= totalPages}
-          text="다음"
-          />
-      </div>
+      <Pagination
+          page={page}
+          totalPages={totalPages}
+          setPage={setPage}
+        />
     </div>
       <TabBar />
   </>
