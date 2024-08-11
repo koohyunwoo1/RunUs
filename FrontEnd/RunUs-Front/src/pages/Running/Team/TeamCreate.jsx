@@ -1,9 +1,4 @@
-<<<<<<< HEAD
 import React, { useState, useEffect, useContext, useRef } from "react";
-=======
-import React, { useState, useEffect, useContext } from "react";
-import TabBar from "../../../components/common/TabBar";
->>>>>>> eca3ae2a1418dd9387b09e39dcc8fb4f595549c8
 import QRCode from "qrcode.react";
 import "../../../styles/Running/Team/TeamCreate.css";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -44,6 +39,12 @@ const TeamPage = () => {
   const [longitude, setLongitude] = useState(null);
   const latestLocation = useRef({ latitude: null, longitude: null });
 
+  const handleStart = () => {
+    setIsRunning(true);
+    setIsRunningStarted(true);
+    setIsWebSocketConnected(true);
+    startSendingLocation();
+  };
 
   useEffect(() => {
     if (!userData) {
@@ -102,7 +103,7 @@ const TeamPage = () => {
               )
             );
           } else if (receivedData.type === "START") {
-            setIsRunning(true);
+            handleStart();
           } else if (receivedData.type === "QUIT") {
             try {
               const response = axios.post("api/v1/record/result_save", null, {
@@ -143,29 +144,31 @@ const TeamPage = () => {
 
   const startSendingLocation = () => {
     const updateLocation = () => {
-      if (isWebSocketConnected) {
-        const { latitude, longitude } = latestLocation.current;
-        if (latitude !== null && longitude !== null) {
-          const locationMessage = {
-            type: "LOCATION",
-            roomId: waitingRoomId,
-            sender: userData.nickname,
-            message: "",
-            userId: userData.userId,
-            longitude,
-            latitude,
-          };
-          WebSocketManager.send(locationMessage);
-        }
+      if (isWebSocketConnected && isRunning) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            latestLocation.current = { latitude, longitude };
+            const locationMessage = {
+              type: "LOCATION",
+              roomId: waitingRoomId,
+              sender: userData.nickname,
+              message: `총 이동 거리: ${distance} km`,
+              userId: userData.userId,
+              longitude,
+              latitude,
+            };
+            WebSocketManager.send(locationMessage);
+          },
+          (error) => console.error("Error getting location:", error),
+          { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+        );
       }
     };
 
     const intervalId = setInterval(updateLocation, 5000);
     return () => clearInterval(intervalId);
   };
-
- 
-
 
   const handleStartButtonClick = () => {
     console.log(userData);
@@ -182,9 +185,7 @@ const TeamPage = () => {
       WebSocketManager.ws.readyState === WebSocket.OPEN
     ) {
       WebSocketManager.send(startMessage);
-      setIsWebSocketConnected(true);
-      setIsRunningStarted(true);
-      setIsRunning(true);
+      handleStart();
     } else {
       console.warn("WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.");
     }
@@ -259,10 +260,6 @@ const TeamPage = () => {
 
   return (
     <div>
-<<<<<<< HEAD
-=======
-      <TabBar />
->>>>>>> eca3ae2a1418dd9387b09e39dcc8fb4f595549c8
       <div className="TeamCreate">
         <div>
           <button
@@ -323,7 +320,6 @@ const TeamPage = () => {
         <div>
           <MapComponent positions={userPositions} roomOwnerId={roomOwnerId} />
         </div>
-
         <div>
           <Running
             distance={distance}
