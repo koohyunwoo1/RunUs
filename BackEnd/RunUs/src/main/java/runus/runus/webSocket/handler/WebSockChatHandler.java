@@ -55,18 +55,23 @@ public class WebSockChatHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         log.info("Connection established with session: {}", session.getId());
+        System.out.println("Connection established with session: " + session.getId());
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String payload = message.getPayload();
         log.info("Received payload: {}", payload);
+        System.out.println("Received payload: " + payload);
+        System.out.println("handleTextMessage : Received payload: " + payload);
 
         ChatMessage chatMessage = objectMapper.readValue(payload, ChatMessage.class);
+        System.out.println("chatMessage: " + chatMessage);
 
         try {
             ChatRoom room = chatServiceImpl.findRoomById(chatMessage.getRoomId());
             room.handleActions(session, chatMessage, chatServiceImpl);
+            System.out.println("handleTextMessage called");
         }
         catch (NullPointerException e){
             log.error("Room ID {}에 대한 ChatRoom을 찾을 수 없습니다.", chatMessage.getRoomId(), e);
@@ -80,5 +85,6 @@ public class WebSockChatHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         log.info("Connection closed with session: {}", session.getId());
+        System.out.println("afterConnectionClosed called");
     }
 }
