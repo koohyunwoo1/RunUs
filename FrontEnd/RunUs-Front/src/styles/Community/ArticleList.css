@@ -76,7 +76,7 @@
   list-style: none; /* 리스트 마커 제거 */
   padding: 0; /* 내부 여백 제거 */
   margin: 0; /* 외부 여백 제거 */
-  margin-top: 130px;
+  margin-top: 40px;
 }
 
 /* 게시글 아이템 스타일 (ArticleItem의 스타일) */
