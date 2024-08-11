@@ -1,5 +1,6 @@
 /* 전체 컨테이너 스타일 */
 .ArticleHome {
+  position: fixed;
   padding: 20px 20px; /* 페이지 내부 여백 추가 */
   border-radius: 8px; /* 테두리 둥글게 (작게 설정) */
   max-width: 1200px; /* 최대 넓이 제한 */
@@ -7,6 +8,7 @@
   margin-right: auto;
   box-sizing: border-box; /* padding과 border를 포함한 전체 크기 설정 */
   font-family: "PreRegular";
+  background-color: white;
 }
 
 /* 검색 폼 스타일 */
@@ -85,5 +87,7 @@
 /* } */
 
 .pagination{
-  padding-bottom: 90px;
+  padding-bottom: 120px;
+  display: flex;
+  justify-content: space-evenly;
 }

@@ -93,7 +93,7 @@ const ArticleHome = () => {
         <div className="article-filters">
           <div className="left-buttons">
             <button onClick={handleCompletedOnly}>
-              {completedOnly ? "모든 글 보기" : "모집 가능한 글만 보기"}
+              {completedOnly ? "모든 글 보기" : "모집 가능한 글 보기"}
             </button>
             <button onClick={handleSortByTime}>
               {sortByTime ? "오래된순" : "최신순"}
@@ -108,7 +108,7 @@ const ArticleHome = () => {
         </div>
       </div>
 
-      <ArticleList articles={articles} />
+      <ArticleList articles={articles}/>
       <div className="pagination">
         <Button
           onClick={() => setPage(prev => Math.max(prev - 1, 0))}
