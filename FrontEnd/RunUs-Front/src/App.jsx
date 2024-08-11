@@ -22,6 +22,7 @@ import TeamQR from "./pages/Running/Team/TeamQR";
 import ArticleCreate from "./pages/Community/ArticleCreate";
 import ArticleDetail from "./pages/Community/ArticleDetail";
 import MyPageEdit from "./pages/MyPage/MyPageEdit";
+import MyPageLocation from "./pages/MyPage/MyPageLocation";
 import CountDown from "./pages/Running/Team/CountDown";
 import TeamCheck from "./pages/Running/Team/TeamCheck";
 import ProtectedRoute from "./components/common/ProtectedRoute";
@@ -197,6 +198,14 @@ const AppContent = () => {
           element={
             <ProtectedRoute>
               <MyPageEdit />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-page-editLocation"
+          element={
+            <ProtectedRoute>
+              <MyPageLocation />
             </ProtectedRoute>
           }
         />
