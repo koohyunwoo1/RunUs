@@ -18,7 +18,10 @@ const LogOutHome = () => {
       <div className="LogOutHome">
         <div className="Runsubtitle">R u n</div>
         <br />
-        <div className="Ussubtitle">U s</div>
+        <div>
+          <div className="Ussubtitle">U</div>
+          <div className="Ussubtitle2">s</div>
+        </div>
       </div>
     </div>
   );

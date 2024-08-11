@@ -94,30 +94,27 @@ const ArticleHome = () => {
             />
             <button type="submit">검색</button>
           </form>
-        <div className="article-filters">
-          <div className="left-buttons">
-            <button onClick={handleCompletedOnly}>
-              {completedOnly ? "모든 글 보기" : "모집 가능한 글 보기"}
-            </button>
-            <button onClick={handleSortByTime}>
-              {sortByTime ? "오래된순" : "최신순"}
-            </button>
-          </div>
-          <div className="right-button">  
-            <Button
-              className="article-create-button"
-              text={"글 쓰기"} 
-              onClick={() => nav('/article-create')}/>
+          <div className="article-filters">
+            <div className="left-buttons">
+              <button onClick={handleCompletedOnly}>
+                {completedOnly ? "모든 글 보기" : "모집 가능한 글 보기"}
+              </button>
+              <button onClick={handleSortByTime}>
+                {sortByTime ? "오래된순" : "최신순"}
+              </button>
+            </div>
+            <div className="right-button">
+              <Button
+                className="article-create-button"
+                text={"글 쓰기"}
+                onClick={() => nav("/article-create")}
+              />
             </div>
           </div>
         </div>
-      <ArticleList articles={articles}/>
-      <Pagination
-          page={page}
-          totalPages={totalPages}
-          setPage={setPage}
-        />
-    </div>
+        <ArticleList articles={articles} />
+        <Pagination page={page} totalPages={totalPages} setPage={setPage} />
+      </div>
       <TabBar />
     </>
   );

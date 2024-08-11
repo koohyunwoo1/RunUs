@@ -17,25 +17,11 @@
     opacity: 1; 
   }
   100% {
-    transform: translateX(2000px) rotate(-30deg); 
+    transform: translateX(2000px) rotate(200deg); 
     opacity: 0; 
   }
 }
 
-@keyframes bounceOutLeft {
-  0% {
-    transform: translateX(0) rotate(0deg); 
-    opacity: 1; 
-  }
-  50% {
-    transform: translateX(80px) rotate(10deg); 
-    opacity: 1; 
-  }
-  100% {
-    transform: translateX(-2000px) rotate(30deg); 
-    opacity: 0; 
-  }
-}
 
 .LogOutHomeContainer {
   position: relative;
@@ -44,7 +30,7 @@
   justify-content: center;
   height: 100vh;
   overflow: hidden; 
-  background: #1e1e1e; 
+  background: black; 
 }
 
 .LogOutHome {
@@ -60,17 +46,24 @@
   margin-right: 80px;
   font-size: 60px; 
   font-family: 'VitroCore'; 
-  color: #98bae3;
+  color: white;
+  animation: bounceOutRight 1.2s ease-in-out 1.2s forwards;
+}
+
+.Ussubtitle {
+  display: inline-block;
+  font-size: 100px; 
+  font-family: 'Cafe24'; 
+  color: white;
   animation: bounceOutRight 1.2s ease-in-out 1.2s forwards;
 }
 
 
-
-.Ussubtitle {
+.Ussubtitle2 {
   display: inline-block;
-  margin-left: 80px;
-  font-size: 60px; 
-  font-family: 'VitroCore'; 
-  color: #98bae3;
+  margin-left: 10px;
+  font-size: 70px; 
+  font-family: 'Cafe24'; 
+  color: white;
   animation: bounceOutRight 1.2s ease-in-out 1.2s forwards;
 }
