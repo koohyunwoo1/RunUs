@@ -139,7 +139,7 @@ const UserProvider = ({ children }) => {
   let reconnectAttempts = 0;
 
   const initializeWebSocket = (roomId) => {
-    const wsUrl = `https://i11e103.p.ssafy.io:8004/ws/chat?roomId=${roomId}`;
+    const wsUrl = `https://i11e103.p.ssafy.io:8001/ws/chat?roomId=${roomId}`;
     document.getElementById("websocket-url").textContent = wsUrl;
 
     socketRef.current = new WebSocket(wsUrl);

@@ -39,12 +39,6 @@ const TeamPage = () => {
   const [longitude, setLongitude] = useState(null);
   const latestLocation = useRef({ latitude: null, longitude: null });
 
-  const handleStart = () => {
-    setIsRunning(true);
-    setIsRunningStarted(true);
-    setIsWebSocketConnected(true);
-    startSendingLocation();
-  };
 
   useEffect(() => {
     if (!userData) {
@@ -73,7 +67,7 @@ const TeamPage = () => {
 
         WebSocketManager.on("message", (receivedData) => {
           console.log("Received message:", receivedData);
-
+        
           if (receivedData.type === "USERLIST_UPDATE") {
             const messageContent = receivedData.message;
             const userList = messageContent.split("현재 방에 있는 사용자: ")[1];
@@ -86,24 +80,26 @@ const TeamPage = () => {
             alert("방장이 방을 종료했습니다. 방을 나가겠습니다.");
             navigate("/home");
           } else if (receivedData.type === "LOCATION") {
-            const { sender, longitude, latitude, userId, message } = receivedData;
-            const displayName = userId === roomOwnerId ? `${sender}` : sender;
-
-            const distanceMatch = message.match(/총 이동 거리: ([0-9.]+) km/);
-            const distance = distanceMatch ? `${distanceMatch[1]} km` : "0.00 km";
-
+            const { sender, distance, longitude, latitude, userId, message } = receivedData;
+             const displayName = userId === roomOwnerId ? `${sender}` : sender;
+        
+            // const distanceMatch = message.match(/총 이동 거리: ([0-9.]+) km/);
+            // const distance = distanceMatch ? `${distanceMatch[1]} km` : "0.00 km";
+        
             setUserPositions((prevPositions) => ({
               ...prevPositions,
               [userId]: { nickname: displayName, latitude, longitude, userId },
             }));
-
+        
             setUserNames((prevUserNames) =>
               prevUserNames.map((user) =>
                 user.name === sender ? { ...user, distance } : user
               )
             );
           } else if (receivedData.type === "START") {
-            handleStart();
+            // Start running session for all users when the "START" message is received
+            setIsRunning(true);
+            setIsRunningStarted(true); // This should start the running session for all users
           } else if (receivedData.type === "QUIT") {
             try {
               const response = axios.post("api/v1/record/result_save", null, {
@@ -116,7 +112,7 @@ const TeamPage = () => {
                 },
               });
               console.log(response);
-
+        
               navigate(`/home`);
             } catch (err) {
               console.error(err);
@@ -144,31 +140,30 @@ const TeamPage = () => {
 
   const startSendingLocation = () => {
     const updateLocation = () => {
-      if (isWebSocketConnected && isRunning) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            latestLocation.current = { latitude, longitude };
-            const locationMessage = {
-              type: "LOCATION",
-              roomId: waitingRoomId,
-              sender: userData.nickname,
-              message: `총 이동 거리: ${distance} km`,
-              userId: userData.userId,
-              longitude,
-              latitude,
-            };
-            WebSocketManager.send(locationMessage);
-          },
-          (error) => console.error("Error getting location:", error),
-          { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-        );
+      if (isWebSocketConnected) {
+        const { latitude, longitude } = latestLocation.current;
+        if (latitude !== null && longitude !== null) {
+          const locationMessage = {
+            type: "LOCATION",
+            roomId: waitingRoomId,
+            sender: userData.nickname,
+            message: "",
+            userId: userData.userId,
+            longitude,
+            latitude,
+            distance
+          };
+          WebSocketManager.send(locationMessage);
+        }
       }
     };
 
     const intervalId = setInterval(updateLocation, 5000);
     return () => clearInterval(intervalId);
   };
+
+ 
+
 
   const handleStartButtonClick = () => {
     console.log(userData);
@@ -185,7 +180,9 @@ const TeamPage = () => {
       WebSocketManager.ws.readyState === WebSocket.OPEN
     ) {
       WebSocketManager.send(startMessage);
-      handleStart();
+      setIsWebSocketConnected(true);
+      setIsRunningStarted(true);
+      setIsRunning(true);
     } else {
       console.warn("WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.");
     }
@@ -260,6 +257,7 @@ const TeamPage = () => {
 
   return (
     <div>
+
       <div className="TeamCreate">
         <div>
           <button
@@ -320,6 +318,7 @@ const TeamPage = () => {
         <div>
           <MapComponent positions={userPositions} roomOwnerId={roomOwnerId} />
         </div>
+
         <div>
           <Running
             distance={distance}
