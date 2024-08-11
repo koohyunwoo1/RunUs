@@ -8,11 +8,6 @@
   margin-top: 100px;
 }
 
-.TeamQR {
-  text-align: center;
-  margin-top: 100px;
-}
-
 .qr-reader-container video {
   object-fit: cover;
 }

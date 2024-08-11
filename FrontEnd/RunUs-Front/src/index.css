@@ -1,0 +1,20 @@
+@font-face {
+  font-family: "VitroCore";
+  src: url("/fonts/VITRO_CORE_TTF.ttf") format("opentype");
+}
+@font-face {
+  font-family: "PreBold";
+  src: url("/fonts/Pretendard-Bold.ttf") format("opentype");
+}
+@font-face {
+  font-family: "PreSemiBold";
+  src: url("/fonts/Pretendard-SemiBold.ttf") format("opentype");
+}
+@font-face {
+  font-family: "PreRegular";
+  src: url("/fonts/Pretendard-Regular.ttf") format("opentype");
+}
+@font-face {
+  font-family: "PreThin";
+  src: url("/fonts/Pretendard-Thin.ttf") format("opentype");
+}

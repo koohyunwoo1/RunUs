@@ -85,7 +85,7 @@ const MyPageProfile = () => {
         onChange={handleImageChange}
         ref={fileInputRef}
       />
-      <h1>{nickname}</h1>
+      <h1 style={{ fontFamily: "PreBold" }}>{nickname}</h1>
     </div>
   );
 };

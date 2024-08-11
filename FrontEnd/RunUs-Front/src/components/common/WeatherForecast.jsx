@@ -8,6 +8,7 @@ const WeatherForecast = () => {
   const weatherDescriptionMap = {
     "clear sky": "맑음",
     "few clouds": "약간의 구름",
+    "overcast clouds": "짙은 구름",
     "scattered clouds": "흐림",
     "broken clouds": "구름이 많이 낀",
     mist: "안개",

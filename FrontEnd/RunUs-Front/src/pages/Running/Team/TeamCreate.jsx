@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 import React, { useState, useEffect, useContext, useRef } from "react";
+=======
+import React, { useState, useEffect, useContext } from "react";
+import TabBar from "../../../components/common/TabBar";
+>>>>>>> eca3ae2a1418dd9387b09e39dcc8fb4f595549c8
 import QRCode from "qrcode.react";
 import "../../../styles/Running/Team/TeamCreate.css";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -254,6 +259,10 @@ const TeamPage = () => {
 
   return (
     <div>
+<<<<<<< HEAD
+=======
+      <TabBar />
+>>>>>>> eca3ae2a1418dd9387b09e39dcc8fb4f595549c8
       <div className="TeamCreate">
         <div>
           <button

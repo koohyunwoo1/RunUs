@@ -61,7 +61,7 @@ const AppContent = () => {
   }, [userData, userId]);
 
   return (
-    <div>
+    <div className="app-content">
       <Routes>
         <Route
           path="/signin"
@@ -202,6 +202,7 @@ const AppContent = () => {
           }
         />
       </Routes>
+      {/* <TabBar /> TabBar를 페이지 콘텐츠 하단에 배치 */}
     </div>
   );
 };

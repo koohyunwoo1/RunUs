@@ -1,9 +1,9 @@
-html,
+/* html,
 body {
   margin: 0;
   padding: 0;
   height: 100%;
-}
+} */
 
 .container3 {
   display: flex;
@@ -23,6 +23,7 @@ body {
   font-size: 200px;
   color: #98bae3;
   animation: fade 1s linear;
+  font-family: "VitroCore";
 }
 
 @keyframes fade {
