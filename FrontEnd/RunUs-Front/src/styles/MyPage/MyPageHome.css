@@ -27,4 +27,37 @@
   margin: 0px;
 }
 
+.MyPageEditSections {
+  width: 100%;
+  background-color: white;
+  margin-top: 20px;
+  padding-bottom: 140px;
+  overflow: hidden;
+  border: 1px solid #ccc;
+}
 
+.MyPageEditSection {
+  width: 90%;
+  padding: 15px 20px;
+  border: 1px solid #ccc;
+  font-size: 18px;
+  cursor: pointer;
+  margin: 0 auto;
+  display: flex; /* 아이콘과 텍스트를 수평으로 정렬 */
+  align-items: center; /* 아이콘과 텍스트가 수직으로 중앙에 오도록 정렬 */
+}
+
+.edit-section-icon {
+  width: 25px; /* 아이콘 크기 조정 */
+  height: 25px;
+  object-fit: contain;
+  margin-right: 10px; /* 텍스트와 아이콘 사이의 간격 */
+}
+
+.MyPageEditSection:first-child {
+  border-top: none;
+}
+
+.MyPageEditSection:hover {
+  background-color: #e9ecef;
+}
