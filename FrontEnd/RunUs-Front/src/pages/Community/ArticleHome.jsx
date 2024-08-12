@@ -3,7 +3,6 @@ import TabBar from "../../components/common/TabBar";
 import "../../styles/Community/ArticleHome.css";
 import ArticleList from "../../components/Community/ArticleList";
 import axios from "axios";
-import Button from "../../components/common/Button";
 import { UserContext } from "../../hooks/UserContext";
 import { useNavigate } from "react-router-dom";
 import Pagination from "../../components/Community/Pagination";
@@ -17,7 +16,7 @@ const fetchRegionName = async (regionId) => {
       return response.data.data.name || "미정";
     }
   } catch (error) {
-    console.error("Error fetching region name:", error);
+    console.error("지역 이름 가져오기 오류:", error);
   }
   return "미정";
 };
@@ -31,7 +30,6 @@ const ArticleHome = () => {
   const [sortByTime, setSortByTime] = useState(false);
   const [completedOnly, setCompletedOnly] = useState(false);
   const [word, setWord] = useState("");
-  // const [searchInitiated, setSearchInitiated] = useState(false);
   const [regionName, setRegionName] = useState("미정");
   const { userData } = useContext(UserContext);
   const size = 10;
@@ -74,13 +72,6 @@ const ArticleHome = () => {
     }
   };
 
-  // useEffect(() => {
-  //   if (searchInitiated) {
-  //     fetchArticles();
-  //     setSearchInitiated(false);
-  //   }
-  // }, [searchInitiated, currentPage, sortByTime, completedOnly, userData, word]);
-
   useEffect(() => {
     if (userData && userData.regionId) {
       fetchArticles();
@@ -95,9 +86,7 @@ const ArticleHome = () => {
     setCompletedOnly((prev) => !prev);
   };
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    // setSearchInitiated(true);
+  const handleSearch = () => {
     setCurrentPage(0);
     fetchArticles();
   };
@@ -112,18 +101,12 @@ const ArticleHome = () => {
   return (
     <>
       <div style={{ backgroundColor: "white" }}>
-        <Header />
+        <Header
+          onSearch={handleSearch}
+          searchValue={word}
+          setSearchValue={setWord}
+        />
         <div className="ArticleHome">
-          {/* <form onSubmit={handleSearch} className="search-form">
-            <input
-              type="text"
-              value={word}
-              onChange={(e) => setWord(e.target.value)}
-              placeholder="검색어를 입력하세요"
-              style={{ borderRadius: "20px" }}
-            />
-            <button type="submit">검색</button>
-          </form> */}
           <div className="article-header">
             <h3
               style={{
