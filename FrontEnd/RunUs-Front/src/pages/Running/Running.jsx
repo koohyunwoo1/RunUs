@@ -4,9 +4,9 @@ import axios from "axios";
 import "../../styles/Running/Solo/SoloModeStart.css";
 
 const Running = ({
-  distance =0,
+  distance,
   setDistance,
-  calories =0,
+  calories,
   setCalories,
   time,
   setTime,
