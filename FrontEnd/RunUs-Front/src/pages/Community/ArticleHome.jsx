@@ -10,6 +10,18 @@ import Pagination from "../../components/Community/Pagination";
 import Header from "../../components/common/Header";
 import CreateArticleButton from "../../components/Community/CreateArticleButton";
 
+const fetchRegionName = async (regionId) => {
+  try {
+    const response = await axios.get(`/api/v1/region-minor/${regionId}`);
+    if (response.data.success) {
+      return response.data.data.name || "미정";
+    }
+  } catch (error) {
+    console.error("Error fetching region name:", error);
+  }
+  return "미정";
+};
+
 const ArticleHome = () => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,6 +32,7 @@ const ArticleHome = () => {
   const [completedOnly, setCompletedOnly] = useState(false);
   const [word, setWord] = useState("");
   // const [searchInitiated, setSearchInitiated] = useState(false);
+  const [regionName, setRegionName] = useState("미정");
   const { userData } = useContext(UserContext);
   const size = 10;
   const nav = useNavigate();
@@ -29,6 +42,8 @@ const ArticleHome = () => {
 
     setLoading(true);
     try {
+      const name = await fetchRegionName(userData.regionId);
+      setRegionName(name);
       let url = `/api/v1/boards/region`;
       const params = {
         regionId: userData.regionId,
@@ -96,36 +111,68 @@ const ArticleHome = () => {
 
   return (
     <>
-      <div>
+      <div style={{ backgroundColor: "white" }}>
         <Header />
         <div className="ArticleHome">
-          <form onSubmit={handleSearch} className="search-form">
+          {/* <form onSubmit={handleSearch} className="search-form">
             <input
               type="text"
               value={word}
               onChange={(e) => setWord(e.target.value)}
               placeholder="검색어를 입력하세요"
+              style={{ borderRadius: "20px" }}
             />
             <button type="submit">검색</button>
-          </form>
+          </form> */}
+          <div className="article-header">
+            <h3
+              style={{
+                textAlign: "center",
+                color: "black",
+                fontSize: "28px",
+                fontFamily: "VitroCore",
+              }}
+            >
+              {regionName}
+            </h3>
 
-          <div className="article-filters">
-            <div className="left-buttons">
-              <button onClick={handleCompletedOnly}>
-                {completedOnly ? "모든 글 보기" : "모집 가능한 글 보기"}
-              </button>
-              <button onClick={handleSortByTime}>
-                {sortByTime ? "오래된순" : "최신순"}
-              </button>
+            <div className="article-filters">
+              <div className="left-buttons">
+                <button
+                  onClick={handleCompletedOnly}
+                  style={{
+                    backgroundColor: "lightgray",
+                    borderRadius: "20px",
+                    color: "black",
+                    border: "none",
+                  }}
+                >
+                  {completedOnly ? "모든 글 보기" : "모집 가능한 글 보기"}
+                </button>
+                <button
+                  onClick={handleSortByTime}
+                  style={{
+                    backgroundColor: "lightgray",
+                    borderRadius: "20px",
+                    color: "black",
+                    border: "none",
+                  }}
+                >
+                  {sortByTime ? "오래된순" : "최신순"}
+                </button>
+              </div>
             </div>
           </div>
+
+          <ArticleList articles={articles} />
         </div>
-        <ArticleList articles={articles} />
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          setPage={setCurrentPage}
-        />
+        <div style={{ marginTop: "40px" }}>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            setPage={setCurrentPage}
+          />
+        </div>
         <CreateArticleButton onClick={handleCreateArticle} />
       </div>
       <TabBar />
