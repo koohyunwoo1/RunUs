@@ -1,16 +1,16 @@
 import "../../styles/Community/Pagination.css"
 
-const Pagination = ({ page, totalPages, setPage }) => {
+const Pagination = ({ currentPage, totalPages, setPage }) => {
     const pagesToShow = 5; // 페이지 버튼 개수
     const pageNumbers = []
 
-    for (let i = Math.max(0, page - Math.floor(pagesToShow / 2)); i <= Math.min(totalPages, page + Math.floor(pagesToShow / 2)); i++) {
+    for (let i = Math.max(0, currentPage - Math.floor(pagesToShow / 2)); i <= Math.min(totalPages -1 , currentPage + Math.floor(pagesToShow / 2)); i++) {
       pageNumbers.push(i)
     }
 
     return (
       <div className="pagination-container">
-        {page > 0 && (
+        {currentPage > 0 && (
           <button
             className="pagination-button"
             onClick={() => setPage(prev => prev - 1)}
@@ -21,13 +21,13 @@ const Pagination = ({ page, totalPages, setPage }) => {
         {pageNumbers.map(number => (
           <button
             key={number}
-            className={`pagination-button ${number === page ? 'active' : ''}`}
+            className={`pagination-button ${number === currentPage ? 'active' : ''}`}
             onClick={() => setPage(number)}
           >
             {number + 1}
           </button>
         ))}
-        {page <= totalPages - 1 && (
+        {currentPage <= totalPages - 2 && (
           <button
             className="pagination-button"
             onClick={() => setPage(prev => prev + 1)}
