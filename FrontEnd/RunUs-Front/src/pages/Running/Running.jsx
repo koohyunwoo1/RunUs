@@ -142,10 +142,6 @@ const Running = ({
     };
   }, [isRunningStarted]);
 
-  const increaseDistance = (additionalDistance) => {
-    setDistance(additionalDistance);
-  };
-
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -187,7 +183,7 @@ const Running = ({
 
   return (
     <div className="SoloModeStart">
-      <button onClick={() => increaseDistance(1000)}>+1000m</button> {/* 1000m 증가 버튼 */}
+      
 
       {error ? (
         <p>Error: {error}</p>

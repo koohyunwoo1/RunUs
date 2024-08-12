@@ -40,12 +40,10 @@ const TeamPage = () => {
   const latestLocation = useRef({ latitude: null, longitude: null, distance: null });
 
   useEffect(() => {
-    // Function to handle the success case of geolocation
     const handleSuccess = (position) => {
       const { latitude, longitude } = position.coords;
       const userId = userData.userId;
 
-      // Update userPositions state with initial location
       setUserPositions((prevPositions) => ({
         ...prevPositions,
         [userId]: {
@@ -57,12 +55,10 @@ const TeamPage = () => {
       }));
     };
 
-    // Function to handle the error case of geolocation
     const handleError = (error) => {
       console.error("Geolocation error:", error);
     };
 
-    // Get the user's current location on component mount
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(handleSuccess, handleError);
     } else {
@@ -93,7 +89,6 @@ const TeamPage = () => {
             userId: userData.userId,
           };
           WebSocketManager.send(message);
-          
         });
 
         WebSocketManager.on("message", (receivedData) => {
@@ -112,10 +107,7 @@ const TeamPage = () => {
             navigate("/home");
           } else if (receivedData.type === "LOCATION") {
             const { sender, distance, longitude, latitude, userId, message } = receivedData;
-             const displayName = userId === roomOwnerId ? `${sender}` : sender;
-        
-            // const distanceMatch = message.match(/총 이동 거리: ([0-9.]+) km/);
-            // const distance = distanceMatch ? `${distanceMatch[1]} km` : "0.00 km";
+            const displayName = userId === roomOwnerId ? `${sender}` : sender;
         
             setUserPositions((prevPositions) => ({
               ...prevPositions,
@@ -124,13 +116,12 @@ const TeamPage = () => {
         
             setUserNames((prevUserNames) =>
               prevUserNames.map((user) =>
-                user.name === sender ? { ...user,  distance: `${distance.toFixed(2)} km` } : user
+                user.name === sender ? { ...user, distance: `${distance.toFixed(2)} km` } : user
               )
             );
           } else if (receivedData.type === "START") {
-            // Start running session for all users when the "START" message is received
             setIsRunning(true);
-            setIsRunningStarted(true); // This should start the running session for all users
+            setIsRunningStarted(true);
           } else if (receivedData.type === "QUIT") {
             try {
               const response = axios.post("api/v1/record/result_save", null, {
@@ -185,7 +176,7 @@ const TeamPage = () => {
             distance,
           };
           WebSocketManager.send(locationMessage);
-          console.log("Sent location message:", locationMessage); // 로그 추가
+          console.log("Sent location message:", locationMessage);
         }
       }
     };
@@ -282,9 +273,26 @@ const TeamPage = () => {
     latestLocation.current = { latitude, longitude, distance: newDistance };
   };
 
+  const updateDistance = (newDistance) => {
+    setDistance(newDistance);
+    
+    if (isWebSocketConnected) {
+      const locationMessage = {
+        type: "LOCATION",
+        roomId: waitingRoomId,
+        sender: userData.nickname,
+        message: "",
+        userId: userData.userId,
+        longitude: latestLocation.current.longitude,
+        latitude: latestLocation.current.latitude,
+        distance: newDistance,
+      };
+      WebSocketManager.send(locationMessage);
+    }
+  };
+
   return (
     <div>
-
       <div className="TeamCreate">
         <div>
           <button
@@ -349,7 +357,7 @@ const TeamPage = () => {
         <div>
           <Running
             distance={distance}
-            setDistance={setDistance}
+            setDistance={updateDistance}
             calories={calories}
             setCalories={setCalories}
             time={time}
