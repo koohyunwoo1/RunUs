@@ -2,6 +2,7 @@ package runus.runus.board.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import runus.runus.api.NotFoundElementException;
 import runus.runus.board.dto.RegionMajorDTO;
 import runus.runus.board.dto.RegionMinorDTO;
 import runus.runus.board.entity.RegionMajor;
@@ -37,7 +38,7 @@ public class RegionService {
     // 기존 메서드를 수정
     public RegionMinorDTO getMajorRegionByMinorId(int minorId) {
         RegionMinor regionMinor = regionMinorRepository.findById(minorId)
-                .orElseThrow(() -> new RuntimeException("Region not found"));
+                .orElseThrow(() -> new NotFoundElementException("Region not found"));
         return new RegionMinorDTO(regionMinor.getRegionMinorId(), regionMinor.getRegionMinorName(), regionMinor.getParentId());
     }
 }
