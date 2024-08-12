@@ -4,9 +4,9 @@ import axios from "axios";
 import "../../styles/Running/Solo/SoloModeStart.css";
 
 const Running = ({
-  distance,
+  distance =0,
   setDistance,
-  calories,
+  calories =0,
   setCalories,
   time,
   setTime,
@@ -68,7 +68,8 @@ const Running = ({
           setLocation(correctedLocation);
           onLocationUpdate(
             correctedLocation.latitude,
-            correctedLocation.longitude
+            correctedLocation.longitude,
+            correctedLocation.distance
           );
         } else {
           setDistance((prevDistance) => prevDistance + dist);
@@ -77,9 +78,10 @@ const Running = ({
             longitude,
             timestamp: currentTime,
             speed,
+            distance
           };
-          setLocation({ latitude, longitude });
-          onLocationUpdate(latitude, longitude); // Pass location to parent
+          setLocation({ latitude, longitude, distance });
+          onLocationUpdate(latitude, longitude, distance); // Pass location to parent
         }
 
         const calculatedCalories = calculateCalories(distance);
@@ -90,9 +92,10 @@ const Running = ({
           longitude,
           timestamp: currentTime,
           speed,
+          distance
         };
-        setLocation({ latitude, longitude });
-        onLocationUpdate(latitude, longitude); // Pass location to parent
+        setLocation({ latitude, longitude, distance });
+        onLocationUpdate(latitude, longitude, distance); // Pass location to parent
       }
     };
 
@@ -139,6 +142,10 @@ const Running = ({
     };
   }, [isRunningStarted]);
 
+  const increaseDistance = (additionalDistance) => {
+    setDistance(additionalDistance);
+  };
+
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -180,6 +187,8 @@ const Running = ({
 
   return (
     <div className="SoloModeStart">
+      <button onClick={() => increaseDistance(1000)}>+1000m</button> {/* 1000m 증가 버튼 */}
+
       {error ? (
         <p>Error: {error}</p>
       ) : (

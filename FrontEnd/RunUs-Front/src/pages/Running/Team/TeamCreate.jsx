@@ -37,8 +37,38 @@ const TeamPage = () => {
   const [time, setTime] = useState(0);
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
-  const latestLocation = useRef({ latitude: null, longitude: null });
+  const latestLocation = useRef({ latitude: null, longitude: null, distance: null });
 
+  useEffect(() => {
+    // Function to handle the success case of geolocation
+    const handleSuccess = (position) => {
+      const { latitude, longitude } = position.coords;
+      const userId = userData.userId;
+
+      // Update userPositions state with initial location
+      setUserPositions((prevPositions) => ({
+        ...prevPositions,
+        [userId]: {
+          nickname: userData.nickname,
+          latitude,
+          longitude,
+          userId,
+        },
+      }));
+    };
+
+    // Function to handle the error case of geolocation
+    const handleError = (error) => {
+      console.error("Geolocation error:", error);
+    };
+
+    // Get the user's current location on component mount
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(handleSuccess, handleError);
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
+  }, [userData]);
 
   useEffect(() => {
     if (!userData) {
@@ -63,6 +93,7 @@ const TeamPage = () => {
             userId: userData.userId,
           };
           WebSocketManager.send(message);
+          
         });
 
         WebSocketManager.on("message", (receivedData) => {
@@ -93,7 +124,7 @@ const TeamPage = () => {
         
             setUserNames((prevUserNames) =>
               prevUserNames.map((user) =>
-                user.name === sender ? { ...user, distance } : user
+                user.name === sender ? { ...user,  distance: `${distance.toFixed(2)} km` } : user
               )
             );
           } else if (receivedData.type === "START") {
@@ -106,7 +137,7 @@ const TeamPage = () => {
                 params: {
                   user_id: userData.userId,
                   party_id: party,
-                  distance: totalDistance,
+                  distance: distance,
                   time: elapsedTime,
                   kcal: totalCalories,
                 },
@@ -141,8 +172,8 @@ const TeamPage = () => {
   const startSendingLocation = () => {
     const updateLocation = () => {
       if (isWebSocketConnected) {
-        const { latitude, longitude } = latestLocation.current;
-        if (latitude !== null && longitude !== null) {
+        const { latitude, longitude, distance } = latestLocation.current;
+        if (latitude !== null && longitude !== null && distance !== null && userData.nickname !== null && userData.nickname !== "null") {
           const locationMessage = {
             type: "LOCATION",
             roomId: waitingRoomId,
@@ -151,9 +182,10 @@ const TeamPage = () => {
             userId: userData.userId,
             longitude,
             latitude,
-            distance
+            distance,
           };
           WebSocketManager.send(locationMessage);
+          console.log("Sent location message:", locationMessage); // 로그 추가
         }
       }
     };
@@ -161,9 +193,6 @@ const TeamPage = () => {
     const intervalId = setInterval(updateLocation, 5000);
     return () => clearInterval(intervalId);
   };
-
- 
-
 
   const handleStartButtonClick = () => {
     console.log(userData);
@@ -235,9 +264,6 @@ const TeamPage = () => {
 
   const isRoomOwner =
     roomOwnerId == Number(localStorage.getItem("userId").trim());
-  console.log(roomOwnerId);
-  console.log(localStorage.getItem("userId"));
-  console.log(isRoomOwner);
 
   useEffect(() => {
     let stopSendingLocation;
@@ -251,8 +277,9 @@ const TeamPage = () => {
     };
   }, [isRunning, isWebSocketConnected]);
 
-  const handleLocationUpdate = (latitude, longitude) => {
-    latestLocation.current = { latitude, longitude };
+  const handleLocationUpdate = (latitude, longitude, newDistance) => {
+    setDistance(newDistance);
+    latestLocation.current = { latitude, longitude, distance: newDistance };
   };
 
   return (
@@ -330,6 +357,7 @@ const TeamPage = () => {
             onLocationUpdate={handleLocationUpdate}
             isRunningStarted={isRunningStarted}
           />
+          <p>{distance}</p>
         </div>
       </div>
     </div>
