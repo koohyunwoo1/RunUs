@@ -1,15 +1,27 @@
 import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom"; // useNavigate와 useLocation 훅을 가져옵니다.
+import { useNavigate, useLocation } from "react-router-dom";
 import "../../styles/Common/Header.css";
 import logo from "../../assets/Logo.png";
+import dodbogi from "../../assets/dodbogi.png";
 
-const Header = () => {
-  const [isDropdownOpen, setDropdownOpen] = useState(false);
-  const navigate = useNavigate(); // useNavigate 훅을 사용하여 navigate 함수를 가져옵니다.
-  const location = useLocation(); // useLocation 훅을 사용하여 현재 경로를 가져옵니다.
+const Header = ({ onSearch, searchValue, setSearchValue }) => {
+  const [isSearchVisible, setSearchVisible] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogoClick = () => {
     navigate("/home");
+  };
+
+  const toggleSearch = () => {
+    setSearchVisible((prev) => !prev);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (onSearch) {
+      onSearch();
+    }
   };
 
   return (
@@ -19,10 +31,37 @@ const Header = () => {
           src={logo}
           alt="Logo"
           className="Header-logo"
-          onClick={handleLogoClick} // 로고 클릭 시 handleLogoClick 호출
+          onClick={handleLogoClick}
         />
+        {location.pathname === "/article-home" && (
+          <button onClick={toggleSearch} className="header-search-toggle">
+            <img
+              src={dodbogi}
+              alt="돋보기 아이콘"
+              className="header-search-icon"
+            />
+          </button>
+        )}
       </div>
+
+      {isSearchVisible && (
+        <div className="header-search-container">
+          <form onSubmit={handleSearchSubmit} className="header-search-form">
+            <input
+              type="text"
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              placeholder="검색어를 입력하세요"
+              className="header-search-input"
+            />
+            <button type="submit" className="header-search-button">
+              검색
+            </button>
+          </form>
+        </div>
+      )}
     </>
   );
 };
+
 export default Header;
