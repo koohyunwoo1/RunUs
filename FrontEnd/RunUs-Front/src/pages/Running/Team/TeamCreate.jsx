@@ -39,7 +39,6 @@ const TeamPage = () => {
   const [longitude, setLongitude] = useState(null);
   const latestLocation = useRef({ latitude: null, longitude: null });
 
-
   useEffect(() => {
     if (!userData) {
       console.log("User data is null");
@@ -67,7 +66,7 @@ const TeamPage = () => {
 
         WebSocketManager.on("message", (receivedData) => {
           console.log("Received message:", receivedData);
-        
+
           if (receivedData.type === "USERLIST_UPDATE") {
             const messageContent = receivedData.message;
             const userList = messageContent.split("현재 방에 있는 사용자: ")[1];
@@ -80,17 +79,18 @@ const TeamPage = () => {
             alert("방장이 방을 종료했습니다. 방을 나가겠습니다.");
             navigate("/home");
           } else if (receivedData.type === "LOCATION") {
-            const { sender, distance, longitude, latitude, userId, message } = receivedData;
-             const displayName = userId === roomOwnerId ? `${sender}` : sender;
-        
+            const { sender, distance, longitude, latitude, userId, message } =
+              receivedData;
+            const displayName = userId === roomOwnerId ? `${sender}` : sender;
+
             // const distanceMatch = message.match(/총 이동 거리: ([0-9.]+) km/);
             // const distance = distanceMatch ? `${distanceMatch[1]} km` : "0.00 km";
-        
+
             setUserPositions((prevPositions) => ({
               ...prevPositions,
               [userId]: { nickname: displayName, latitude, longitude, userId },
             }));
-        
+
             setUserNames((prevUserNames) =>
               prevUserNames.map((user) =>
                 user.name === sender ? { ...user, distance } : user
@@ -112,7 +112,7 @@ const TeamPage = () => {
                 },
               });
               console.log(response);
-        
+
               navigate(`/home`);
             } catch (err) {
               console.error(err);
@@ -151,7 +151,7 @@ const TeamPage = () => {
             userId: userData.userId,
             longitude,
             latitude,
-            distance
+            distance,
           };
           WebSocketManager.send(locationMessage);
         }
@@ -161,9 +161,6 @@ const TeamPage = () => {
     const intervalId = setInterval(updateLocation, 5000);
     return () => clearInterval(intervalId);
   };
-
- 
-
 
   const handleStartButtonClick = () => {
     console.log(userData);
@@ -257,7 +254,6 @@ const TeamPage = () => {
 
   return (
     <div>
-
       <div className="TeamCreate">
         <div>
           <button
@@ -288,10 +284,7 @@ const TeamPage = () => {
               </button>
             )}
             {isRoomOwner && isRunning && (
-              <button
-                onClick={handleQuit}
-                className="TeamCreateButton"
-              >
+              <button onClick={handleQuit} className="TeamCreateButton">
                 Quit
               </button>
             )}

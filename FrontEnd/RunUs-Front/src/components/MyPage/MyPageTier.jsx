@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "../../styles/MyPage/MyPageTier.css";
 import axios from "axios";
 import { CiCircleQuestion } from "react-icons/ci";
@@ -17,7 +17,12 @@ const MyPageTier = () => {
   const [xp, setXp] = useState(0);
   const [currentTier, setCurrentTier] = useState(tiers[0]);
   const [showModal, setShowModal] = useState(false);
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [isClicked, setIsClicked] = useState(false);
   const userId = localStorage.getItem("userId");
+
+  const cardRef = useRef(null);
+  const [rect, setRect] = useState(null);
 
   useEffect(() => {
     if (userId) {
@@ -35,33 +40,88 @@ const MyPageTier = () => {
     }
   }, [userId]);
 
+  useEffect(() => {
+    if (cardRef.current) {
+      setRect(cardRef.current.getBoundingClientRect());
+    }
+  }, [cardRef.current]);
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (rect) {
+        const left = e.clientX - rect.left;
+        const top = e.clientY - rect.top;
+        const centerX = left - rect.width / 2;
+        const centerY = top - rect.height / 2;
+        const d = Math.sqrt(centerX ** 2 + centerY ** 2);
+
+        cardRef.current.style.boxShadow = `
+          ${-centerX / 10}px ${-centerY / 10}px 10px rgba(0, 0, 0, 0.1)
+        `;
+
+        cardRef.current.style.transform = `
+          rotate3d(
+            ${-centerY / 100}, ${centerX / 100}, 0, ${d / 10}deg
+          )
+        `;
+
+        cardRef.current.classList.add("mousemove-effect");
+      }
+    };
+
+    const handleMouseLeave = () => {
+      cardRef.current.style.boxShadow = "";
+      cardRef.current.style.transform = "";
+      cardRef.current.classList.remove("mousemove-effect");
+    };
+
+    const cardElement = cardRef.current;
+    if (cardElement) {
+      cardElement.addEventListener("mousemove", handleMouseMove);
+      cardElement.addEventListener("mouseleave", handleMouseLeave);
+    }
+
+    return () => {
+      if (cardElement) {
+        cardElement.removeEventListener("mousemove", handleMouseMove);
+        cardElement.removeEventListener("mouseleave", handleMouseLeave);
+      }
+    };
+  }, [rect]);
+
   const getNextTierInfo = () => {
     const nextTier = tiers.find((tier) => tier.min > xp);
     const nextTierXp = nextTier ? nextTier.min - xp : 0;
     return { name: nextTier ? nextTier.name : "최고 티어", xp: nextTierXp };
   };
 
-  // 모달 열기
   const openModal = () => setShowModal(true);
-
-  // 모달 닫기
   const closeModal = () => setShowModal(false);
-
-  // 모달 외부 클릭 시 닫기
   const handleOverlayClick = (e) => {
-    if (e.target.classList.contains('tier_modal-overlay')) {
+    if (e.target.classList.contains("tier_modal-overlay")) {
       closeModal();
     }
   };
 
+  const handleCardClick = () => {
+    setIsClicked(true);
+    setTimeout(() => setIsClicked(false), 800); // 클릭 애니메이션 지속 시간과 맞추기
+  };
+
   return (
     <>
-      <div className={`card ${currentTier.color}`}>
+      <div
+        className={`card ${currentTier.color} ${isFlipped ? "flip" : ""} ${
+          isClicked ? "clicked" : ""
+        }`}
+        ref={cardRef} // Attach ref to card element
+        onClick={handleCardClick}
+      >
         <div className="tier-header">
           <h2 style={{ fontFamily: "VitroCore" }}>{currentTier.name}</h2>
-          <div>
+          {/* <div>
             <CiCircleQuestion className="tierHelp" onClick={openModal} />
-          </div>
+          </div> */}
         </div>
         <p
           style={{
