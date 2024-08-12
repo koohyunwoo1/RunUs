@@ -245,13 +245,13 @@ const SoloModeStart = () => {
               <h1 style={{ fontSize: "30px" }}>
                 {formatTime(time)} <br />
               </h1>
-              시간
+              <div style={{ fontStyle: "oblique" }}>시간</div>
             </div>
             <div>
               <h1 style={{ fontSize: "30px" }}>
                 {parseInt(calories.toFixed(2))} <br />
               </h1>
-              칼로리
+              <div style={{ fontStyle: "oblique" }}>칼로리</div>
             </div>
           </div>
 

@@ -199,71 +199,42 @@ const MyPageEdit = () => {
   return (
     <div>
       <div className="MyPageEdit">
-        <h1>회원 정보 수정</h1>
+        <h1>위치 수정</h1>
         <form onSubmit={handleSubmit} className="MyPageEditForm">
           <div className="memberEditDiv">
-            <label className="MyPageEditLabel">닉네임</label>
-            <input
-              type="text"
-              name="nickname"
-              className="MyPageEditInput"
-              value={form.nickname}
-              onChange={handleChange}
-            />
-            {errors.nickname && (
-              <p className="MyPageEditError">{errors.nickname}</p>
+            <select
+              name="regionMajor"
+              className="SignUpInput"
+              value={form.regionMajor}
+              onChange={handleSelectChange}
+            >
+              <option value="">시/도 선택</option>
+              {regionMajorOptions.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.name}
+                </option>
+              ))}
+            </select>
+            {errors.regionMajor && (
+              <p className="SignUpError">{errors.regionMajor}</p>
             )}
           </div>
-          <div className="memberEditDiv">
-            <label className="MyPageEditLabel">휴대전화 번호</label>
-            <input
-              type="text"
-              name="phoneNumber"
-              className="MyPageEditInput"
-              value={form.phoneNumber}
-              onChange={handleChange}
-            />
-            {errors.phoneNumber && (
-              <p className="MyPageEditError">{errors.phoneNumber}</p>
-            )}
-          </div>
-          <div className="memberEditDiv">
-            <label className="MyPageEditLabel">비밀번호</label>
-            <input
-              type="password"
-              name="password"
-              className="MyPageEditInput"
-              value={form.password}
-              onChange={handleChange}
-            />
-            {errors.password && (
-              <p className="MyPageEditError">{errors.password}</p>
-            )}
-          </div>
-          <div className="memberEditDiv">
-            <label className="MyPageEditLabel">비밀번호 확인</label>
-            <input
-              type="password"
-              name="confirmPassword"
-              className="MyPageEditInput"
-              value={form.confirmPassword}
-              onChange={handleChange}
-            />
-            {errors.confirmPassword && (
-              <p className="MyPageEditError">{errors.confirmPassword}</p>
-            )}
-          </div>
-          <div className="memberEditDiv">
-            <label className="MyPageEditLabel">몸무게 (kg)</label>
-            <input
-              type="number"
-              name="weight"
-              className="MyPageEditInput"
-              value={form.weight}
-              onChange={handleChange}
-            />
-            {errors.weight && (
-              <p className="MyPageEditError">{errors.weight}</p>
+          <div className="inputDiv">
+            <select
+              name="regionId"
+              className="SignUpInput"
+              value={form.regionId}
+              onChange={handleSelectChange}
+            >
+              <option value="">시/군/구 선택</option>
+              {regionMinorOptions.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.name}
+                </option>
+              ))}
+            </select>
+            {errors.regionId && (
+              <p className="SignUpError">{errors.regionId}</p>
             )}
           </div>
           <Button className={"MyPageEditButton"} text={"수정 완료"} />
