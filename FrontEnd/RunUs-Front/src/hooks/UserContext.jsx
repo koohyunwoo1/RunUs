@@ -7,8 +7,9 @@ import "../styles/Common/CustomSwal.css";
 // fcm setteing
 import {
   requestPermissionAndGetToken,
-  sendTokenToServer,
+  // sendTokenToServer,
   deleteTokenFromServer,
+  resetFCMState,
 } from "./fcm";
 // fcm setting end
 
@@ -48,13 +49,18 @@ const UserProvider = ({ children }) => {
 
         // fcm code
         // FCM 토큰 요청 및 서버로 전송
-        const fcmToken = await requestPermissionAndGetToken(
-          response.data.data.userId
-        );
-        if (fcmToken) {
-          console.log("FCM token obtained and sent to server");
-        } else {
-          console.log("Failed to obtain or send FCM token");
+        try {
+          const fcmToken = await requestPermissionAndGetToken(
+            response.data.data.userId
+          );
+          if (fcmToken) {
+            console.log("FCM token obtained and sent to server");
+          } else {
+            console.log("Failed to obtain or send FCM token");
+          }
+        } catch (fcmError) {
+          console.error("Error in FCM token process:", fcmError);
+          // FCM 오류가 로그인 프로세스를 방해하지 않도록 합니다.
         }
         // fcm code end
       } else {
@@ -92,6 +98,7 @@ const UserProvider = ({ children }) => {
       if (response.data.success) {
         // fcm code
         await deleteTokenFromServer(userId);
+        resetFCMState();
         // fcm code end
 
         localStorage.removeItem("AuthToken");
