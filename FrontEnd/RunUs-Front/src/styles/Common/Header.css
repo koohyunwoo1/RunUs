@@ -1,10 +1,3 @@
-.Header-logo {
-  padding-left: 5px;
-  width: 60px;
-  height: 60px;
-  cursor: pointer;
-}
-
 .header2 {
   position: fixed;
   top: 0;
@@ -17,4 +10,91 @@
   z-index: 1000;
   transition: background-color 0.3s ease;
   background-color: white;
+}
+
+.Header-logo {
+  padding-left: 5px;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+}
+
+.header-search-toggle {
+  border: none;
+  background: none;
+  margin-left: auto;
+  padding-right: 20px;
+  cursor: pointer;
+}
+
+.header-search-icon {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.3s ease;
+}
+
+.header-search-toggle:hover .header-search-icon {
+  transform: scale(1.2); /* 아이콘 확대 효과 */
+}
+
+.header-search-container {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  padding: 15px 0; /* 검색창 주위에 여백 추가 */
+  background-color: #ffffff;
+  /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
+  display: flex;
+  justify-content: center;
+  z-index: 999;
+  opacity: 0;
+  animation: fadeIn 0.4s forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+.header-search-form {
+  display: flex;
+  align-items: center;
+  width: 80%; /* 검색창 넓이 설정 */
+  max-width: 600px; /* 최대 넓이 제한 */
+  background: white;
+  border-radius: 30px;
+  padding: 5px 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.header-search-input {
+  flex: 1; /* 입력 필드가 가능한 공간을 모두 차지하도록 설정 */
+  height: 40px; /* 높이 조정 */
+  padding: 10px 15px; /* 내부 여백 설정 */
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  outline: none;
+}
+
+.header-search-button {
+  border: none;
+  background-color: #007bff; /* 버튼 색상 */
+  color: white;
+  padding: 10px 20px; /* 버튼 내부 여백 설정 */
+  margin-left: 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 16px; /* 글자 크기 */
+  line-height: normal; /* 텍스트가 위아래로 흐르는 문제를 방지 */
+  display: flex; /* Flexbox 사용하여 텍스트 정렬 */
+  align-items: center; /* 수직 정렬을 중앙으로 설정 */
+  justify-content: center; /* 수평 정렬을 중앙으로 설정 */
+  transition: background-color 0.3s ease;
+}
+
+.header-search-button:hover {
+  background-color: #0056b3; /* 버튼 호버 색상 */
 }
