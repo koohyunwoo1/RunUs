@@ -13,5 +13,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 // const messaging = getMessaging(app);
+const messaging = null;
 
 export { messaging };
