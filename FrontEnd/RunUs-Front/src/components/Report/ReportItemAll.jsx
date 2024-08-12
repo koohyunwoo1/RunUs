@@ -6,7 +6,10 @@ import { FaRunning, FaFire } from "react-icons/fa";
 
 const ReportItem = () => {
   const [reportData, setReportData] = useState([]);
+  const [page, setPage] = useState(0)
+  const [size] = useState(10)
   const [error, setError] = useState(null);
+  const [hasMore, setHasMore] = useState(true)
   const [filteredData, setFilteredData] = useState([]);
   const [filterMode, setFilterMode] = useState("all"); // 'all', 'solo', 'team'
   const userId = localStorage.getItem("userId");
@@ -15,14 +18,21 @@ const ReportItem = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get("api/v1/record/all", {
-          params: { user_id: userId },
+          params: { 
+            userId: userId,
+            page: page,
+            size: size,
+          },
         });
+
+        console.log('API response:', response.data);
         const data = response.data.data || [];
         const sortedData = data.sort(
           (a, b) => new Date(b.recordDate) - new Date(a.recordDate)
         );
 
-        setReportData(sortedData);
+        setReportData(prevData => [...prevData, ...sortedData]);
+        setHasMore(data.length === size)
         setError(null);
       } catch (err) {
         setError(err.message);
@@ -31,7 +41,18 @@ const ReportItem = () => {
     };
 
     fetchData();
-  }, [userId]);
+  }, [userId, page]);
+
+  const handleScroll = () => {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight && hasMore) {
+      setPage(prevPage => prevPage + 1) // 페이지 번호를 증가시켜 다음 데이터 요청
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [hasMore])
 
   const convertDistance = (meters) => {
     return (meters / 1000).toFixed(2);
@@ -66,6 +87,22 @@ const ReportItem = () => {
     setFilterMode(event.target.value);
   };
 
+  const formatDate = (timestamp) => {
+    console.log('Timestamp received:', timestamp)
+    if (!timestamp) {
+      return "N/A"; // or any other placeholder text
+    }
+
+    // Convert timestamp to Date object
+    const date = new Date(timestamp);
+    
+    // Extract and format date components
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`
+  };
+
   return (
     <div>
       <div className="record_selection">
@@ -95,7 +132,7 @@ const ReportItem = () => {
                 <div className="mode_indicator">
                   {item.party_id === null ? "솔로 모드" : "팀 모드"}
                 </div>
-                <div className="record_date">{item.recordDate}</div>
+                <div className="record_date">{formatDate(item.record_date)}</div>
               </div>
               <div className="record_details">
                 <div className="distance">

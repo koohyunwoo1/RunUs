@@ -26,7 +26,7 @@ const ReportGraph = () => {
           `api/v1/record/graph/${selectedYear}`,
           {
             params: {
-              user_id: userId,
+              userId: userId,
             },
           }
         );
@@ -53,8 +53,8 @@ const ReportGraph = () => {
       try {
         const response = await axios.get("api/v1/record/total_distance", {
           params: {
-            user_id: userId,
-            year: selectedYear,
+            userId: userId,
+            // year: selectedYear,
           },
         });
         setGraphTotalData(response.data.data);
@@ -65,7 +65,7 @@ const ReportGraph = () => {
 
     fetchData();
     fetchTotalData();
-  }, [selectedYear]);
+  }, [userId, selectedYear]);
 
   const handleYearChange = (event) => {
     setSelectedYear(event.target.value);

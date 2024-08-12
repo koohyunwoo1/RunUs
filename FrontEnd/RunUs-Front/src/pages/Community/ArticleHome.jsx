@@ -13,12 +13,12 @@ const ArticleHome = () => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [page, setPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [sortByTime, setSortByTime] = useState(false);
   const [completedOnly, setCompletedOnly] = useState(false);
   const [word, setWord] = useState("");
-  const [searchInitiated, setSearchInitiated] = useState(false);
+  // const [searchInitiated, setSearchInitiated] = useState(false);
   const { userData } = useContext(UserContext);
   const size = 10;
   const nav = useNavigate();
@@ -28,16 +28,24 @@ const ArticleHome = () => {
 
     setLoading(true);
     try {
-      let url = `/api/v1/boards/region/${userData.regionId}`;
+      let url = `/api/v1/boards/region`;
+      const params = {
+        regionId: userData.regionId,
+        size: size,
+        page: currentPage,
+      }
+      
       if (completedOnly) {
-        url += "/incomplete";
+        params.order = "incomplete"
       } else if (sortByTime) {
-        url += "/time";
-      } else if (word) {
-        url += `/${word}`;
+        params.order = "time"
       }
 
-      const response = await axios.get(url, { params: { size, page } });
+      if (word) {
+        params.word = word
+      }
+
+      const response = await axios.get(url, { params });
       const filteredArticles = response.data.data.filter(
         (article) => article.isDeleted !== 1
       );
@@ -50,18 +58,18 @@ const ArticleHome = () => {
     }
   };
 
-  useEffect(() => {
-    if (searchInitiated) {
-      fetchArticles();
-      setSearchInitiated(false);
-    }
-  }, [searchInitiated, page, sortByTime, completedOnly, userData, word]);
+  // useEffect(() => {
+  //   if (searchInitiated) {
+  //     fetchArticles();
+  //     setSearchInitiated(false);
+  //   }
+  // }, [searchInitiated, currentPage, sortByTime, completedOnly, userData, word]);
 
   useEffect(() => {
     if (userData && userData.regionId) {
       fetchArticles();
     }
-  }, [userData, page, sortByTime, completedOnly]);
+  }, [userData, currentPage, sortByTime, completedOnly, word]);
 
   const handleSortByTime = () => {
     setSortByTime((prev) => !prev);
@@ -73,8 +81,9 @@ const ArticleHome = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    setSearchInitiated(true);
-    setPage(0);
+    // setSearchInitiated(true);
+    setCurrentPage(0);
+    fetchArticles()
   };
 
   if (loading) return <p>로딩 중...</p>;
@@ -112,9 +121,13 @@ const ArticleHome = () => {
             </div>
           </div>
         </div>
-        <ArticleList articles={articles} />
-        <Pagination page={page} totalPages={totalPages} setPage={setPage} />
-      </div>
+      <ArticleList articles={articles}/>
+      <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          setPage={setCurrentPage}
+        />
+    </div>
       <TabBar />
     </>
   );
