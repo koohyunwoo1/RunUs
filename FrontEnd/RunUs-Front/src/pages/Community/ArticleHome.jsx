@@ -8,6 +8,7 @@ import { UserContext } from "../../hooks/UserContext";
 import { useNavigate } from "react-router-dom";
 import Pagination from "../../components/Community/Pagination";
 import Header from "../../components/common/Header";
+import CreateArticleButton from "../../components/Community/CreateArticleButton";
 
 const ArticleHome = () => {
   const [articles, setArticles] = useState([]);
@@ -33,16 +34,16 @@ const ArticleHome = () => {
         regionId: userData.regionId,
         size: size,
         page: currentPage,
-      }
-      
+      };
+
       if (completedOnly) {
-        params.order = "incomplete"
+        params.order = "incomplete";
       } else if (sortByTime) {
-        params.order = "time"
+        params.order = "time";
       }
 
       if (word) {
-        params.word = word
+        params.word = word;
       }
 
       const response = await axios.get(url, { params });
@@ -83,7 +84,11 @@ const ArticleHome = () => {
     e.preventDefault();
     // setSearchInitiated(true);
     setCurrentPage(0);
-    fetchArticles()
+    fetchArticles();
+  };
+
+  const handleCreateArticle = () => {
+    nav("/article-create");
   };
 
   if (loading) return <p>로딩 중...</p>;
@@ -103,6 +108,7 @@ const ArticleHome = () => {
             />
             <button type="submit">검색</button>
           </form>
+
           <div className="article-filters">
             <div className="left-buttons">
               <button onClick={handleCompletedOnly}>
@@ -112,22 +118,16 @@ const ArticleHome = () => {
                 {sortByTime ? "오래된순" : "최신순"}
               </button>
             </div>
-            <div className="right-button">
-              <Button
-                className="article-create-button"
-                text={"글 쓰기"}
-                onClick={() => nav("/article-create")}
-              />
-            </div>
           </div>
         </div>
-      <ArticleList articles={articles}/>
-      <Pagination
+        <ArticleList articles={articles} />
+        <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
           setPage={setCurrentPage}
         />
-    </div>
+        <CreateArticleButton onClick={handleCreateArticle} />
+      </div>
       <TabBar />
     </>
   );
