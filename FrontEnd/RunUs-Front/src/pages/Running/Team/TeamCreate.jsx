@@ -119,18 +119,20 @@ const TeamPage = () => {
             setIsRunningStarted(true);
           } else if (receivedData.type === "QUIT") {
             try {
-              const response = axios.post("api/v1/record/result_save", null, {
-                params: {
-                  user_id: userData.userId,
-                  party_id: party,
-                  distance: distance,
-                  time: elapsedTime,
-                  kcal: totalCalories,
-                },
-              });
-              console.log(response);
-
-              navigate(`/home`);
+              // const requestbody = {
+              //   userId: userData.userId,
+              //   partyId: party,
+              //   distance: distance,
+              //   time: time,
+              //   kcal: calories,
+              // }
+              // console.log(requestbody);
+              // alert(requestbody);
+              // const response = axios.post("api/v1/record/result_save", requestbody);
+              // console.log(response);
+        
+              navigate(`/report-home`);
+              // window.location.reload();
             } catch (err) {
               console.error(err);
             }
@@ -246,6 +248,29 @@ const TeamPage = () => {
         message: "방장이 종료 버튼을 눌렀습니다.",
         userId: userData.userId,
       };
+
+      // 최신의 distance, time, calories 값을 가져옵니다.
+      const requestbody = {
+        userId: userData.userId,
+        partyId: party,
+        distance: distance,
+        time: time,
+        kcal: calories,
+      };
+
+      console.log(requestbody); // 확인용으로 로그를 출력
+
+      // 서버에 결과 저장 요청을 보냅니다.
+      axios.post("api/v1/record/result_save", requestbody)
+        .then(response => {
+          console.log(response);
+          navigate(`/report-home`);
+          window.location.reload();
+        })
+        .catch(err => {
+          console.error(err);
+        });
+        
       WebSocketManager.send(stopMessage);
       setIsRunning(false);
     } else {
