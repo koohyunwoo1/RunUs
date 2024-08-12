@@ -35,7 +35,7 @@ export const sendTokenToServer = async (userId, token) => {
     //https://i11e103.p.ssafy.io:8001/
     //https://localhost:8000
     const response = await fetch(
-      "https://i11e103.p.ssafy.io:8003/api/v1/fcm/user",
+      "https://i11e103.p.ssafy.io:8001/api/v1/fcm/user",
       {
         method: "POST",
         headers: {
@@ -62,7 +62,7 @@ export const sendTokenToServer = async (userId, token) => {
 export const deleteTokenFromServer = async (userId) => {
   try {
     const response = await fetch(
-      `https://i11e103.p.ssafy.io:8003/api/v1/fcm/user/${userId}`,
+      `https://i11e103.p.ssafy.io:8001/api/v1/fcm/user/${userId}`,
       {
         method: "DELETE",
       }

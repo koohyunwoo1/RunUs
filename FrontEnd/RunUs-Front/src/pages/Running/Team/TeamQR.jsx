@@ -94,7 +94,7 @@ export const TeamQR = () => {
 
   const joinRoom = (roomId) => {
     const ws = new WebSocket(
-      `wss://i11e103.p.ssafy.io:8003/ws/chat?roomId=${roomId}`
+      `wss://i11e103.p.ssafy.io:8001/ws/chat?roomId=${roomId}`
     );
 
     ws.onopen = () => {
