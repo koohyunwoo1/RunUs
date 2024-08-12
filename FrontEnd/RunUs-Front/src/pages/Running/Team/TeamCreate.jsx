@@ -173,7 +173,6 @@ const TeamPage = () => {
             distance,
           };
           WebSocketManager.send(locationMessage);
-          setDistance(10);
 
           // 자신의 위치 업데이트
           setUserPositions((prevPositions) => ({
