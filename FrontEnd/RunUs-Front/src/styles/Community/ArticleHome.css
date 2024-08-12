@@ -8,6 +8,7 @@
   margin-right: auto;
   box-sizing: border-box; /* padding과 border를 포함한 전체 크기 설정 */
   font-family: "PreRegular";
+  background-color: white;
 }
 
 /* 검색 폼 스타일 */

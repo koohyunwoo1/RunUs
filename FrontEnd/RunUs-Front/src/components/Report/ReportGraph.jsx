@@ -16,14 +16,7 @@ const ReportGraph = () => {
   const [graphData, setGraphData] = useState(null);
   const [graphTotalData, setGraphTotalData] = useState(null);
   const [selectedYear, setSelectedYear] = useState("2024");
-  const [years, setYears] = useState([
-    "2020",
-    "2021",
-    "2022",
-    "2023",
-    "2024",
-    "2025",
-  ]);
+  const [years, setYears] = useState(["2021", "2022", "2023", "2024"]);
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
@@ -33,7 +26,7 @@ const ReportGraph = () => {
           `api/v1/record/graph/${selectedYear}`,
           {
             params: {
-              user_id: userId,
+              userId: userId,
             },
           }
         );
@@ -60,8 +53,8 @@ const ReportGraph = () => {
       try {
         const response = await axios.get("api/v1/record/total_distance", {
           params: {
-            user_id: userId,
-            year: selectedYear,
+            userId: userId,
+            // year: selectedYear,
           },
         });
         setGraphTotalData(response.data.data);
@@ -72,7 +65,7 @@ const ReportGraph = () => {
 
     fetchData();
     fetchTotalData();
-  }, [selectedYear]);
+  }, [userId, selectedYear]);
 
   const handleYearChange = (event) => {
     setSelectedYear(event.target.value);
@@ -131,7 +124,11 @@ const ReportGraph = () => {
         value={selectedYear}
       >
         {years.map((year) => (
-          <option key={year} value={year} style={{ fontFamily: "PreSemiBold" }}>
+          <option
+            key={year}
+            value={year}
+            style={{ fontFamily: "PreSemiBold", fontSize: "12px" }}
+          >
             {year}
           </option>
         ))}

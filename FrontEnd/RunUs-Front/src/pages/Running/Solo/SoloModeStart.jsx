@@ -155,12 +155,17 @@ const SoloModeStart = () => {
     if (result.isConfirmed) {
       try {
         // 데이터 준비
-        const user_id = localStorage.getItem("userId");
+        const userId = localStorage.getItem("userId")
+        const partyId = null; // 솔로는 null
+        const requestbody = {
+          userId: userId,
+          partyId: partyId,
+          distance: parseInt(distance),
+          time: time,
+          kcal: parseInt(calories.toFixed(2)),
+        }
         const response = await axios.post(
-          `/api/v1/record/result_save?user_id=${user_id}&distance=${parseInt(
-            distance
-          )}&time=${time}&kcal=${parseInt(calories)}`
-        );
+          `/api/v1/record/result_save`, requestbody);
 
         if (response.data.success) {
           console.log(response.data.data);
@@ -240,13 +245,13 @@ const SoloModeStart = () => {
               <h1 style={{ fontSize: "30px" }}>
                 {formatTime(time)} <br />
               </h1>
-              시간
+              <div style={{ fontStyle: "oblique" }}>시간</div>
             </div>
             <div>
               <h1 style={{ fontSize: "30px" }}>
                 {parseInt(calories.toFixed(2))} <br />
               </h1>
-              칼로리
+              <div style={{ fontStyle: "oblique" }}>칼로리</div>
             </div>
           </div>
 

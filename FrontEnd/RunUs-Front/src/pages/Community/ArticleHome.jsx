@@ -6,17 +6,19 @@ import axios from "axios";
 import Button from "../../components/common/Button";
 import { UserContext } from "../../hooks/UserContext";
 import { useNavigate } from "react-router-dom";
+import Pagination from "../../components/Community/Pagination";
 import Header from "../../components/common/Header";
+
 const ArticleHome = () => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [page, setPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [sortByTime, setSortByTime] = useState(false);
   const [completedOnly, setCompletedOnly] = useState(false);
   const [word, setWord] = useState("");
-  const [searchInitiated, setSearchInitiated] = useState(false);
+  // const [searchInitiated, setSearchInitiated] = useState(false);
   const { userData } = useContext(UserContext);
   const size = 10;
   const nav = useNavigate();
@@ -26,16 +28,24 @@ const ArticleHome = () => {
 
     setLoading(true);
     try {
-      let url = `/api/v1/boards/region/${userData.regionId}`;
+      let url = `/api/v1/boards/region`;
+      const params = {
+        regionId: userData.regionId,
+        size: size,
+        page: currentPage,
+      }
+      
       if (completedOnly) {
-        url += "/incomplete";
+        params.order = "incomplete"
       } else if (sortByTime) {
-        url += "/time";
-      } else if (word) {
-        url += `/${word}`;
+        params.order = "time"
       }
 
-      const response = await axios.get(url, { params: { size, page } });
+      if (word) {
+        params.word = word
+      }
+
+      const response = await axios.get(url, { params });
       const filteredArticles = response.data.data.filter(
         (article) => article.isDeleted !== 1
       );
@@ -48,18 +58,18 @@ const ArticleHome = () => {
     }
   };
 
-  useEffect(() => {
-    if (searchInitiated) {
-      fetchArticles();
-      setSearchInitiated(false);
-    }
-  }, [searchInitiated, page, sortByTime, completedOnly, userData, word]);
+  // useEffect(() => {
+  //   if (searchInitiated) {
+  //     fetchArticles();
+  //     setSearchInitiated(false);
+  //   }
+  // }, [searchInitiated, currentPage, sortByTime, completedOnly, userData, word]);
 
   useEffect(() => {
     if (userData && userData.regionId) {
       fetchArticles();
     }
-  }, [userData, page, sortByTime, completedOnly]);
+  }, [userData, currentPage, sortByTime, completedOnly, word]);
 
   const handleSortByTime = () => {
     setSortByTime((prev) => !prev);
@@ -71,8 +81,9 @@ const ArticleHome = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    setSearchInitiated(true);
-    setPage(0);
+    // setSearchInitiated(true);
+    setCurrentPage(0);
+    fetchArticles()
   };
 
   if (loading) return <p>로딩 중...</p>;
@@ -92,11 +103,10 @@ const ArticleHome = () => {
             />
             <button type="submit">검색</button>
           </form>
-
           <div className="article-filters">
             <div className="left-buttons">
               <button onClick={handleCompletedOnly}>
-                {completedOnly ? "모든 글 보기" : "모집 가능한 글만 보기"}
+                {completedOnly ? "모든 글 보기" : "모집 가능한 글 보기"}
               </button>
               <button onClick={handleSortByTime}>
                 {sortByTime ? "오래된순" : "최신순"}
@@ -111,27 +121,13 @@ const ArticleHome = () => {
             </div>
           </div>
         </div>
-
-        <ArticleList articles={articles} />
-        <div className="pagination">
-          <Button
-            onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
-            disabled={page === 0}
-            text="이전"
-          />
-          <span> Page : {page + 1} </span>
-          <Button
-            onClick={() => {
-              setPage((prev) => {
-                const newPage = prev + 1 <= totalPages ? prev + 1 : prev;
-                return newPage;
-              });
-            }}
-            disabled={page + 1 >= totalPages}
-            text="다음"
-          />
-        </div>
-      </div>
+      <ArticleList articles={articles}/>
+      <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          setPage={setCurrentPage}
+        />
+    </div>
       <TabBar />
     </>
   );

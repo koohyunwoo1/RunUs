@@ -3,12 +3,10 @@ import "../../styles/MyPage/MyPageHome.css";
 import MyPageProfile from "../../components/MyPage/MyPageProfile";
 import MyPageTier from "../../components/MyPage/MyPageTier";
 import EditIcon from "../../assets/editIcon.png";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import axios from "axios";
+import locationIcon from "../../assets/location.png";
 import Header from "../../components/common/Header";
-// import Logout from "../../components/Home/Logout";
-
+import { useNavigate } from "react-router-dom";
+import Logout from "../../components/Home/Logout";
 const MyPageHome = () => {
   const navigate = useNavigate();
 
@@ -16,33 +14,38 @@ const MyPageHome = () => {
     navigate("/my-page-edit", { replace: true });
   };
 
+  const handleLocationClick = () => {
+    navigate("/my-page-editLocation", {replace: true});
+  };
+
   return (
     <div>
-      <div className="MyPageHome">
-        <div>
-          <img
-            src={EditIcon}
-            className="MyPageEditIcon"
-            onClick={handleEditIconClick}
-          />
-        </div>
-        <div>
-          <MyPageProfile />
-        </div>
-        <div className="MyPageTier">
-          {/* <h3 className="MyPageh3">러닝 티어</h3> */}
-          <MyPageTier />
-        </div>
-        {/* <div
-          style={{
-            marginTop: "100px",
-            textAlign: "right",
-          }}
-        >
-          <Logout />
-        </div> */}
+
+      <Header />
+    <div className="MyPageHome" style={{marginTop: "80px"}}>
+      <div>
+        <MyPageProfile />
       </div>
+      <div className="MyPageTier">
+        <MyPageTier />
+      </div>
+
+      <div className="MyPageEditSections">
+        <div className="MyPageEditSection" onClick={handleEditIconClick}>
+          <img src={EditIcon} alt="User Icon" className="edit-section-icon" />
+          회원정보 수정
+        </div>
+        <div className="MyPageEditSection" onClick={handleLocationClick}>
+          <img src={locationIcon} alt="Location Icon" className="edit-section-icon" />
+          위치 수정
+        </div>
+        <div>
+          <Logout />
+        </div>
+      </div>
+      <div className="bottom-spacing"></div>
       <TabBar />
+    </div>
     </div>
   );
 };

@@ -43,8 +43,16 @@ const MyPageTier = () => {
 
   // 모달 열기
   const openModal = () => setShowModal(true);
+
   // 모달 닫기
   const closeModal = () => setShowModal(false);
+
+  // 모달 외부 클릭 시 닫기
+  const handleOverlayClick = (e) => {
+    if (e.target.classList.contains('tier_modal-overlay')) {
+      closeModal();
+    }
+  };
 
   return (
     <>
@@ -86,12 +94,8 @@ const MyPageTier = () => {
       </div>
 
       {showModal && (
-        <div className="tier_modal-overlay">
+        <div className="tier_modal-overlay" onClick={handleOverlayClick}>
           <div className="tier_modal-content">
-            {/* <div className="expExplain">
-              <p>팀모드 : 러닝 거리(km) * 1.3 (점)</p>
-              <p>솔로모드 : 러닝 거리(km) * 1 (점)</p>
-            </div> */}
             <ul>
               {tiers.map((tier) => (
                 <li className="tierexplain" key={tier.name}>
@@ -102,7 +106,6 @@ const MyPageTier = () => {
                 </li>
               ))}
             </ul>
-            <button onClick={closeModal}>닫기</button>
           </div>
         </div>
       )}

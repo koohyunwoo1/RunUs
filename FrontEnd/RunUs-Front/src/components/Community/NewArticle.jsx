@@ -34,7 +34,7 @@ const NewArticle = () => {
         meetingTime: formattedMeetingTime, // Send as formatted string
         meetingDay, // Send as it is
         userId: userData.userId,
-        nickname: userData.nickname,
+        // nickname: userData.nickname,
         is_deleted: '0'
       }, {
         headers: {

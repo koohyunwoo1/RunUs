@@ -22,6 +22,7 @@ import TeamQR from "./pages/Running/Team/TeamQR";
 import ArticleCreate from "./pages/Community/ArticleCreate";
 import ArticleDetail from "./pages/Community/ArticleDetail";
 import MyPageEdit from "./pages/MyPage/MyPageEdit";
+import MyPageLocation from "./pages/MyPage/MyPageLocation";
 import CountDown from "./pages/Running/Team/CountDown";
 import TeamCheck from "./pages/Running/Team/TeamCheck";
 import ProtectedRoute from "./components/common/ProtectedRoute";
@@ -29,7 +30,7 @@ import RedirectRoute from "./components/common/RedirectRoute";
 import SoloModeCountDown from "./pages/Running/Solo/SoloModeCountDown";
 import SoloModeStart from "./pages/Running/Solo/SoloModeStart";
 import axios from "axios";
-
+import TabBar from "./components/common/TabBar";
 axios.defaults.baseURL = process.env.VITE_API_URL;
 
 const AppContent = () => {
@@ -40,9 +41,9 @@ const AppContent = () => {
 
     const setupFCM = async () => {
       if (userData) {
-        const token = await requestPermissionAndGetToken();
+        const token = await requestPermissionAndGetToken(userData.userId);
         if (token) {
-          await sendTokenToServer(userId, token);
+          // await sendTokenToServer(userId, token);
           messageHandler = setupMessageListener();
         }
       } else if (messageHandler) {
@@ -63,6 +64,13 @@ const AppContent = () => {
   return (
     <div className="app-content">
       <Routes>
+        <Route
+          element={
+            <RedirectRoute>
+              <TabBar />
+            </RedirectRoute>
+          }
+        ></Route>
         <Route
           path="/signin"
           element={
@@ -190,6 +198,14 @@ const AppContent = () => {
           element={
             <ProtectedRoute>
               <MyPageEdit />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-page-editLocation"
+          element={
+            <ProtectedRoute>
+              <MyPageLocation />
             </ProtectedRoute>
           }
         />
