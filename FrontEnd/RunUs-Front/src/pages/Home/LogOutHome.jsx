@@ -1,91 +1,26 @@
 import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "../../styles/Home/LogOutHome.css";
-import { useInView } from "react-intersection-observer";
-import LogOutHeader from "../../components/Home/LogOutHeader";
-import logo2 from "../../assets/logo2.png"
-import logo3 from "../../assets/logo3.png"
-import Phone from "../../assets/Phone.png"
 
 const LogOutHome = () => {
-  const { ref: ref1, inView: inView1 } = useInView({
-    triggerOnce: true,
-    threshold: 0.3,
-  });
-
-  const { ref: ref2, inView: inView2 } = useInView({
-    triggerOnce: true,
-    threshold: 0.3,
-  });
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (inView1) {
-        document.querySelectorAll(".imageItem").forEach((item, index) => {
-          item.style.transitionDelay = `${index * 0.3}s`;
-          item.classList.add("animate");
-        });
-      }
+    const timer = setTimeout(() => {
+      navigate("/signin");
+    }, 2500);
 
-      if (inView2) {
-        document.querySelectorAll(".imageItem2").forEach((item, index) => {
-          item.style.transitionDelay = `${index * 0.3}s`;
-          item.classList.add("animate");
-        });
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [inView1, inView2]);
+    return () => clearTimeout(timer);
+  }, [navigate]);
 
   return (
-    <div>
-      <LogOutHeader />
-      <div className="LogOut-container">
-        <h1 className="title">
-          언제 어디서나 <br />
-          RunUs와 즐겁게 달릴 수 있도록
-        </h1>
-        <h3 className="subtitle">
-          건강하고 강한 당신을 위한 러닝 웹사이트로 뛰어보세요.
-        </h3>
-        <div className="image" ref={ref1}>
-          {/* <img
-            src="src/assets/Running(2).gif"
-            // src="src/assets/RunningPhone.png"
-            alt=""
-            className={inView1 ? "imageItem animate" : "imageItem"}
-          /> */}
-        </div>
-      </div>
-
-      <div className="LogOut-container2">
-        <span className="tag">목표 만들기</span>
-        <h1 className="title2">시작이 어렵다면 ?</h1>
-        <h1 className="title2">작은 미션부터 시작해보세요.</h1>
-        <div className="image2" ref={ref2}>
-          <img src={logo2} alt="" className="imageItem" />
-          <img src={logo3} alt="" className="imageItem" />
-          <img src={logo3} alt="" className="imageItem" />
-          <img src={logo2} alt="" className="imageItem" />
-        </div>
-      </div>
-
-      <div className="LogOut-container3">
-        <span className="tag">루틴 만들기</span>
-        <h1 className="title3">
-          꾸준히 기록하고 <br />
-          건강한 습관을 만들어보세요 !
-        </h1>
-        <div className="image3">
-          <img
-            src={Phone}
-            alt=""
-            className={inView2 ? "imageItem2 animate" : "imageItem2"}
-          />
+    <div className="LogOutHomeContainer">
+      <div className="LogOutHome">
+        <div className="Runsubtitle">R u n</div>
+        <br />
+        <div>
+          <div className="Ussubtitle">U</div>
+          <div className="Ussubtitle2">s</div>
         </div>
       </div>
     </div>
