@@ -28,7 +28,7 @@
   margin-left: auto; /* Pushes the right button to the end */
 }
 
-.article-create-button{
+.article-create-button {
   display: flex;
   justify-content: right;
 }
@@ -70,6 +70,7 @@
 /* 게시글 리스트 래퍼 스타일 */
 .article-wrapper {
   margin-top: 20px; /* 리스트와 상단 간의 여백 */
+  margin-bottom: 20px;
 }
 
 .article-wrapper ul {
