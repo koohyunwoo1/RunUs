@@ -73,13 +73,16 @@ export const sendTokenToServer = async (userId, token) => {
   try {
     //https://i11e103.p.ssafy.io:8001/
     //https://localhost:8000
-    const response = await fetch("https://localhost:8000/api/v1/fcm/user", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userId, token }),
-    });
+    const response = await fetch(
+      "https://i11e103.p.ssafy.io:8001/api/v1/fcm/user",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId, token }),
+      }
+    );
     if (response.ok) {
       console.log("Token sent to server successfully");
       return true;
@@ -103,7 +106,7 @@ export const deleteTokenFromServer = async (userId) => {
     const response = await fetch(
       //https://i11e103.p.ssafy.io:8001/
       //https://localhost:8000
-      `https://localhost:8000/api/v1/fcm/user/${userId}`,
+      `https://i11e103.p.ssafy.io:8001/api/v1/fcm/user/${userId}`,
       {
         method: "DELETE",
       }
