@@ -23,16 +23,13 @@ const TeamPage = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [userNames, setUserNames] = useState([]);
   const [userPositions, setUserPositions] = useState({});
-  const [totalDistance, setTotalDistance] = useState(0);
-  const [totalCalories, setTotalCalories] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [isRunningStarted, setIsRunningStarted] = useState(false);
   const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
   const [distance, setDistance] = useState(0);
   const [calories, setCalories] = useState(0);
-  const [elapsedTime, setElapsedTime] = useState(0);
   const [time, setTime] = useState(0);
-  const latestLocation = useRef({ latitude: null, longitude: null, distance: null });
+  const latestLocation = useRef({ latitude: null, longitude: null, distance: 0 });
 
   useEffect(() => {
     const handleSuccess = (position) => {
@@ -111,29 +108,14 @@ const TeamPage = () => {
 
             setUserNames((prevUserNames) =>
               prevUserNames.map((user) =>
-                user.name === sender ? { ...user, distance: distance !== undefined ? `${distance.toFixed(2)} km` : '0.00 km' } : user
+                user.name === sender ? { ...user, distance: distance !== undefined ? `${(distance / 1000).toFixed(2)} km` : '0.00 km' } : user
               )
             );
           } else if (receivedData.type === "START") {
             setIsRunning(true);
             setIsRunningStarted(true);
           } else if (receivedData.type === "QUIT") {
-            try {
-              const response = axios.post("api/v1/record/result_save", null, {
-                params: {
-                  user_id: userData.userId,
-                  party_id: party,
-                  distance: distance,
-                  time: elapsedTime,
-                  kcal: totalCalories,
-                },
-              });
-              console.log(response);
-
-              navigate(`/home`);
-            } catch (err) {
-              console.error(err);
-            }
+            handleQuit();
           }
         });
 
@@ -155,60 +137,40 @@ const TeamPage = () => {
     }
   }, [waitingRoomId, userData, navigate, roomOwnerId]);
 
-  useEffect(() => {
-    let intervalId;
-
-    if (isRunning && isWebSocketConnected) {
-      intervalId = setInterval(() => {
-        const { latitude, longitude, distance } = latestLocation.current;
-        if (latitude !== null && longitude !== null) {
-          const locationMessage = {
-            type: "LOCATION",
-            roomId: waitingRoomId,
-            sender: userData.nickname,
-            message: "",
-            userId: userData.userId,
-            longitude,
-            latitude,
-            distance,
-          };
-          WebSocketManager.send(locationMessage);
-          setDistance(10);
-
-          // 자신의 위치 업데이트
-          setUserPositions((prevPositions) => ({
-            ...prevPositions,
-            [userData.userId]: { 
-              nickname: userData.nickname, 
-              latitude, 
-              longitude, 
-              userId: userData.userId 
-            },
-          }));
-
-          // 사용자 목록 업데이트
-          setUserNames((prevUserNames) =>
-            prevUserNames.map((user) =>
-              user.name === userData.nickname 
-                ? { ...user, distance: `${distance.toFixed(2)} km` } 
-                : user
-            )
-          );
-        }
-      }, 5000); // 5초 간격으로 실행
-    }
-
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [isRunning, isWebSocketConnected, waitingRoomId, userData]);
-
   const handleLocationUpdate = (latitude, longitude, newDistance) => {
-    if (newDistance !== undefined && newDistance !== null) {
-      setDistance(newDistance);
-      latestLocation.current = { latitude, longitude, distance: newDistance };
+    setDistance(newDistance);
+    latestLocation.current = { latitude, longitude, distance: newDistance };
+    
+    if (isWebSocketConnected) {
+      const locationMessage = {
+        type: "LOCATION",
+        roomId: waitingRoomId,
+        sender: userData.nickname,
+        message: "",
+        userId: userData.userId,
+        longitude,
+        latitude,
+        distance: newDistance,
+      };
+      WebSocketManager.send(locationMessage);
+
+      setUserPositions((prevPositions) => ({
+        ...prevPositions,
+        [userData.userId]: { 
+          nickname: userData.nickname, 
+          latitude, 
+          longitude, 
+          userId: userData.userId 
+        },
+      }));
+
+      setUserNames((prevUserNames) =>
+        prevUserNames.map((user) =>
+          user.name === userData.nickname 
+            ? { ...user, distance: `${(newDistance / 1000).toFixed(2)} km` } 
+            : user
+        )
+      );
     }
   };
 
@@ -235,7 +197,7 @@ const TeamPage = () => {
     }
   };
 
-  const handleQuit = () => {
+  const handleQuit = async () => {
     if (
       WebSocketManager.ws &&
       WebSocketManager.ws.readyState === WebSocket.OPEN
@@ -251,6 +213,23 @@ const TeamPage = () => {
       setIsRunning(false);
     } else {
       console.warn("WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.");
+    }
+
+    try {
+      const response = await axios.post("api/v1/record/result_save", null, {
+        params: {
+          user_id: userData.userId,
+          party_id: party,
+          distance: distance,
+          time: time,
+          kcal: calories,
+        },
+      });
+      console.log(response);
+
+      navigate(`/home`);
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -357,7 +336,6 @@ const TeamPage = () => {
             onLocationUpdate={handleLocationUpdate}
             isRunningStarted={isRunningStarted}
           />
-          <p>{distance}</p>
         </div>
       </div>
     </div>

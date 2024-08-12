@@ -4,7 +4,7 @@ import axios from "axios";
 import "../../styles/Running/Solo/SoloModeStart.css";
 
 const Running = ({
-  distance, // 기본값을 설정합니다.
+  distance,
   setDistance,
   calories,
   setCalories,
@@ -14,7 +14,6 @@ const Running = ({
   isRunningStarted,
 }) => {
   const [location, setLocation] = useState({ latitude: null, longitude: null });
-  const [isRunning, setIsRunning] = useState(true);
   const [error, setError] = useState(null);
   const prevLocation = useRef({
     latitude: null,
@@ -69,7 +68,7 @@ const Running = ({
             onLocationUpdate(
               correctedLocation.latitude,
               correctedLocation.longitude,
-              correctedLocation.distance
+              distance + maxPossibleDistance
             );
           } else {
             setDistance((prevDistance) => prevDistance + dist);
@@ -78,13 +77,12 @@ const Running = ({
               longitude,
               timestamp: currentTime,
               speed,
-              distance
             };
-            setLocation({ latitude, longitude, distance });
-            onLocationUpdate(latitude, longitude, distance); // Pass location to parent
+            setLocation({ latitude, longitude });
+            onLocationUpdate(latitude, longitude, distance + dist);
           }
 
-          const calculatedCalories = calculateCalories(distance);
+          const calculatedCalories = calculateCalories(distance + dist);
           setCalories(calculatedCalories);
         } else {
           prevLocation.current = {
@@ -92,10 +90,9 @@ const Running = ({
             longitude,
             timestamp: currentTime,
             speed,
-            distance
           };
-          setLocation({ latitude, longitude, distance });
-          onLocationUpdate(latitude, longitude, distance); // Pass location to parent
+          setLocation({ latitude, longitude });
+          onLocationUpdate(latitude, longitude, distance);
         }
       };
 
@@ -121,7 +118,7 @@ const Running = ({
 
       return () => navigator.geolocation.clearWatch(watchId);
     }
-  }, [isRunningStarted, distance, onLocationUpdate]);
+  }, [isRunningStarted, distance, onLocationUpdate, setDistance, setCalories]);
 
   useEffect(() => {
     if (isRunningStarted) {
@@ -139,16 +136,7 @@ const Running = ({
         clearInterval(timerRef.current);
       }
     };
-  }, [isRunningStarted]);
-
-  const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${String(minutes).padStart(2, "0")}:${String(secs).padStart(
-      2,
-      "0"
-    )}`;
-  };
+  }, [isRunningStarted, setTime]);
 
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371e3;
@@ -180,6 +168,15 @@ const Running = ({
     return caloriesBurned;
   };
 
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${String(minutes).padStart(2, "0")}:${String(secs).padStart(
+      2,
+      "0"
+    )}`;
+  };
+
   return (
     <div className="SoloModeStart">
       {error ? (
@@ -189,8 +186,8 @@ const Running = ({
           <p>Elapsed Time: {formatTime(time)}</p>
           <p>Latitude: {location.latitude}</p>
           <p>Longitude: {location.longitude}</p>
-          <p>Distance traveled: {distance ? distance.toFixed(2) : "0.00"} meters</p> {/* 조건부 렌더링 */}
-          <p>Calories burned: {calories ? calories.toFixed(2) : "0.00"} kcal</p> {/* 조건부 렌더링 */}
+          <p>Distance traveled: {distance.toFixed(2)} meters</p>
+          <p>Calories burned: {calories.toFixed(2)} kcal</p>
         </>
       )}
     </div>
