@@ -56,6 +56,10 @@
   margin-left: 20px;
 }
 
+.left-buttons {
+  margin-left: 30px;
+}
+
 .article-filters button {
   padding: 10px 15px; /* 패딩 줄이기 */
   border: 1px solid #6c757d; /* 버튼 테두리 색상 */

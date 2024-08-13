@@ -4,7 +4,7 @@
   font-weight: lighter;
   text-align: center;
   overflow: hidden; /* 텍스트가 애니메이션 동안 넘어가는 것을 방지 */
-  margin-top: 100px;
+  margin-top: 40px;
   color: rgba(0, 0, 0, 0.8);
 }
 

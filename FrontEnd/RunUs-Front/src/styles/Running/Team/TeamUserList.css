@@ -10,28 +10,25 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 350px;
 }
 
 .user-card {
   display: flex;
   align-items: center;
   padding: 10px;
-  /* border-top: 2px solid black;
-  border-left: 2px solid black;
-  border-right: 2px solid black;
-  border-bottom: 2px solid black; */
-  border: 2px solid;
+  height: 80px;
+  border: none;
   border-color: black;
   border-radius: 5px;
-  background-color: #98bae3;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.user-info {
-  flex: 1;
+  color: black;
+  transform: skew(-10deg); /* 수평 및 수직으로 기울이기 */
 }
 
 .user-nickname {
   margin-left: 10px;
-  font-weight: bold;
+  font-family: VitroCore;
+  font-style: oblique;
+  font-size: 24px;
 }
