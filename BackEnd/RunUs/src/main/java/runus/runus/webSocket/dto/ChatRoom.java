@@ -133,15 +133,13 @@ public class ChatRoom {
                 double previousOwnerDistance = this.ownerDistance;
                 this.ownerDistance = distance;
 
-                log.info(userName + " (방장)의 위치 업데이트: 총 이동 거리 = " + String.format("%.5f", distance) + " km");
-
                 ChatMessage OwnerLocationBroadcastMessage = new ChatMessage();
                 OwnerLocationBroadcastMessage.setType(ChatMessage.MessageType.DISTANCE);
                 OwnerLocationBroadcastMessage.setRoomId(chatMessage.getRoomId());
                 OwnerLocationBroadcastMessage.setDistance(previousOwnerDistance);
                 OwnerLocationBroadcastMessage.setLatitude(previousOwnerLatitude);
                 OwnerLocationBroadcastMessage.setLongitude(previousOwnerLongitude);
-                log.info(userName + "(방장)의 위치 업데이트: 총 이동 거리 = " + String.format("%.5f", distance) + " km");
+                log.info(userName + "(방장)의 위치 업데이트: 총 이동 거리 = " + String.format("%.5f", previousOwnerDistance) + " km");
                 OwnerLocationBroadcastMessage.setMessage(userName + "(방장)의 총 이동 거리: " + String.format("%.5f", previousOwnerDistance) + " km");
                 sendMessage(OwnerLocationBroadcastMessage, chatServiceImpl);
             } else {
