@@ -49,6 +49,7 @@ const TeamSaying = () => {
     <div
       className={`team-saying ${fade ? "fade-in" : "fade-out"}`}
       onClick={handleClick} // 클릭 이벤트 핸들러 추가
+      style={{ fontFamily: "PreBold", padding: "10px" }}
     >
       {currentQuote}
     </div>
