@@ -36,7 +36,11 @@ const TeamPage = () => {
   const [calories, setCalories] = useState(0);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [time, setTime] = useState(0);
-  const latestLocation = useRef({ latitude: null, longitude: null, distance: null });
+  const latestLocation = useRef({
+    latitude: null,
+    longitude: null,
+    distance: null,
+  });
 
   useEffect(() => {
     const handleSuccess = (position) => {
@@ -177,8 +181,6 @@ const TeamPage = () => {
           }
         });
 
-
-       
         WebSocketManager.on("close", () => {
           console.log("WebSocket connection closed");
           setIsWebSocketConnected(false);
@@ -254,8 +256,6 @@ const TeamPage = () => {
   };
 
   const handleStartButtonClick = () => {
-    setIsCountdownVisible(true); // Show countdown
-    setCountdownFinished(false); // Reset countdown finished state
     const startMessage = {
       type: "START",
       roomId: waitingRoomId,
@@ -272,13 +272,15 @@ const TeamPage = () => {
       setIsWebSocketConnected(true);
       setIsRunningStarted(true);
       setIsRunning(true);
+      setIsCountdownVisible(true);
+      setCountdownFinished(false);
+      setTimeout(() => {
+        setIsCountdownVisible(false);
+        setCountdownFinished(true);
+      }, 3000); // 3초 후에 실제 실행
     } else {
       console.warn("WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.");
     }
-    setTimeout(() => {
-      setIsCountdownVisible(false);
-      setCountdownFinished(true); // Countdown is finished
-    }, 3000); // 3초 후에 실제 실행
   };
 
   const handleQuit = () => {
@@ -293,7 +295,7 @@ const TeamPage = () => {
         message: "방장이 종료 버튼을 눌렀습니다.",
         userId: userData.userId,
       };
-  
+
       WebSocketManager.send(stopMessage);
       setIsRunning(false);
     } else {
