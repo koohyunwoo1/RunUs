@@ -136,12 +136,21 @@ const TeamPage = () => {
             }
           } else if (receivedData.type === "DISTANCE") {
             const messageContent = receivedData.message;
-            const [nickname, distanceStr] = messageContent.split("의 총 이동 거리: ");
+            // 방장의 메시지를 처리
+            let nickname;
+            if (messageContent.includes("(방장)")) {
+                nickname = messageContent.split("(방장)의 총 이동 거리: ")[0];
+            } else {
+                nickname = messageContent.split("의 총 이동 거리: ")[0];
+            }
+            
+            const distanceStr = messageContent.split("의 총 이동 거리: ")[1];
             const distance = parseFloat(distanceStr.split(" km")[0]);
-        
+
+            // Update the distance for the user with the matching nickname
             setUserNames((prevUserNames) =>
               prevUserNames.map((user) =>
-                user.name === nickname
+                user.name == nickname
                   ? { ...user, distance: `${distance.toFixed(2)} km` }
                   : user
               )
@@ -200,13 +209,13 @@ const TeamPage = () => {
           }));
 
           // 사용자 목록 업데이트
-          setUserNames((prevUserNames) =>
-            prevUserNames.map((user) =>
-              user.name === userData.nickname 
-                ? { ...user, distance: `${distance.toFixed(2)} km` } 
-                : user
-            )
-          );
+          // setUserNames((prevUserNames) =>
+          //   prevUserNames.map((user) =>
+          //     user.name === userData.nickname 
+          //       ? { ...user, distance: `${distance.toFixed(2)} km` } 
+          //       : user
+          //   )
+          // );
         }
       }, 5000); // 5초 간격으로 실행
     }
