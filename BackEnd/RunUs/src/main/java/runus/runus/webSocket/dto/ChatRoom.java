@@ -6,8 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.WebSocketSession;
 import runus.runus.fcm.dto.NotificationDTO;
-import runus.runus.fcm.service.FCMService;
-import runus.runus.fcm.service.FCMServiceImpl;
+//import runus.runus.fcm.service.FCMService;
+//import runus.runus.fcm.service.FCMServiceImpl;
 import runus.runus.record.service.RecordService;
 import runus.runus.webSocket.service.ChatServiceImpl;
 
@@ -32,7 +32,7 @@ public class ChatRoom {
     private RecordService recordService;
 
     // FCM 사용
-    private FCMService fcmService;
+    //private FCMService fcmService;
 
     // 방장과 멀어지는 거리 100 M
     private static final double  MAX_DISTANCE = 0.1; // 최대허용 거리 (km)
@@ -219,7 +219,7 @@ public class ChatRoom {
                     : "방장과의 거리가 " + String.format("%.2f", distance) + "km로 멀어졌습니다.";
 
             NotificationDTO notification = new NotificationDTO(title, body);
-            fcmService.sendNotification(String.valueOf(userId), notification);
+            //fcmService.sendNotification(String.valueOf(userId), notification);
             System.out.println("call sendDistanceAlert (ChatRoom)");
         } catch (Exception e) {
             log.error("Failed to send distance alert to user: " + userId, e);
