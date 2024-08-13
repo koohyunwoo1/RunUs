@@ -36,9 +36,7 @@ const TeamPage = () => {
   const [calories, setCalories] = useState(0);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [time, setTime] = useState(0);
-  const [latitude, setLatitude] = useState(null);
-  const [longitude, setLongitude] = useState(null);
-  const latestLocation = useRef({ latitude: null, longitude: null });
+  const latestLocation = useRef({ latitude: null, longitude: null, distance: null });
 
   useEffect(() => {
     const handleSuccess = (position) => {
@@ -179,6 +177,8 @@ const TeamPage = () => {
           }
         });
 
+
+       
         WebSocketManager.on("close", () => {
           console.log("WebSocket connection closed");
           setIsWebSocketConnected(false);
@@ -293,6 +293,7 @@ const TeamPage = () => {
         message: "방장이 종료 버튼을 눌렀습니다.",
         userId: userData.userId,
       };
+  
       WebSocketManager.send(stopMessage);
       setIsRunning(false);
     } else {

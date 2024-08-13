@@ -4,7 +4,7 @@ import axios from "axios";
 import "../../styles/Running/Solo/SoloModeStart.css";
 import { UserContext } from "../../hooks/UserContext";
 const Running = ({
-  distance,
+  distance, // 기본값을 설정합니다.
   setDistance,
   calories,
   setCalories,
