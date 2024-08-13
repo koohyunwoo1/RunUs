@@ -98,99 +98,101 @@ const TeamPage = () => {
   };
 
   useEffect(() => {
-    if (!userData) {
-      console.log("User data is null");
-      return;
-    }
+    if (!waitingRoomId || !userData) return;
 
-    if (waitingRoomId) {
-      const timer = setTimeout(() => {
-        WebSocketManager.connect(waitingRoomId);
+    const timer = setTimeout(() => {
+      WebSocketManager.connect(waitingRoomId);
 
-        WebSocketManager.on("open", () => {
-          console.log("WebSocket connection opened");
-          setIsWebSocketConnected(true);
+      WebSocketManager.on("open", () => {
+        console.log("WebSocket connection opened");
+        setIsWebSocketConnected(true);
 
-          const message = {
-            type: "ENTER",
-            roomId: waitingRoomId,
-            sender: userData.nickname,
-            message: "",
-            userId: userData.userId,
-          };
-          WebSocketManager.send(message);
-        });
+        const message = {
+          type: "ENTER",
+          roomId: waitingRoomId,
+          sender: userData.nickname,
+          message: "",
+          userId: userData.userId,
+        };
+        WebSocketManager.send(message);
+      });
 
-        WebSocketManager.on("message", (receivedData) => {
-          // console.log("Received message:", receivedData);
+      WebSocketManager.on("message", (receivedData) => {
+        console.log("Received message:", receivedData);
 
-          if (receivedData.type === "USERLIST_UPDATE") {
-            const messageContent = receivedData.message;
-            const userList = messageContent.split("현재 방에 있는 사용자: ")[1];
-            const userNames = userList ? userList.split(", ") : [];
-            localStorage.setItem("userNames", JSON.stringify(userNames));
-            setUserNames(
-              userNames.map((user) => ({
-                name: user,
-                distance: distance,
-              }))
-            );
-          } else if (receivedData.type === "ROOM_CLOSED") {
-            alert("방장이 방을 종료했습니다. 방을 나가겠습니다.");
-            navigate("/report-home");
-          } else if (receivedData.type === "LOCATION") {
-            const { sender, distance, longitude, latitude, userId } =
-              receivedData;
-            const displayName = userId === roomOwnerId ? `${sender}` : sender;
+        if (receivedData.type === "USERLIST_UPDATE") {
+          const messageContent = receivedData.message;
+          const userList = messageContent.split("현재 방에 있는 사용자: ")[1];
+          const userNames = userList ? userList.split(", ") : [];
+          localStorage.setItem("userNames", JSON.stringify(userNames));
+          setUserNames(
+            userNames.map((user) => ({
+              name: user,
+              distance: distance,
+            }))
+          );
+        } else if (receivedData.type === "ROOM_CLOSED") {
+          alert("방장이 방을 종료했습니다. 방을 나가겠습니다.");
+          navigate("/report-home");
+        } else if (receivedData.type === "LOCATION") {
+          const { sender, distance, longitude, latitude, userId } =
+            receivedData;
+          const displayName = userId === roomOwnerId ? `${sender}` : sender;
 
-            setUserPositions((prevPositions) => ({
-              ...prevPositions,
-              [userId]: { nickname: displayName, latitude, longitude, userId },
-            }));
-          } else if (receivedData.type === "START") {
-            setIsRunning(true);
-            setIsRunningStarted(true);
-            setCountdownFinished(true);
-          } else if (receivedData.type === "QUIT") {
-            setIsRunning(false);
-          } else if (receivedData.type === "DISTANCE") {
-            const messageContent = receivedData.message;
-            let nickname;
-            if (messageContent.includes("(방장)")) {
-              nickname = messageContent.split("(방장)의 총 이동 거리: ")[0];
-            } else {
-              nickname = messageContent.split("의 총 이동 거리: ")[0];
-            }
+          setUserPositions((prevPositions) => ({
+            ...prevPositions,
+            [userId]: { nickname: displayName, latitude, longitude, userId },
+          }));
+        } else if (receivedData.type === "START") {
+          setIsRunning(true);
+          console.log("응애", receivedData.type);
+          setIsRunningStarted(true);
+          setCountdownFinished(true);
 
-            const distanceStr = messageContent.split("의 총 이동 거리: ")[1];
-            const distance = parseFloat(distanceStr.split(" km")[0]);
-
-            setUserNames((prevUserNames) =>
-              prevUserNames.map((user) =>
-                user.name == nickname
-                  ? { ...user, distance: `${distance.toFixed(2)} km` }
-                  : user
-              )
-            );
-          }
-        });
-
-        WebSocketManager.on("close", () => {
-          console.log("WebSocket connection closed");
-          setIsWebSocketConnected(false);
+          // 카운트다운을 보여주고 3초 후에 숨기기
+          setIsCountdownVisible(true);
+          setTimeout(() => {
+            setIsCountdownVisible(false);
+          }, 3000); // 3초 후에 카운트다운 숨기기
+        } else if (receivedData.type === "QUIT") {
           setIsRunning(false);
-        });
+        } else if (receivedData.type === "DISTANCE") {
+          const messageContent = receivedData.message;
+          let nickname;
+          if (messageContent.includes("(방장)")) {
+            nickname = messageContent.split("(방장)의 총 이동 거리: ")[0];
+          } else {
+            nickname = messageContent.split("의 총 이동 거리: ")[0];
+          }
 
-        WebSocketManager.on("error", (error) => {
-          console.error("WebSocket error:", error);
-        });
-      }, 2000);
+          const distanceStr = messageContent.split("의 총 이동 거리: ")[1];
+          const distance = parseFloat(distanceStr.split(" km")[0]);
 
-      return () => {
-        clearTimeout(timer);
-        WebSocketManager.close();
-      };
-    }
+          setUserNames((prevUserNames) =>
+            prevUserNames.map((user) =>
+              user.name === nickname
+                ? { ...user, distance: `${distance.toFixed(2)} km` }
+                : user
+            )
+          );
+        }
+      });
+
+      WebSocketManager.on("close", () => {
+        console.log("WebSocket connection closed");
+        setIsWebSocketConnected(false);
+        setIsRunning(false);
+      });
+
+      WebSocketManager.on("error", (error) => {
+        console.error("WebSocket error:", error);
+      });
+    }, 2000);
+
+    return () => {
+      clearTimeout(timer);
+      WebSocketManager.close();
+    };
   }, [waitingRoomId, userData, navigate, roomOwnerId]);
 
   useEffect(() => {
@@ -262,35 +264,30 @@ const TeamPage = () => {
       setTimeout(() => {
         setIsCountdownVisible(false);
         setCountdownFinished(true);
-      }, 3000); // 3초 후에 실제 실행
-    } else {
-      console.warn("WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.");
-    }
-  };
-
-  const handleQuit = () => {
-    if (
-      WebSocketManager.ws &&
-      WebSocketManager.ws.readyState === WebSocket.OPEN
-    ) {
-      const stopMessage = {
-        type: "QUIT",
-        roomId: waitingRoomId,
-        sender: userData.nickname,
-        message: "방장이 종료 버튼을 눌렀습니다.",
-        userId: userData.userId,
-      };
-
-      WebSocketManager.send(stopMessage);
-      setIsRunning(false);
-    } else {
-      console.warn("WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.");
+      }, 3000); // 3초 카운트다운
     }
   };
 
   const handleLeaveRoom = () => {
-    const leaveMessage = {
-      type: "WAIT_EXIT",
+    if (isWebSocketConnected) {
+      WebSocketManager.send({
+        type: "QUIT",
+        roomId: waitingRoomId,
+        sender: userData.nickname,
+        message: "",
+        userId: userData.userId,
+      });
+    }
+    navigate("/report-home");
+  };
+
+  const handleModalToggle = () => {
+    setModalIsOpen(!modalIsOpen);
+  };
+
+  const handleQuit = () => {
+    const quitMessage = {
+      type: "QUIT",
       roomId: waitingRoomId,
       sender: userData.nickname,
       message: "",
@@ -301,21 +298,10 @@ const TeamPage = () => {
       WebSocketManager.ws &&
       WebSocketManager.ws.readyState === WebSocket.OPEN
     ) {
-      WebSocketManager.send(leaveMessage);
-      localStorage.removeItem("userNames");
+      WebSocketManager.send(quitMessage);
     }
-    WebSocketManager.close();
-    navigate("/report-home");
+    setIsRunning(false);
   };
-
-  const handleModalToggle = () => {
-    setModalIsOpen((prevState) => !prevState);
-  };
-
-  const teamCreatePageUrl = `https://i11e103.p.ssafy.io/team-create/${waitingRoomId}/${party}/${roomOwnerId}`;
-
-  const isRoomOwner =
-    roomOwnerId == Number(localStorage.getItem("userId").trim());
 
   return (
     <div>
@@ -342,7 +328,7 @@ const TeamPage = () => {
             <TeamUserList userNames={userNames} />
           </div>
           <div className="TeamCreateQR">
-            {!isRunning && isRoomOwner && (
+            {!isRunning && isWebSocketConnected && (
               <button
                 onClick={handleStartButtonClick}
                 className="TeamCreateButton"
@@ -350,13 +336,16 @@ const TeamPage = () => {
                 시작
               </button>
             )}
-            {isRunning && isRoomOwner && (
+            {isRunning && isWebSocketConnected && (
               <button onClick={handleQuit} className="TeamCreateButton">
                 Quit
               </button>
             )}
             {!isRunning && (
-              <button onClick={handleModalToggle} className="TeamCreateButton">
+              <button
+                onClick={handleModalToggle}
+                className="TeamCreateButton"
+              >
                 QR코드
               </button>
             )}
@@ -369,8 +358,8 @@ const TeamPage = () => {
             overlayClassName="TeamCreateOverlay"
           >
             <QRCode
-              value={teamCreatePageUrl}
-              onClick={() => (window.location.href = teamCreatePageUrl)}
+              value={`http://your-app-url/${waitingRoomId}`}
+              onClick={() => (window.location.href = `http://your-app-url/${waitingRoomId}`)}
               style={{ cursor: "pointer", width: "300px", height: "300px" }}
             />
           </Modal>
