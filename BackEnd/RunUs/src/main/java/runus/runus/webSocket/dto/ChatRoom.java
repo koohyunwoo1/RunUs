@@ -136,7 +136,7 @@ public class ChatRoom {
                 log.info(userName + " (방장)의 위치 업데이트: 총 이동 거리 = " + String.format("%.5f", distance) + " km");
 
                 ChatMessage OwnerLocationBroadcastMessage = new ChatMessage();
-                OwnerLocationBroadcastMessage.setType(ChatMessage.MessageType.LOCATION);
+                OwnerLocationBroadcastMessage.setType(ChatMessage.MessageType.DISTANCE);
                 OwnerLocationBroadcastMessage.setRoomId(chatMessage.getRoomId());
                 OwnerLocationBroadcastMessage.setDistance(previousOwnerDistance);
                 OwnerLocationBroadcastMessage.setLatitude(previousOwnerLatitude);
@@ -148,7 +148,7 @@ public class ChatRoom {
                 // 방장이 아닌 경우 거리 계산
 
                 ChatMessage LocationBroadcastMessage = new ChatMessage();
-                LocationBroadcastMessage.setType(ChatMessage.MessageType.LOCATION);
+                LocationBroadcastMessage.setType(ChatMessage.MessageType.DISTANCE);
                 LocationBroadcastMessage.setRoomId(chatMessage.getRoomId());
                 LocationBroadcastMessage.setDistance(distance);
                 LocationBroadcastMessage.setLatitude(latitude);
