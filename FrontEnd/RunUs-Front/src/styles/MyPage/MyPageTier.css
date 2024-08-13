@@ -14,7 +14,7 @@
   );
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
-  transition: transform 0.3s, background 0.3s, box-shadow 0.3s;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
   transform-style: preserve-3d;
   position: relative;
   overflow: hidden;
@@ -31,10 +31,6 @@
   mix-blend-mode: overlay;
   z-index: 1;
   transition: opacity 0.5s;
-}
-
-.card.flip {
-  transform: rotateY(720deg) scale(1.1); /* 기본 회전 */
 }
 
 .card.clicked {

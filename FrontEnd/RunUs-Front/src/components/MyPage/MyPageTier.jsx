@@ -17,7 +17,6 @@ const MyPageTier = () => {
   const [xp, setXp] = useState(0);
   const [currentTier, setCurrentTier] = useState(tiers[0]);
   const [showModal, setShowModal] = useState(false);
-  const [isFlipped, setIsFlipped] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
   const userId = localStorage.getItem("userId");
 
@@ -56,13 +55,11 @@ const MyPageTier = () => {
         const d = Math.sqrt(centerX ** 2 + centerY ** 2);
 
         cardRef.current.style.boxShadow = `
-          ${-centerX / 10}px ${-centerY / 10}px 10px rgba(0, 0, 0, 0.1)
+          ${-centerX / 5}px ${-centerY / 5}px 20px rgba(0, 0, 0, 0.3)
         `;
 
         cardRef.current.style.transform = `
-          rotate3d(
-            ${-centerY / 100}, ${centerX / 100}, 0, ${d / 10}deg
-          )
+          rotateX(${centerY / 5}deg) rotateY(${-centerX / 5}deg) scale(1.05)
         `;
 
         cardRef.current.classList.add("mousemove-effect");
@@ -111,9 +108,7 @@ const MyPageTier = () => {
   return (
     <>
       <div
-        className={`card ${currentTier.color} ${isFlipped ? "flip" : ""} ${
-          isClicked ? "clicked" : ""
-        }`}
+        className={`card ${currentTier.color} ${isClicked ? "clicked" : ""}`}
         ref={cardRef} // Attach ref to card element
         onClick={handleCardClick}
       >
