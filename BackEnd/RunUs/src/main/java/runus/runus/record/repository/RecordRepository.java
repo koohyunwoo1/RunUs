@@ -17,7 +17,7 @@ public interface RecordRepository extends JpaRepository<RecordEntity, Integer> {
     List<RecordEntity> findTopByUser_idOrderByRecordDateDesc(Integer user_id, Pageable pageable);
 
     // 사용자 ID로 페이지네이션을 통한 모든 기록 조회 - refactor
-    @Query("SELECT new runus.runus.record.dto.RecordDTO(r.recordId, r.userId, r.partyId, r.distance, r.time, r.kcal, r.recordDate) FROM RecordEntity r WHERE r.userId = :userId ORDER BY r.recordId DESC")
+    @Query("SELECT new runus.runus.record.dto.RecordDTO(r.recordId, r.userId, r.partyId, r.distance, r.time, r.kcal, r.recordDate) FROM RecordEntity r WHERE r.userId = :userId ORDER BY r.recordDate DESC")
     Page<RecordDTO> findRecord(@Param("userId") int userId, Pageable pageable);
 
     // 사용자 ID로 모든 기록의 거리 합계 계산
