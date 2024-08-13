@@ -72,6 +72,7 @@ const TeamPage = () => {
   useEffect(() => {
     if (isRunning && isRunningStarted) {
       setIsCountdownVisible(true);
+      setCountdownFinished(false);
     }
     if (!isRunning && isRunningStarted) {
       saveResults();
@@ -261,7 +262,7 @@ const TeamPage = () => {
       setIsRunningStarted(true);
       setIsRunning(true);
       // setIsCountdownVisible(true);
-      setCountdownFinished(false);
+      // setCountdownFinished(false);
       setTimeout(() => {
         setIsCountdownVisible(false);
         setCountdownFinished(true);
