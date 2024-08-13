@@ -70,10 +70,6 @@ const TeamPage = () => {
   }, [userData]);
 
   useEffect(() => {
-    if (isRunning && isRunningStarted) {
-      setIsCountdownVisible(true);
-      setCountdownFinished(false);
-    }
     if (!isRunning && isRunningStarted) {
       saveResults();
     }
@@ -261,8 +257,8 @@ const TeamPage = () => {
       setIsWebSocketConnected(true);
       setIsRunningStarted(true);
       setIsRunning(true);
-      // setIsCountdownVisible(true);
-      // setCountdownFinished(false);
+      setIsCountdownVisible(true);
+      setCountdownFinished(false);
       setTimeout(() => {
         setIsCountdownVisible(false);
         setCountdownFinished(true);
@@ -323,7 +319,7 @@ const TeamPage = () => {
 
   return (
     <div>
-      {isCountdownVisible && isRoomOwner ? (
+      {isCountdownVisible ? (
         <SoloModeCountDown />
       ) : (
         <div className="TeamCreate">
