@@ -147,12 +147,6 @@ const TeamPage = () => {
               ...prevPositions,
               [userId]: { nickname: displayName, latitude, longitude, userId },
             }));
-
-            // setUserNames((prevUserNames) =>
-            //   prevUserNames.map((user) =>
-            //     user.name === sender ? { ...user, distance } : user
-            //   )
-            // );
           } else if (receivedData.type === "START") {
             setIsRunning(true);
             setIsRunningStarted(true);
@@ -228,15 +222,6 @@ const TeamPage = () => {
               userId: userData.userId,
             },
           }));
-
-          // 사용자 목록 업데이트
-          // setUserNames((prevUserNames) =>
-          //   prevUserNames.map((user) =>
-          //     user.name === userData.nickname
-          //       ? { ...user, distance: `${distance.toFixed(2)} km` }
-          //       : user
-          //   )
-          // );
         }
       }, 5000); // 5초 간격으로 실행
     }
@@ -332,58 +317,9 @@ const TeamPage = () => {
   const isRoomOwner =
     roomOwnerId == Number(localStorage.getItem("userId").trim());
 
-  useEffect(() => {
-    let intervalId;
-
-    if (isRunning && isWebSocketConnected) {
-      intervalId = setInterval(() => {
-        const { latitude, longitude, distance } = latestLocation.current;
-        if (latitude !== null && longitude !== null) {
-          const locationMessage = {
-            type: "LOCATION",
-            roomId: waitingRoomId,
-            sender: userData.nickname,
-            message: "",
-            userId: userData.userId,
-            longitude,
-            latitude,
-            distance,
-          };
-          WebSocketManager.send(locationMessage);
-
-          // 자신의 위치 업데이트
-          setUserPositions((prevPositions) => ({
-            ...prevPositions,
-            [userData.userId]: {
-              nickname: userData.nickname,
-              latitude,
-              longitude,
-              userId: userData.userId,
-            },
-          }));
-
-          // 사용자 목록 업데이트
-          // setUserNames((prevUserNames) =>
-          //   prevUserNames.map((user) =>
-          //     user.name === userData.nickname
-          //       ? { ...user, distance: `${distance.toFixed(2)} km` }
-          //       : user
-          //   )
-          // );
-        }
-      }, 5000); // 5초 간격으로 실행
-    }
-
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [isRunning, isWebSocketConnected, waitingRoomId, userData]);
-
   return (
     <div>
-      {isCountdownVisible ? (
+      {isCountdownVisible && isRoomOwner ? (
         <SoloModeCountDown />
       ) : (
         <div className="TeamCreate">
