@@ -62,6 +62,31 @@ const TeamPage = () => {
   }, [userData]);
 
   useEffect(() => {
+    if (!isRunning && isRunningStarted) {
+      saveResults();
+    }
+  }, [isRunning, distance, time, calories]);
+
+  const saveResults = async () => {
+    try {
+      const requestbody = {
+        userId: userData.userId,
+        partyId: party,
+        distance: distance,
+        time: time,
+        kcal: calories,
+      };
+      console.log("파라미터 데이터: " + JSON.stringify(requestbody, null, 2));
+      const response = await axios.post("api/v1/record/result_save", requestbody);
+      console.log(response);
+  
+      navigate(`/report-home`);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
     if (!userData) {
       console.log("User data is null");
       return;
@@ -95,7 +120,7 @@ const TeamPage = () => {
             const userNames = userList ? userList.split(", ") : [];
             localStorage.setItem("userNames", JSON.stringify(userNames));
             setUserNames(
-              userNames.map((user) => ({ name: user, distance: "0.00 km" }))
+              userNames.map((user) => ({ name: user, distance: "0.00 m" }))
             );
           } else if (receivedData.type === "ROOM_CLOSED") {
             alert("방장이 방을 종료했습니다. 방을 나가겠습니다.");
@@ -118,22 +143,8 @@ const TeamPage = () => {
             setIsRunning(true);
             setIsRunningStarted(true);
           } else if (receivedData.type === "QUIT") {
-            try {
-              const requestbody = {
-                userId: userData.userId,
-                partyId: party,
-                distance: distance,
-                time: time,
-                kcal: calories,
-              }
-              const response = axios.post("api/v1/record/result_save", requestbody);
-              console.log(response);
-        
-              navigate(`/report-home`);
-              // window.location.reload();
-            } catch (err) {
-              console.error(err);
-            }
+            // saveResults();
+            setIsRunning(false);
           } else if (receivedData.type === "DISTANCE") {
             const messageContent = receivedData.message;
             // 방장의 메시지를 처리
