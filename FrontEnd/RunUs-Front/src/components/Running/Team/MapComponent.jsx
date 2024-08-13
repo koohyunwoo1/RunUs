@@ -29,6 +29,12 @@ const MapComponent = ({ positions, roomOwnerId }) => {
       // 새로운 마커와 오버레이를 추가합니다.
       Object.keys(positions).forEach(userId => {
         const { latitude, longitude, nickname } = positions[userId];
+        
+        // 닉네임이 null이면 마커와 오버레이를 생성하지 않습니다.
+        if (nickname === null) {
+          return;
+        }
+
         const position = new window.kakao.maps.LatLng(latitude, longitude);
 
         // 마커 생성

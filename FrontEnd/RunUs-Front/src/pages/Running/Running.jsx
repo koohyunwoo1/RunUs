@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../styles/Running/Solo/SoloModeStart.css";
-
+import { UserContext } from "../../hooks/UserContext";
 const Running = ({
-  distance,
+  distance, // 기본값을 설정합니다.
   setDistance,
   calories,
   setCalories,
@@ -13,6 +13,7 @@ const Running = ({
   onLocationUpdate,
   isRunningStarted,
 }) => {
+  const { userData } = useContext(UserContext);
   const [location, setLocation] = useState({ latitude: null, longitude: null });
   const [isRunning, setIsRunning] = useState(true);
   const [error, setError] = useState(null);
@@ -32,80 +33,82 @@ const Running = ({
     }
 
     if (isRunningStarted) {
-    const handleSuccess = (position) => {
-      const { latitude, longitude, speed } = position.coords;
-      const currentTime = Date.now();
+      const handleSuccess = (position) => {
+        const { latitude, longitude, speed } = position.coords;
+        const currentTime = Date.now();
 
-      if (
-        prevLocation.current.latitude !== null &&
-        prevLocation.current.longitude !== null
-      ) {
-        const timeElapsed =
-          (currentTime - prevLocation.current.timestamp) / 1000;
-        const maxPossibleDistance =
-          (prevLocation.current.speed || 0) * timeElapsed;
-        const dist = calculateDistance(
-          prevLocation.current.latitude,
-          prevLocation.current.longitude,
-          latitude,
-          longitude
-        );
-
-        if (dist > maxPossibleDistance) {
-          const correctedLocation = correctLocation(
+        if (
+          prevLocation.current.latitude !== null &&
+          prevLocation.current.longitude !== null
+        ) {
+          const timeElapsed =
+            (currentTime - prevLocation.current.timestamp) / 1000;
+          const maxPossibleDistance =
+            (prevLocation.current.speed || 0) * timeElapsed;
+          const dist = calculateDistance(
             prevLocation.current.latitude,
             prevLocation.current.longitude,
             latitude,
-            longitude,
-            maxPossibleDistance
+            longitude
           );
-          setDistance((prevDistance) => prevDistance + maxPossibleDistance);
-          prevLocation.current = {
-            ...correctedLocation,
-            timestamp: currentTime,
-            speed,
-          };
-          setLocation(correctedLocation);
-          onLocationUpdate(
-            correctedLocation.latitude,
-            correctedLocation.longitude
-          );
+
+          if (dist > maxPossibleDistance) {
+            const correctedLocation = correctLocation(
+              prevLocation.current.latitude,
+              prevLocation.current.longitude,
+              latitude,
+              longitude,
+              maxPossibleDistance
+            );
+            setDistance((prevDistance) => prevDistance + maxPossibleDistance);
+            prevLocation.current = {
+              ...correctedLocation,
+              timestamp: currentTime,
+              speed,
+            };
+            setLocation(correctedLocation);
+            onLocationUpdate(
+              correctedLocation.latitude,
+              correctedLocation.longitude,
+              correctedLocation.distance
+            );
+          } else {
+            setDistance((prevDistance) => prevDistance + dist);
+            prevLocation.current = {
+              latitude,
+              longitude,
+              timestamp: currentTime,
+              speed,
+              distance,
+            };
+            setLocation({ latitude, longitude, distance });
+            onLocationUpdate(latitude, longitude, distance); // Pass location to parent
+          }
+
+          const calculatedCalories = calculateCalories(distance);
+          setCalories(calculatedCalories);
         } else {
-          setDistance((prevDistance) => prevDistance + dist);
           prevLocation.current = {
             latitude,
             longitude,
             timestamp: currentTime,
             speed,
+            distance,
           };
-          setLocation({ latitude, longitude });
-          onLocationUpdate(latitude, longitude); // Pass location to parent
+          setLocation({ latitude, longitude, distance });
+          onLocationUpdate(latitude, longitude, distance); // Pass location to parent
         }
+      };
 
-        const calculatedCalories = calculateCalories(distance);
-        setCalories(calculatedCalories);
-      } else {
-        prevLocation.current = {
-          latitude,
-          longitude,
-          timestamp: currentTime,
-          speed,
-        };
-        setLocation({ latitude, longitude });
-        onLocationUpdate(latitude, longitude); // Pass location to parent
-      }
-    };
+      const handleError = (error) => {
+        setError(error.message);
+      };
 
-    const handleError = (error) => {
-      setError(error.message);
-    };
+      const options = {
+        enableHighAccuracy: true,
+        maximumAge: 0,
+      };
 
-    const options = {
-      enableHighAccuracy: true,
-      maximumAge: 0,
-    };
-
-  
       navigator.geolocation.getCurrentPosition(
         handleSuccess,
         handleError,
@@ -172,7 +175,7 @@ const Running = ({
     return { latitude: correctedLat, longitude: correctedLon };
   };
 
-  const calculateCalories = (distance, weight = 70) => {
+  const calculateCalories = (distance, weight = userData.weight) => {
     const distanceInKm = distance / 1000;
     const caloriesBurned = distanceInKm * weight * 1.036;
     return caloriesBurned;
@@ -184,11 +187,9 @@ const Running = ({
         <p>Error: {error}</p>
       ) : (
         <>
-          <p>Elapsed Time: {formatTime(time)}</p>
-          <p>Latitude: {location.latitude}</p>
-          <p>Longitude: {location.longitude}</p>
-          <p>Distance traveled: {distance.toFixed(2)} meters</p>
-          <p>Calories burned: {calories.toFixed(2)} kcal</p>
+          <p>시간: {formatTime(time)}</p>
+          <p>거리: {distance ? distance.toFixed(2) : "0.00"} meters</p>
+          <p>칼로리: {calories ? calories.toFixed(2) : ".0.00"} kcal</p>
         </>
       )}
     </div>

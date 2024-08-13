@@ -63,14 +63,10 @@
   color: #98bae3;
 }
 
-
-
 .tab-item.active img {
   filter: brightness(0) saturate(100%) invert(32%) sepia(4%) saturate(6400%)
     hue-rotate(144deg) brightness(94%) contrast(92%);
 }
-
-
 
 .tab-item-run {
   position: relative;
