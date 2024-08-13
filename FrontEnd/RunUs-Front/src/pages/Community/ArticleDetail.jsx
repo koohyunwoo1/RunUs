@@ -6,7 +6,20 @@ import CommentSection from "../../components/Community/CommentSection";
 import Button from "../../components/common/Button";
 import { UserContext } from "../../hooks/UserContext";
 import TabBar from "../../components/common/TabBar";
-import leftArrow from "../../assets/leftArrow.png"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import Header from "../../components/common/Header";
+import "../../styles/MyPage/MyPageTier.css";
+
+// 티어 정보
+const tiers = [
+  { name: "Unranked", min: 0, max: 49, color: "tier-unranked" },
+  { name: "Bronze", min: 50, max: 349, color: "tier-bronze" },
+  { name: "Silver", min: 350, max: 999, color: "tier-silver" },
+  { name: "Gold", min: 1000, max: 1999, color: "tier-gold" },
+  { name: "Platinum", min: 2000, max: 4999, color: "tier-platinum" },
+  { name: "Diamond", min: 5000, max: Infinity, color: "tier-diamond" },
+];
 
 // 날짜와 시간을 포맷하는 함수
 const formatDate = (dateString) => {
@@ -19,7 +32,7 @@ const formatDate = (dateString) => {
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-      hour12: false // 24시간제 사용
+      hour12: false, // 24시간제 사용
     };
     return new Date(dateString).toLocaleString(undefined, options);
   } catch (error) {
@@ -31,13 +44,15 @@ const formatDate = (dateString) => {
 const ArticleDetail = () => {
   const { id } = useParams();
   const nav = useNavigate();
-  const { userData } = useContext(UserContext); // UserContext에서 사용자 데이터 가져오기
+  const { userData } = useContext(UserContext);
   const [article, setArticle] = useState(null);
   const [regionName, setRegionName] = useState('미정');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [exp, setExp] = useState(0);
   const [comments, setComments] = useState([]);
-  const [isAuthor, setIsAuthor] = useState(false); // 현재 사용자가 글 작성자인지 여부
+  const [isAuthor, setIsAuthor] = useState(false);
+  const [currentTier, setCurrentTier] = useState(tiers[0]);
 
   useEffect(() => {
     if (!id) {
@@ -52,16 +67,23 @@ const ArticleDetail = () => {
       try {
         const response = await axios.get(`/api/v1/boards/${id}`);
         console.log('Article response:', response.data);
+        const exp = response.data.data.exp;
+        console.log('Exp:', exp);
+        setExp(exp);
         setArticle(response.data.data);
 
-        // Fetch region name
+        // 티어 설정
+        const tier = tiers.find((tier) => exp >= tier.min && exp <= tier.max);
+        setCurrentTier(tier || tiers[tiers.length - 1]);
+
+        // 지역 이름 가져오기
         const regionResponse = await axios.get(`/api/v1/region-minor/${response.data.data.regionId}`);
         console.log('Region response:', regionResponse.data);
         if (regionResponse.data.success) {
           setRegionName(regionResponse.data.data.name || '미정');
         }
 
-        // Check if the current user is the author of the article
+        // 현재 사용자가 글 작성자인지 확인
         if (userData && response.data.data.nickname) {
           setIsAuthor(response.data.data.nickname === userData.nickname);
         }
@@ -97,32 +119,33 @@ const ArticleDetail = () => {
   if (!article) return <p>글을 찾을 수 없습니다.</p>;
 
   return (
-    <div>
-      <a className="article-detail-back-button" onClick={() => nav("/article-home")}>
-        <img src={leftArrow} alt="" className="back-button"></img>
-      </a>
+    <div style={{ paddingTop: "60px", paddingBottom: "60px" }}>
+      <Header />
       <div className="article-detail-container">
-        <h1>{article.title}</h1>
+        <a onClick={() => nav("/article-home")} className="back-button">
+          <FontAwesomeIcon icon={faArrowLeft} size="md" />
+        </a>
         <div className="author">
-          <p>
-            <strong>작성자:</strong> {article.nickname || "익명"}
-          </p>
-          <p>
-            <strong>작성 시간:</strong> {formatDate(article.createdAt)}
+          <div className={`color-box ${currentTier.color}`}>{currentTier.color.slice(5, 6).toUpperCase()}</div>
+          <div className="text-info">
+            <p>
+              <strong>{article.nickname || "익명"}</strong>
+            </p>
+            <p>{regionName}</p>
+          </div>
+        </div>
+
+        <div className="title">
+          <h2>{article.title}</h2>
+          <p style={{ fontSize: "13px" }}>
+            출발 시간 : {article.meetingTime ? formatDate(article.meetingTime) : "미정"}
           </p>
         </div>
         <div className="article-content">
-          <p>
-            <strong>출발 시간 :</strong> {article.meetingTime ? formatDate(article.meetingTime) : "미정"}
-          </p>
-          <p>
-            <strong>장소 :</strong> {regionName}
-          </p>
-          <br />
           {article.content}
         </div>
-        {/* 댓글 섹션을 콘텐츠 아래로 이동 */}
-        <CommentSection comments={comments} articleId={id} />
+        {/* currentTier.color를 CommentSection에 전달 */}
+        <CommentSection comments={comments} articleId={id} tierColor={currentTier.color} />
         {isAuthor && (
           <div className="board-button-container">
             <Button

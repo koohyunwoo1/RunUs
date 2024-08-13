@@ -4,6 +4,7 @@ import Button from "../common/Button";
 import ArticleItem from "./ArticleItem";
 
 const ArticleList = ({ articles }) => {
+  console.log(articles)
   return (
     <div className="ArticleList">
       <div className="article-wrapper">
@@ -15,6 +16,7 @@ const ArticleList = ({ articles }) => {
                   id={post.boardId}
                   title={post.title}
                   content={post.content}
+                  date={post.meetingTime}
                   className={`ArticleItem ${
                     post.boardId % 2 === 0 ? "even" : "odd"
                   }`} // 클래스 이름 조건부 설정

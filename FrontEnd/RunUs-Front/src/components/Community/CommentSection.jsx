@@ -1,9 +1,25 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import "../../styles/Community/CommentSection.css";
+import "../../styles/MyPage/MyPageTier.css";
 import { UserContext } from "../../hooks/UserContext";
 
-const CommentSection = ({ articleId }) => {
+// 티어 정보
+const tiers = [
+  { name: "Unranked", min: 0, max: 49, color: "tier-unranked" },
+  { name: "Bronze", min: 50, max: 349, color: "tier-bronze" },
+  { name: "Silver", min: 350, max: 999, color: "tier-silver" },
+  { name: "Gold", min: 1000, max: 1999, color: "tier-gold" },
+  { name: "Platinum", min: 2000, max: 4999, color: "tier-platinum" },
+  { name: "Diamond", min: 5000, max: Infinity, color: "tier-diamond" },
+];
+
+// 티어를 결정하는 함수
+const determineTier = (exp) => {
+  return tiers.find(tier => exp >= tier.min && exp <= tier.max) || tiers[0];
+};
+
+const CommentSection = ({ articleId, tierColor }) => {
   const { userData } = useContext(UserContext);
   const [newComment, setNewComment] = useState("");
   const [commentList, setCommentList] = useState([]);
@@ -117,7 +133,7 @@ const CommentSection = ({ articleId }) => {
   };
 
   const toggleDropdown = (commentId) => {
-    setDropdownCommentId((prevId) => (prevId === commentId ? null : commentId));
+    setDropdownCommentId((prevId) => (prevId === commentId ? null : prevId));
   };
 
   const formatDate = (dateString) => {
@@ -142,7 +158,9 @@ const CommentSection = ({ articleId }) => {
   const renderComments = (comments, parentId = null, level = 0) => {
     return comments
       .filter(comment => comment.parentId === parentId)
-      .map(comment => (
+      .map(comment => {
+        const commentTier = determineTier(comment.exp); // 댓글 티어 결정
+        return(
         <div key={comment.commentId} className={level > 0 ? "nested-comment" : ""}>
           {editingCommentId === comment.commentId ? (
             <div className="comment-container">
@@ -160,10 +178,11 @@ const CommentSection = ({ articleId }) => {
             </div>
           ) : (
             <div className="comment-container">
-              <div>
-                <p><strong>{comment.nickname}</strong> <span className="date">{formatDate(comment.createdAt)}</span></p>
-                <p>{comment.content}</p>
+              <div className="comment-container2">
+                <p><p className={`color-box-comment ${commentTier.color}`}>{commentTier.color.slice(5, 6).toUpperCase()}</p> {/* 티어 색상 클래스 적용 */}
+                <strong>{comment.nickname}</strong> <span className="date">{formatDate(comment.createdAt)}</span></p>
               </div>
+                <p>{comment.content}</p>
               {userData.userId === comment.userId && (
                 <>
                   <button
@@ -185,7 +204,8 @@ const CommentSection = ({ articleId }) => {
           )}
           {renderComments(comments, comment.commentId, level + 1)}
         </div>
-      ));
+      );
+      });
   };
 
   return (
@@ -219,7 +239,9 @@ const CommentSection = ({ articleId }) => {
         </div>
       </form>
       {hasMoreComments && (
-        <button onClick={loadMoreComments}>더 보기</button>
+        <div className="load-more-comments">
+          <button onClick={loadMoreComments}>더보기</button>
+        </div>
       )}
     </div>
   );
