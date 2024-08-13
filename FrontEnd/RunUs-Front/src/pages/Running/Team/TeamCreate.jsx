@@ -268,7 +268,7 @@ const TeamPage = () => {
               marginLeft: "10px",
             }}
           >
-            <FontAwesomeIcon icon={faArrowLeft} size="lg" />
+            <FontAwesomeIcon icon={faArrowLeft} size="lg"/>
           </button>
         </div>
         <div>

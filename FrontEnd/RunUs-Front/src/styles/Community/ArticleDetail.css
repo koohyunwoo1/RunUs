@@ -1,3 +1,38 @@
+.title {
+  border-top: black solid 1px;
+}
+
+/* 작성자 컨테이너 스타일 */
+.author {
+  display: flex; /* Flexbox 레이아웃 사용 */
+  align-items: center; /* 수직 중앙 정렬 */
+  gap: 10px; /* 사각형과 텍스트 간의 간격 */
+  font-family: "PreRegular"; /* 폰트 설정 */
+
+}
+
+/* 사각형 스타일 */
+.color-box {
+  width: 50px; /* 사각형 너비 */
+  height: 50px; /* 사각형 높이 */
+  /* background-color: #007bff; */
+  display: flex; /* 내부 요소들을 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
+  justify-content: center; /* 가로 중앙 정렬 */
+  color: white; /* 텍스트 색상 */
+  font-size: 24px; /* 텍스트 크기 */
+  border-radius: 50px; /* 모서리 둥글게 */
+  font-size: 20px;
+  font-family: VitroCore;
+}
+
+/* 텍스트 정보 스타일 */
+.text-info {
+  display: flex; /* Flexbox 레이아웃 사용 */
+  flex-direction: column; /* 세로 정렬 */
+}
+
+
 /* 전체 컨테이너 스타일 */
 .article-detail-container {
   width: 100%;
@@ -49,20 +84,18 @@
 .article-detail-container h1 {
   font-size: 1.8em;
   margin: 0;
-  color: #333;
 }
 
 /* 문단 스타일 */
 .article-detail-container p {
   margin: 8px 0;
-  color: #555;
 }
 
 /* 글 내용 스타일 */
-.article-detail-container .article-content {
-  padding: 15px;
-  border-top: 1px solid #ddd;
-  background-color: #f9f9f9;
+.article-content {
+  /* padding: 15px; */
+  /* border-top: black solid 1px; */
+  font-size: 20px;
 }
 
 /* 버튼 컨테이너 스타일 */
@@ -125,16 +158,7 @@
   background-color: #218838; /* 댓글 작성 버튼 호버 색상 */
 }
 
-.article-detail-back-button {
-  display: inline-block; /* 버튼을 인라인 블록으로 설정 */
-  cursor: pointer; /* 클릭 가능한 느낌을 주기 위해 포인터 커서 사용 */
-  text-decoration: none; /* 링크의 기본 밑줄 제거 */
-  width: 10%;
-
-}
-
 .back-button {
-  width: 80%;
-  margin-top: 10px;
-  margin-left: 20px;
+  margin-top: 5px;
+  margin-left: 5px;
 }

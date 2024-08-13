@@ -6,7 +6,6 @@ const ArticleItem = ({ id, title, content, date }) => {
   const formattedDate = dateTimeArray[0]; // "2024-08-15"
   const formattedTime = dateTimeArray[1].substring(0, 5); // "20:00"
   console.log(`${formattedDate} ${formattedTime}`); // "2024-08-15 20:00"
-
   const nav = useNavigate();
   return (
     <div>
