@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,6 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import "../../../styles/Running/Solo/SoloModeStart.css";
+import { UserContext } from "../../../hooks/UserContext";
 
 const SoloModeStart = () => {
   const [time, setTime] = useState(0); // 시간 상태
@@ -26,6 +27,7 @@ const SoloModeStart = () => {
   }); // 이전 위치 정보
   const timerRef = useRef(null); // 타이머 참조
   const navigate = useNavigate();
+  const { userData } = useContext(UserContext);
 
   useEffect(() => {
     if (!navigator.geolocation) {
@@ -155,7 +157,7 @@ const SoloModeStart = () => {
     if (result.isConfirmed) {
       try {
         // 데이터 준비
-        const userId = localStorage.getItem("userId")
+        const userId = localStorage.getItem("userId");
         const partyId = null; // 솔로는 null
         const requestbody = {
           userId: userId,
@@ -163,9 +165,11 @@ const SoloModeStart = () => {
           distance: parseInt(distance),
           time: time,
           kcal: parseInt(calories.toFixed(2)),
-        }
+        };
         const response = await axios.post(
-          `/api/v1/record/result_save`, requestbody);
+          `/api/v1/record/result_save`,
+          requestbody
+        );
 
         if (response.data.success) {
           console.log(response.data.data);
@@ -224,7 +228,7 @@ const SoloModeStart = () => {
     return { latitude: correctedLat, longitude: correctedLon };
   };
 
-  const calculateCalories = (distance, weight = 70) => {
+  const calculateCalories = (distance, weight = userData.weight) => {
     const distanceInKm = distance / 1000;
     const caloriesBurned = distanceInKm * weight * 1.036;
     return caloriesBurned;
@@ -258,7 +262,7 @@ const SoloModeStart = () => {
           <div className="SoloModeStartDistance">
             <p>
               {(distance / 1000).toFixed(2)} <br />
-              <span style={{ fontSize: "20px" }}>킬로미터</span>
+              <span style={{ fontSize: "25px" }}>킬로미터</span>
             </p>
           </div>
 

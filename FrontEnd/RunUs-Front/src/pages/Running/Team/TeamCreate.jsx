@@ -12,6 +12,7 @@ import WebSocketManager from "./WebSocketManager";
 import MapComponent from "../../../components/Running/Team/MapComponent";
 import axios from "axios";
 import Running from "../Running";
+import SoloModeCountDown from "../Solo/SoloModeCountDown";
 
 Modal.setAppElement("#root");
 
@@ -28,6 +29,9 @@ const TeamPage = () => {
   const [isRunning, setIsRunning] = useState(false);
   const [isRunningStarted, setIsRunningStarted] = useState(false);
   const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
+  const [isCountdownVisible, setIsCountdownVisible] = useState(false);
+  const [countdownFinished, setCountdownFinished] = useState(false);
+  const location = useLocation();
   const [distance, setDistance] = useState(0);
   const [calories, setCalories] = useState(0);
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -77,9 +81,12 @@ const TeamPage = () => {
         kcal: calories,
       };
       console.log("파라미터 데이터: " + JSON.stringify(requestbody, null, 2));
-      const response = await axios.post("api/v1/record/result_save", requestbody);
+      const response = await axios.post(
+        "api/v1/record/result_save",
+        requestbody
+      );
       console.log(response);
-  
+
       navigate(`/report-home`);
     } catch (err) {
       console.error(err);
@@ -92,7 +99,6 @@ const TeamPage = () => {
       return;
     }
 
-    console.log(userData);
     if (waitingRoomId) {
       const timer = setTimeout(() => {
         WebSocketManager.connect(waitingRoomId);
@@ -112,7 +118,7 @@ const TeamPage = () => {
         });
 
         WebSocketManager.on("message", (receivedData) => {
-          //console.log("Received message:", receivedData);
+          // console.log("Received message:", receivedData);
 
           if (receivedData.type === "USERLIST_UPDATE") {
             const messageContent = receivedData.message;
@@ -120,13 +126,17 @@ const TeamPage = () => {
             const userNames = userList ? userList.split(", ") : [];
             localStorage.setItem("userNames", JSON.stringify(userNames));
             setUserNames(
-              userNames.map((user) => ({ name: user, distance: "0.00 m" }))
+              userNames.map((user) => ({
+                name: user,
+                distance: distance,
+              }))
             );
           } else if (receivedData.type === "ROOM_CLOSED") {
             alert("방장이 방을 종료했습니다. 방을 나가겠습니다.");
-            navigate("/home");
+            navigate("/report-home");
           } else if (receivedData.type === "LOCATION") {
-            const { sender, distance, longitude, latitude, userId } = receivedData;
+            const { sender, distance, longitude, latitude, userId } =
+              receivedData;
             const displayName = userId === roomOwnerId ? `${sender}` : sender;
 
             setUserPositions((prevPositions) => ({
@@ -136,29 +146,27 @@ const TeamPage = () => {
 
             // setUserNames((prevUserNames) =>
             //   prevUserNames.map((user) =>
-            //     user.name === sender ? { ...user, distance: distance !== undefined ? `${distance.toFixed(2)} km` : '0.00 km' } : user
+            //     user.name === sender ? { ...user, distance } : user
             //   )
             // );
           } else if (receivedData.type === "START") {
             setIsRunning(true);
             setIsRunningStarted(true);
+            setCountdownFinished(true);
           } else if (receivedData.type === "QUIT") {
-            // saveResults();
             setIsRunning(false);
           } else if (receivedData.type === "DISTANCE") {
             const messageContent = receivedData.message;
-            // 방장의 메시지를 처리
             let nickname;
             if (messageContent.includes("(방장)")) {
-                nickname = messageContent.split("(방장)의 총 이동 거리: ")[0];
+              nickname = messageContent.split("(방장)의 총 이동 거리: ")[0];
             } else {
-                nickname = messageContent.split("의 총 이동 거리: ")[0];
+              nickname = messageContent.split("의 총 이동 거리: ")[0];
             }
-            
+
             const distanceStr = messageContent.split("의 총 이동 거리: ")[1];
             const distance = parseFloat(distanceStr.split(" km")[0]);
 
-            // Update the distance for the user with the matching nickname
             setUserNames((prevUserNames) =>
               prevUserNames.map((user) =>
                 user.name == nickname
@@ -211,19 +219,19 @@ const TeamPage = () => {
           // 자신의 위치 업데이트
           setUserPositions((prevPositions) => ({
             ...prevPositions,
-            [userData.userId]: { 
-              nickname: userData.nickname, 
-              latitude, 
-              longitude, 
-              userId: userData.userId 
+            [userData.userId]: {
+              nickname: userData.nickname,
+              latitude,
+              longitude,
+              userId: userData.userId,
             },
           }));
 
           // 사용자 목록 업데이트
           // setUserNames((prevUserNames) =>
           //   prevUserNames.map((user) =>
-          //     user.name === userData.nickname 
-          //       ? { ...user, distance: `${distance.toFixed(2)} km` } 
+          //     user.name === userData.nickname
+          //       ? { ...user, distance: `${distance.toFixed(2)} km` }
           //       : user
           //   )
           // );
@@ -246,7 +254,8 @@ const TeamPage = () => {
   };
 
   const handleStartButtonClick = () => {
-    console.log(userData);
+    setIsCountdownVisible(true); // Show countdown
+    setCountdownFinished(false); // Reset countdown finished state
     const startMessage = {
       type: "START",
       roomId: waitingRoomId,
@@ -266,6 +275,10 @@ const TeamPage = () => {
     } else {
       console.warn("WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.");
     }
+    setTimeout(() => {
+      setIsCountdownVisible(false);
+      setCountdownFinished(true); // Countdown is finished
+    }, 3000); // 3초 후에 실제 실행
   };
 
   const handleQuit = () => {
@@ -305,7 +318,7 @@ const TeamPage = () => {
       localStorage.removeItem("userNames");
     }
     WebSocketManager.close();
-    navigate("/home");
+    navigate("/report-home");
   };
 
   const handleModalToggle = () => {
@@ -317,30 +330,81 @@ const TeamPage = () => {
   const isRoomOwner =
     roomOwnerId == Number(localStorage.getItem("userId").trim());
 
+  useEffect(() => {
+    let intervalId;
+
+    if (isRunning && isWebSocketConnected) {
+      intervalId = setInterval(() => {
+        const { latitude, longitude, distance } = latestLocation.current;
+        if (latitude !== null && longitude !== null) {
+          const locationMessage = {
+            type: "LOCATION",
+            roomId: waitingRoomId,
+            sender: userData.nickname,
+            message: "",
+            userId: userData.userId,
+            longitude,
+            latitude,
+            distance,
+          };
+          WebSocketManager.send(locationMessage);
+
+          // 자신의 위치 업데이트
+          setUserPositions((prevPositions) => ({
+            ...prevPositions,
+            [userData.userId]: {
+              nickname: userData.nickname,
+              latitude,
+              longitude,
+              userId: userData.userId,
+            },
+          }));
+
+          // 사용자 목록 업데이트
+          // setUserNames((prevUserNames) =>
+          //   prevUserNames.map((user) =>
+          //     user.name === userData.nickname
+          //       ? { ...user, distance: `${distance.toFixed(2)} km` }
+          //       : user
+          //   )
+          // );
+        }
+      }, 5000); // 5초 간격으로 실행
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [isRunning, isWebSocketConnected, waitingRoomId, userData]);
+
   return (
     <div>
-      <div className="TeamCreate">
-        <div>
-          <button
-            onClick={handleLeaveRoom}
-            style={{
-              backgroundColor: "white",
-              border: "none",
-              marginLeft: "10px",
-            }}
-          >
-            <FontAwesomeIcon icon={faArrowLeft} size="lg" />
-          </button>
-        </div>
-        <div>
-          <TeamSaying />
-        </div>
-        <div>
-          <TeamUserList userNames={userNames} />
-        </div>
-        <div className="TeamCreateQR">
+      {isCountdownVisible ? (
+        <SoloModeCountDown />
+      ) : (
+        <div className="TeamCreate">
           <div>
-            {isRoomOwner && !isRunning && (
+            <button
+              onClick={handleLeaveRoom}
+              style={{
+                backgroundColor: "white",
+                border: "none",
+                marginLeft: "10px",
+              }}
+            >
+              <FontAwesomeIcon icon={faArrowLeft} size="lg" />
+            </button>
+          </div>
+          <div>
+            <TeamSaying />
+          </div>
+          <div>
+            <TeamUserList userNames={userNames} />
+          </div>
+          <div className="TeamCreateQR">
+            {!isRunning && isRoomOwner && (
               <button
                 onClick={handleStartButtonClick}
                 className="TeamCreateButton"
@@ -348,52 +412,44 @@ const TeamPage = () => {
                 시작
               </button>
             )}
-            {isRoomOwner && isRunning && (
-              <button
-                onClick={handleQuit}
-                className="TeamCreateButton"
-              >
+            {isRunning && isRoomOwner && (
+              <button onClick={handleQuit} className="TeamCreateButton">
                 Quit
               </button>
             )}
+            {!isRunning && (
+              <button onClick={handleModalToggle} className="TeamCreateButton">
+                QR코드
+              </button>
+            )}
           </div>
-          <div>
-            <button onClick={handleModalToggle} className="TeamCreateButton">
-              QR코드 보기
-            </button>
-          </div>
+          <Modal
+            isOpen={modalIsOpen}
+            onRequestClose={handleModalToggle}
+            contentLabel="QR Code Modal"
+            className="TeamCreateModal"
+            overlayClassName="TeamCreateOverlay"
+          >
+            <QRCode
+              value={teamCreatePageUrl}
+              onClick={() => (window.location.href = teamCreatePageUrl)}
+              style={{ cursor: "pointer", width: "300px", height: "300px" }}
+            />
+          </Modal>
+          {countdownFinished && isRunning && (
+            <Running
+              distance={distance}
+              setDistance={setDistance}
+              calories={calories}
+              setCalories={setCalories}
+              time={time}
+              setTime={setTime}
+              onLocationUpdate={handleLocationUpdate}
+              isRunningStarted={isRunningStarted}
+            />
+          )}
         </div>
-        <Modal
-          isOpen={modalIsOpen}
-          onRequestClose={handleModalToggle}
-          contentLabel="QR Code Modal"
-          className="TeamCreateModal"
-          overlayClassName="TeamCreateOverlay"
-        >
-          <QRCode
-            value={teamCreatePageUrl}
-            onClick={() => (window.location.href = teamCreatePageUrl)}
-            style={{ cursor: "pointer", width: "300px", height: "300px" }}
-          />
-        </Modal>
-        <div>
-          <MapComponent positions={userPositions} roomOwnerId={roomOwnerId} />
-        </div>
-
-        <div>
-          <Running
-            distance={distance}
-            setDistance={setDistance}
-            calories={calories}
-            setCalories={setCalories}
-            time={time}
-            setTime={setTime}
-            onLocationUpdate={handleLocationUpdate}
-            isRunningStarted={isRunningStarted}
-          />
-          <p>{distance}</p>
-        </div>
-      </div>
+      )}
     </div>
   );
 };

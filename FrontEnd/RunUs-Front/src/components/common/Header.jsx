@@ -51,7 +51,7 @@ const Header = ({ onSearch, searchValue, setSearchValue }) => {
               type="text"
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
-              placeholder="검색어를 입력하세요"
+              placeholder="검색어를 입력해주세요."
               className="header-search-input"
             />
             <button type="submit" className="header-search-button">

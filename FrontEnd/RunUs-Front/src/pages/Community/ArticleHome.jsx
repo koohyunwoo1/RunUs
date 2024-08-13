@@ -76,7 +76,7 @@ const ArticleHome = () => {
     if (userData && userData.regionId) {
       fetchArticles();
     }
-  }, [userData, currentPage, sortByTime, completedOnly, word]);
+  }, [userData, currentPage, sortByTime, completedOnly]);
 
   const handleSortByTime = () => {
     setSortByTime((prev) => !prev);

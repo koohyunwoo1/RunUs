@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../styles/Running/Solo/SoloModeStart.css";
-
+import { UserContext } from "../../hooks/UserContext";
 const Running = ({
   distance, // 기본값을 설정합니다.
   setDistance,
@@ -13,6 +13,7 @@ const Running = ({
   onLocationUpdate,
   isRunningStarted,
 }) => {
+  const { userData } = useContext(UserContext);
   const [location, setLocation] = useState({ latitude: null, longitude: null });
   const [isRunning, setIsRunning] = useState(true);
   const [error, setError] = useState(null);
@@ -78,7 +79,7 @@ const Running = ({
               longitude,
               timestamp: currentTime,
               speed,
-              distance
+              distance,
             };
             setLocation({ latitude, longitude, distance });
             onLocationUpdate(latitude, longitude, distance); // Pass location to parent
@@ -92,7 +93,7 @@ const Running = ({
             longitude,
             timestamp: currentTime,
             speed,
-            distance
+            distance,
           };
           setLocation({ latitude, longitude, distance });
           onLocationUpdate(latitude, longitude, distance); // Pass location to parent
@@ -174,7 +175,7 @@ const Running = ({
     return { latitude: correctedLat, longitude: correctedLon };
   };
 
-  const calculateCalories = (distance, weight = 70) => {
+  const calculateCalories = (distance, weight = userData.weight) => {
     const distanceInKm = distance / 1000;
     const caloriesBurned = distanceInKm * weight * 1.036;
     return caloriesBurned;
@@ -186,11 +187,9 @@ const Running = ({
         <p>Error: {error}</p>
       ) : (
         <>
-          <p>Elapsed Time: {formatTime(time)}</p>
-          <p>Latitude: {location.latitude}</p>
-          <p>Longitude: {location.longitude}</p>
-          <p>Distance traveled: {distance ? distance.toFixed(2) : "0.00"} meters</p> {/* 조건부 렌더링 */}
-          <p>Calories burned: {calories ? calories.toFixed(2) : "0.00"} kcal</p> {/* 조건부 렌더링 */}
+          <p>시간: {formatTime(time)}</p>
+          <p>거리: {distance ? distance.toFixed(2) : "0.00"} meters</p>
+          <p>칼로리: {calories ? calories.toFixed(2) : ".0.00"} kcal</p>
         </>
       )}
     </div>
