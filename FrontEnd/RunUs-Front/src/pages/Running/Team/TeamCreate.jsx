@@ -70,6 +70,9 @@ const TeamPage = () => {
   }, [userData]);
 
   useEffect(() => {
+    if (isRunning && isRunningStarted) {
+      setIsCountdownVisible(true);
+    }
     if (!isRunning && isRunningStarted) {
       saveResults();
     }
@@ -257,7 +260,7 @@ const TeamPage = () => {
       setIsWebSocketConnected(true);
       setIsRunningStarted(true);
       setIsRunning(true);
-      setIsCountdownVisible(true);
+      // setIsCountdownVisible(true);
       setCountdownFinished(false);
       setTimeout(() => {
         setIsCountdownVisible(false);
