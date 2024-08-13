@@ -87,7 +87,7 @@ const TeamPage = () => {
         });
 
         WebSocketManager.on("message", (receivedData) => {
-          console.log("Received message:", receivedData);
+          //console.log("Received message:", receivedData);
 
           if (receivedData.type === "USERLIST_UPDATE") {
             const messageContent = receivedData.message;
@@ -109,11 +109,11 @@ const TeamPage = () => {
               [userId]: { nickname: displayName, latitude, longitude, userId },
             }));
 
-            setUserNames((prevUserNames) =>
-              prevUserNames.map((user) =>
-                user.name === sender ? { ...user, distance: distance !== undefined ? `${distance.toFixed(2)} km` : '0.00 km' } : user
-              )
-            );
+            // setUserNames((prevUserNames) =>
+            //   prevUserNames.map((user) =>
+            //     user.name === sender ? { ...user, distance: distance !== undefined ? `${distance.toFixed(2)} km` : '0.00 km' } : user
+            //   )
+            // );
           } else if (receivedData.type === "START") {
             setIsRunning(true);
             setIsRunningStarted(true);
@@ -123,20 +123,38 @@ const TeamPage = () => {
                 params: {
                   user_id: userData.userId,
                   party_id: party,
-                  distance: distance,
-                  time: elapsedTime,
-                  kcal: totalCalories,
+                  distance: Math.round(distance),
+                  time: Math.round(time),
+                  kcal: Math.round(calories),
                 },
               });
-              console.log(response);
-
+              
+              console.log(userData.userId);
+              console.log(party)
+              console.log(Math.round(distance))
+              console.log(Math.round(time))
+              console.log(Math.round(calories))
               navigate(`/home`);
             } catch (err) {
               console.error(err);
             }
+          } else if (receivedData.type === "DISTANCE") {
+            const messageContent = receivedData.message;
+            const [nickname, distanceStr] = messageContent.split("의 총 이동 거리: ");
+            const distance = parseFloat(distanceStr.split(" km")[0]);
+        
+            setUserNames((prevUserNames) =>
+              prevUserNames.map((user) =>
+                user.name === nickname
+                  ? { ...user, distance: `${distance.toFixed(2)} km` }
+                  : user
+              )
+            );
           }
         });
 
+
+       
         WebSocketManager.on("close", () => {
           console.log("WebSocket connection closed");
           setIsWebSocketConnected(false);
