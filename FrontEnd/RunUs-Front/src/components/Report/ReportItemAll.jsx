@@ -88,7 +88,6 @@ const ReportItem = () => {
   };
 
   const formatDate = (timestamp) => {
-    console.log('Timestamp received:', timestamp)
     if (!timestamp) {
       return "N/A"; // or any other placeholder text
     }

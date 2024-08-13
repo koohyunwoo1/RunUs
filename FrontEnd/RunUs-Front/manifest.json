@@ -3,8 +3,8 @@
     "short_name": "Run Us",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#F8F7DA",
-    "theme_color": "#8C383A",
+    "background_color": "#98BAE3",
+    "theme_color": "#FFFFFF",
     "description": "Run Us - Running App",
     "icons": [
       {
