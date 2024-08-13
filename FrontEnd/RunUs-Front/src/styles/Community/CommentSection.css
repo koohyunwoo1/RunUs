@@ -3,6 +3,21 @@
   /* padding: 20px; */
 }
 
+/* 사각형 스타일 */
+.color-box-comment {
+  width: 20px; /* 사각형 너비 */
+  height: 20px; /* 사각형 높이 */
+  /* background-color: #007bff; */
+  display: flex; /* 내부 요소들을 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
+  justify-content: center; /* 가로 중앙 정렬 */
+  color: white; /* 텍스트 색상 */
+  font-size: 24px; /* 텍스트 크기 */
+  border-radius: 50px; /* 모서리 둥글게 */
+  font-size: 20px;
+  font-family: VitroCore;
+}
+
 .comment-section h3 {
   margin: 0 0 20px 0;
   font-size: 20px;

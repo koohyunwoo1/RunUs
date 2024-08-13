@@ -3,7 +3,7 @@ import axios from "axios";
 import "../../styles/Community/CommentSection.css";
 import { UserContext } from "../../hooks/UserContext";
 
-const CommentSection = ({ articleId }) => {
+const CommentSection = ({ articleId, tierColor }) => {
   const { userData } = useContext(UserContext);
   const [newComment, setNewComment] = useState("");
   const [commentList, setCommentList] = useState([]);
@@ -14,7 +14,6 @@ const CommentSection = ({ articleId }) => {
   const [hasMoreComments, setHasMoreComments] = useState(true);
   const [replyingTo, setReplyingTo] = useState(null);
   const [dropdownCommentId, setDropdownCommentId] = useState(null);
-
   const fetchComments = async (pageNumber = 0) => {
     try {
       const response = await axios.get(`/api/v1/boards/comments`, {
@@ -142,7 +141,9 @@ const CommentSection = ({ articleId }) => {
   const renderComments = (comments, parentId = null, level = 0) => {
     return comments
       .filter(comment => comment.parentId === parentId)
-      .map(comment => (
+      .map(comment => {
+        console.log("comment", comment);
+        return(
         <div key={comment.commentId} className={level > 0 ? "nested-comment" : ""}>
           {editingCommentId === comment.commentId ? (
             <div className="comment-container">
@@ -161,7 +162,8 @@ const CommentSection = ({ articleId }) => {
           ) : (
             <div className="comment-container">
               <div>
-                <p><strong>{comment.nickname}</strong> <span className="date">{formatDate(comment.createdAt)}</span></p>
+                <p><p className="color-box-comment"></p><strong>{comment.nickname}</strong> <span className="date">{formatDate(comment.createdAt)}</span></p>
+                <p>{comment.tierColor}</p>
                 <p>{comment.content}</p>
               </div>
               {userData.userId === comment.userId && (
@@ -185,7 +187,8 @@ const CommentSection = ({ articleId }) => {
           )}
           {renderComments(comments, comment.commentId, level + 1)}
         </div>
-      ));
+      );
+      });
   };
 
   return (

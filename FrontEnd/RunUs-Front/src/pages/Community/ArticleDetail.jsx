@@ -44,15 +44,15 @@ const formatDate = (dateString) => {
 const ArticleDetail = () => {
   const { id } = useParams();
   const nav = useNavigate();
-  const { userData } = useContext(UserContext); // UserContext에서 사용자 데이터 가져오기
+  const { userData } = useContext(UserContext);
   const [article, setArticle] = useState(null);
   const [regionName, setRegionName] = useState('미정');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [exp, setExp] = useState(0); // 기본값 0으로 설정
+  const [exp, setExp] = useState(0);
   const [comments, setComments] = useState([]);
-  const [isAuthor, setIsAuthor] = useState(false); // 현재 사용자가 글 작성자인지 여부
-  const [currentTier, setCurrentTier] = useState(tiers[0]); // 기본 티어 설정
+  const [isAuthor, setIsAuthor] = useState(false);
+  const [currentTier, setCurrentTier] = useState(tiers[0]);
 
   useEffect(() => {
     if (!id) {
@@ -126,7 +126,7 @@ const ArticleDetail = () => {
           <FontAwesomeIcon icon={faArrowLeft} size="md" />
         </a>
         <div className="author">
-          <div className={`color-box ${currentTier.color}`}>B</div>
+          <div className={`color-box ${currentTier.color}`}>{currentTier.color.slice(5, 6).toUpperCase()}</div>
           <div className="text-info">
             <p>
               <strong>{article.nickname || "익명"}</strong>
@@ -144,7 +144,8 @@ const ArticleDetail = () => {
         <div className="article-content">
           {article.content}
         </div>
-        <CommentSection comments={comments} articleId={id} />
+        {/* currentTier.color를 CommentSection에 전달 */}
+        <CommentSection comments={comments} articleId={id} tierColor={currentTier.color} />
         {isAuthor && (
           <div className="board-button-container">
             <Button
