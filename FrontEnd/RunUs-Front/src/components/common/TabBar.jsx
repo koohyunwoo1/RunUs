@@ -4,7 +4,7 @@ import "../../styles/Common/TabBar.css";
 import homeIcon from "../../assets/home.png";
 import reportIcon from "../../assets/report.png";
 import runIcon from "../../assets/speed.png";
-import runWhiteIcon from "../../assets/speedWhite.png";
+import runWhite from "../../assets/runWhite.png";
 import communityIcon from "../../assets/group.png";
 import profileIcon from "../../assets/user.png";
 import "../../styles/Home/LoginHomeCustomSwal.css";
@@ -158,7 +158,7 @@ const TabBar = ({ onRunClick }) => {
         <span>리포트</span>
       </div>
       <div className={`tab-item2 tab-item-run`} onClick={handleRunClick}>
-        <img src={runIcon} alt="Run" />
+        <img src={runWhite} alt="Run" />
         <span>Run Us</span>
       </div>
       <div
