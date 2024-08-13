@@ -119,22 +119,18 @@ const TeamPage = () => {
             setIsRunningStarted(true);
           } else if (receivedData.type === "QUIT") {
             try {
-              const response = axios.post("api/v1/record/result_save", null, {
-                params: {
-                  user_id: userData.userId,
-                  party_id: party,
-                  distance: Math.round(distance),
-                  time: Math.round(time),
-                  kcal: Math.round(calories),
-                },
-              });
-              
-              console.log(userData.userId);
-              console.log(party)
-              console.log(Math.round(distance))
-              console.log(Math.round(time))
-              console.log(Math.round(calories))
-              navigate(`/home`);
+              const requestbody = {
+                userId: userData.userId,
+                partyId: party,
+                distance: distance,
+                time: time,
+                kcal: calories,
+              }
+              const response = axios.post("api/v1/record/result_save", requestbody);
+              console.log(response);
+        
+              navigate(`/report-home`);
+              // window.location.reload();
             } catch (err) {
               console.error(err);
             }
@@ -264,6 +260,7 @@ const TeamPage = () => {
         message: "방장이 종료 버튼을 눌렀습니다.",
         userId: userData.userId,
       };
+  
       WebSocketManager.send(stopMessage);
       setIsRunning(false);
     } else {
