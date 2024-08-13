@@ -58,11 +58,4 @@ public class CommentServiceImpl implements CommentService {
         Page<CommentResponseDTO> comments = commentRepository.findBoardComents(boardId, '0', pageable);
         return comments;
     }
-
-    private CommentResponseDTO convertToDTO(CommentEntity comment) {
-        return new CommentResponseDTO(
-                comment.getCommentId(), comment.getBoardId(), comment.getParentId(),
-                comment.getUserId(), comment.getContent(), comment.getCreatedAt(), comment.getUpdatedAt(),
-                comment.getNickname());
-    }
 }
