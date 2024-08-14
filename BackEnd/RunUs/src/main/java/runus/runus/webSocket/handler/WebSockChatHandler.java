@@ -59,7 +59,7 @@ public class WebSockChatHandler extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        String payload = message.getPayload();
+                String payload = message.getPayload();
         log.info("Received payload: {}", payload);
 
         ChatMessage chatMessage = objectMapper.readValue(payload, ChatMessage.class);
