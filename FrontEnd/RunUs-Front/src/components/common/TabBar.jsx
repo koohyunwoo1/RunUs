@@ -60,7 +60,7 @@ const TabBar = ({ onRunClick }) => {
   const handleSoloModeClick = async () => {
     Swal.close();
     const result = await Swal.fire({
-      title: "Run?",
+      title: "러닝을 하시겠습니까 ?",
       showCancelButton: true,
       confirmButtonText: "예",
       cancelButtonText: "아니오",
