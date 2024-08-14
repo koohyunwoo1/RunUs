@@ -43,7 +43,6 @@ public class GlobalRestExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
         ApiResponse<Void> response = new ApiResponse<>();
         response.setFail(null, "Missing required parameter: " + e.getParameterName());
-        System.out.println("HTE");
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 

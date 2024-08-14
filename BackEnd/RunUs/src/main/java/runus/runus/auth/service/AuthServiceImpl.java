@@ -56,6 +56,7 @@ public class AuthServiceImpl implements AuthService {
         user.setWeight(userDto.getWeight());
         user.setRegionId(userDto.getRegionId());
         user.setRegisteredAt(LocalDateTime.now());
+        user.setExp(0);
         user.setTierId(1);
 
         System.out.println("AuthServiceImpl"+user);

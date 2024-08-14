@@ -17,5 +17,6 @@ public class CommentResponseDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String nickname;
+    private int exp;
 
 }
