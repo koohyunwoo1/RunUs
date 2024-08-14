@@ -4,10 +4,9 @@
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
-  border: 1px solid #ddd;
   border-radius: 8px;
-  background-color: #f9f9f9;
   font-family: "PreRegular";
+  margin-top: 20%;
 }
 
 .ArticleEdit h2 {
@@ -47,14 +46,28 @@
   width: 100%;
   padding: 10px;
   border: none;
-  background-color: #98bae3;
+  background-color: #007bff;
   color: #fff;
   font-size: 16px;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-top: 10px;
 }
 
 .ArticleEdit button:hover {
   background-color: #0056b3;
+}
+
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%; /* 필요에 따라 너비를 조정하세요 */
+ 
+}
+
+.button-container .cancel {
+  margin-left: 20px;
+  background-color: #d2d2d2; /* 취소 버튼의 배경색을 변경하고 싶다면 추가 */
 }

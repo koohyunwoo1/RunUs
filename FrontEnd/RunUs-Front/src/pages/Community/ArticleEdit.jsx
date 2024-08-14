@@ -78,7 +78,6 @@ const ArticleEdit = () => {
     <div>
       <Header/>
     <div className="ArticleEdit">
-      <h2>글 수정하기</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="title">제목</label>
@@ -120,8 +119,10 @@ const ArticleEdit = () => {
           />
         </div>
         {/* 지역 선택 요소 제거 */}
-        <Button type="submit" text="저장" />
-        <Button text="취소" onClick={() => nav(`/article-detail/${id}`)} />
+        <div className="button-container">
+          <Button type="submit" text="저장" />
+          <Button className="cancel" text="취소" onClick={() => nav(`/article-detail/${id}`)} />
+        </div>
       </form>
     </div>
     </div>
