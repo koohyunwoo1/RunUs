@@ -34,7 +34,7 @@ const Header = ({ onSearch, searchValue, setSearchValue }) => {
     <>
       <div className="header2">
         <div className="header-left">
-          {location.pathname === "/article-create" ? (
+          {location.pathname === "/article-create"  || location.pathname.includes("/article-edit") ? (
             <FontAwesomeIcon
               icon={faTimes}
               className="header-X-button"
@@ -57,6 +57,10 @@ const Header = ({ onSearch, searchValue, setSearchValue }) => {
         </div>
         {location.pathname === "/article-create" && (
           <span className="header-title">글쓰기</span>
+        )}
+        {location.pathname.includes("/article-edit") && (
+          <span className="header-title">수정하기</span>
+          
         )}
         {location.pathname === "/article-home" && (
           <button onClick={toggleSearch} className="header-search-toggle">

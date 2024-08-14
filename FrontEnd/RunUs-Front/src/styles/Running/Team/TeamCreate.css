@@ -47,3 +47,23 @@
   background: white;
   z-index: 10000;
 }
+
+.TeamCreateButton2 {
+  display: inline-block;
+  width: 40%;
+  font-size: 15px;
+  margin: 0 auto; /* This centers the button if the container is a block-level element */
+  padding: 10px 20px;
+  background-color: #98bae3;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center; /* Ensure text is centered */
+}
+
+.TeamCreateButtonContainer {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  margin-top: 20px; /* Add margin if needed */
+}

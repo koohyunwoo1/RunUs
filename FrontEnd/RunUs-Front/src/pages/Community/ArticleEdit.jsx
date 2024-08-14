@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../styles/Community/ArticleEdit.css"; // 스타일 파일 import
 import Button from "../../components/common/Button";
+import Header from "../../components/common/Header.jsx";
 
 const ArticleEdit = () => {
   const { id } = useParams();
@@ -74,6 +75,8 @@ const ArticleEdit = () => {
   if (error) return <p>문제가 발생했습니다: {error.message}</p>;
 
   return (
+    <div>
+      <Header/>
     <div className="ArticleEdit">
       <h2>글 수정하기</h2>
       <form onSubmit={handleSubmit}>
@@ -120,6 +123,7 @@ const ArticleEdit = () => {
         <Button type="submit" text="저장" />
         <Button text="취소" onClick={() => nav(`/article-detail/${id}`)} />
       </form>
+    </div>
     </div>
   );
 };

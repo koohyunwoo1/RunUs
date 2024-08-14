@@ -9,7 +9,7 @@ const TeamUserList = ({ userNames }) => {
         {userNames.map((user, index) => (
           <div className="user-card" key={index}>
             <span className="user-nickname">
-              {user.name} - {user.distance}km
+              {user.name} - {user.distance}m
             </span>
           </div>
         ))}
