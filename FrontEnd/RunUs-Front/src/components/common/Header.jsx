@@ -29,6 +29,10 @@ const Header = ({ onSearch, searchValue, setSearchValue }) => {
   const handleBackClick = () => {
     navigate(-1); // 이전 페이지로 돌아가기
   };
+  
+  const handleBackClickArrow = () => {
+    navigate('/article-home');
+};
 
   return (
     <>
@@ -44,7 +48,7 @@ const Header = ({ onSearch, searchValue, setSearchValue }) => {
             <FontAwesomeIcon
               icon={faArrowLeft}
               className="header-back-arrow"
-              onClick={handleBackClick}
+              onClick={handleBackClickArrow}
             />
           ) : (
             <img
