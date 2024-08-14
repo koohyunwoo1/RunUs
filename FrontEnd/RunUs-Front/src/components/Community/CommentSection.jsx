@@ -145,7 +145,10 @@ const CommentSection = ({ articleId, tierColor }) => {
   };
 
   const toggleDropdown = (commentId) => {
-    setDropdownCommentId((prevId) => (prevId === commentId ? null : prevId));
+    console.log('Toggling dropdown for commentId:', commentId); // 추가된 로그
+
+    setDropdownCommentId(commentId);
+    
   };
 
   const formatDate = (dateString) => {
@@ -202,7 +205,7 @@ const CommentSection = ({ articleId, tierColor }) => {
                 <>
                   <button
                     className="menu-button"
-                    onClick={() => toggleDropdown(comment.commentId)}
+                    onClick={() => toggleDropdown(comment.commentId)} 
                   >
                     ⋮
                   </button>
