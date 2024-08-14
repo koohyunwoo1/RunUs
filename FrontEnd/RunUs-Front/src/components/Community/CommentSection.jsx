@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import axios from "axios";
 import "../../styles/Community/CommentSection.css";
 import "../../styles/MyPage/MyPageTier.css";
 import { UserContext } from "../../hooks/UserContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowUp, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 // 티어 정보
 const tiers = [
@@ -30,6 +32,8 @@ const CommentSection = ({ articleId, tierColor }) => {
   const [hasMoreComments, setHasMoreComments] = useState(true);
   const [replyingTo, setReplyingTo] = useState(null);
   const [dropdownCommentId, setDropdownCommentId] = useState(null);
+
+  const textareaRef = useRef(null);
 
   const fetchComments = async (pageNumber = 0) => {
     try {
@@ -60,8 +64,16 @@ const CommentSection = ({ articleId, tierColor }) => {
     fetchComments(page);
   }, [articleId, page]);
 
+  const autoResizeTextarea = () => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'; // 일단 높이를 'auto'로 설정
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // 콘텐츠 높이에 맞게 조정
+    }
+  };
+
   const handleCommentChange = (e) => {
     setNewComment(e.target.value);
+    autoResizeTextarea(); // 입력값이 변경될 때마다 높이 조절
   };
 
   const handleCommentSubmit = async (e) => {
@@ -109,8 +121,8 @@ const CommentSection = ({ articleId, tierColor }) => {
 
   const handleDeleteComment = async (commentId) => {
     try {
-      await axios.delete(`/api/v1/boards/comments`,{
-       data: { commentId },
+      await axios.delete(`/api/v1/boards/comments`, {
+        data: { commentId },
       });
       setPage(0);
       setCommentList([]);
@@ -179,10 +191,12 @@ const CommentSection = ({ articleId, tierColor }) => {
           ) : (
             <div className="comment-container">
               <div className="comment-container2">
-                <p><p className={`color-box-comment ${commentTier.color}`}>{commentTier.color.slice(5, 6).toUpperCase()}</p> {/* 티어 색상 클래스 적용 */}
-                <strong>{comment.nickname}</strong> <span className="date">{formatDate(comment.createdAt)}</span></p>
+                <p>
+                  <p className={`color-box-comment ${commentTier.color}`}>{commentTier.color.slice(5, 6).toUpperCase()}</p> {/* 티어 색상 클래스 적용 */}
+                  <strong>{comment.nickname}</strong> <span className="date">{formatDate(comment.createdAt)}</span>
+                </p>
               </div>
-                <p>{comment.content}</p>
+              <p>{comment.content}</p>
               {userData.userId === comment.userId && (
                 <>
                   <button
@@ -195,11 +209,13 @@ const CommentSection = ({ articleId, tierColor }) => {
                     <button onClick={() => handleEditComment(comment.commentId, comment.content)}>
                       수정
                     </button>
-                    <button onClick={() => handleDeleteComment(comment.commentId)}>삭제</button>
+                    <button onClick={() => handleDeleteComment(comment.commentId)}>
+                      삭제
+                    </button>
                   </div>
                 </>
               )}
-              <button onClick={(e) => handleReply(comment.commentId, e)} className="reply-button">답글</button>
+              <button onClick={(e) => handleReply(comment.commentId, e)} className="reply-button">답글 달기</button>
             </div>
           )}
           {renderComments(comments, comment.commentId, level + 1)}
@@ -217,6 +233,7 @@ const CommentSection = ({ articleId, tierColor }) => {
       <form onSubmit={handleCommentSubmit}>
         <div className="textarea-container">
           <textarea
+            ref={textareaRef}
             className="comment-writer"
             value={newComment}
             onChange={handleCommentChange}
@@ -224,7 +241,7 @@ const CommentSection = ({ articleId, tierColor }) => {
           />
           <div className="submit-container">
             <button type="submit" className="create-comment">
-              {replyingTo ? "답글" : "댓글"}
+              <FontAwesomeIcon icon={faArrowUp} />
             </button>
             {replyingTo && (
               <button
@@ -232,7 +249,7 @@ const CommentSection = ({ articleId, tierColor }) => {
                 onClick={() => setReplyingTo(null)}
                 className="cancel-reply"
               >
-                취소
+                <FontAwesomeIcon icon={faTimes} />
               </button>
             )}
           </div>
