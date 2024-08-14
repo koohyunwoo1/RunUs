@@ -20,12 +20,26 @@
   margin-top: 20px;
   display: flex;
   flex-direction: row;
-  gap: 180px;
+  gap: 230px;
   margin-left: 20px;
 }
 
 .SoloModeStartDistance {
   font-size: 80px;
+  font-weight: bold;
+  font-style: oblique;
+}
+
+.TeamModeStartHeader {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 180px;
+  margin-left: 20px;
+}
+
+.TeamModeStartDistance {
+  font-size: 30px;
   font-weight: bold;
   font-style: oblique;
 }

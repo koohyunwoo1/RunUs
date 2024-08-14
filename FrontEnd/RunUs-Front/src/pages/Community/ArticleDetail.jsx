@@ -143,17 +143,22 @@ const ArticleDetail = () => {
         <CommentSection comments={comments} articleId={id} tierColor={currentTier.color} />
         {isAuthor && (
           <div className="board-button-container">
-            <Button
-              text="수정"
-              onClick={handleEdit}
-              className="article-edit-button"
-            />
-            <Button
-              text="삭제"
-              onClick={handleDelete}
-              className="article-delete-button"
-            />
-          </div>
+          <button
+            type="button"
+            onClick={handleEdit}
+            className="article-edit-button"
+          >
+            수정
+          </button>
+          <button
+            type="button"
+            onClick={handleDelete}
+            className="article-delete-button"
+          >
+            삭제
+          </button>
+        </div>
+        
         )}
       </div>
       <TabBar />

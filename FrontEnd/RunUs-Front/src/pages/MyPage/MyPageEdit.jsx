@@ -4,8 +4,9 @@ import "../../styles/MyPage/MyPageEdit.css";
 import Button from "../../components/common/Button";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Logout from "../../components/Home/Logout";
 import { UserContext } from "../../hooks/UserContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 const MyPageEdit = () => {
   const [form, setForm] = useState({
@@ -21,7 +22,7 @@ const MyPageEdit = () => {
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const nav = useNavigate();
   const userId = localStorage.getItem("userId");
   const token = localStorage.getItem("AuthToken");
   const [regionMajorOptions, setRegionMajorOptions] = useState([]);
@@ -88,7 +89,7 @@ const MyPageEdit = () => {
           );
           if (response.data.success) {
             const userData = response.data.data;
-            console.log(userData)
+            console.log(userData);
             setForm({
               userId: userData.userId,
               nickname: userData.nickname || "",
@@ -184,7 +185,7 @@ const MyPageEdit = () => {
             weight: form.weight,
             regionId: form.regionId,
           }));
-          navigate("/my-page-home");
+          nav("/my-page-home");
         } else {
           console.error("회원 정보 수정 실패", response.data.message);
         }
@@ -199,6 +200,11 @@ const MyPageEdit = () => {
   return (
     <div>
       <div className="MyPageEdit">
+        <div className="MyPageBackButton">
+          <a onClick={() => nav("/my-page-home")} className="back-button">
+            <FontAwesomeIcon icon={faArrowLeft} size="md" />
+          </a>
+        </div>
         <h1>회원 정보 수정</h1>
         <form onSubmit={handleSubmit} className="MyPageEditForm">
           <div className="memberEditDiv">
@@ -273,8 +279,7 @@ const MyPageEdit = () => {
         style={{
           textAlign: "right",
         }}
-      >
-      </div>
+      ></div>
       <TabBar />
     </div>
   );

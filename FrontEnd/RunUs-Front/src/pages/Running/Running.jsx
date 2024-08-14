@@ -187,9 +187,27 @@ const Running = ({
         <p>Error: {error}</p>
       ) : (
         <>
-          <p>시간: {formatTime(time)}</p>
-          <p>거리: {distance ? distance.toFixed(2) : "0.00"} meters</p>
-          <p>칼로리: {calories ? calories.toFixed(2) : ".0.00"} kcal</p>
+          <div className="TeamModeStartHeader">
+            <div>
+              <h1 style={{ fontSize: "30px" }}>
+                {formatTime(time)} <br />
+              </h1>
+              <div style={{ fontStyle: "oblique" }}>시간</div>
+            </div>
+            <div>
+              <h1 style={{ fontSize: "30px" }}>
+                {parseInt(calories.toFixed(2))} <br />
+              </h1>
+              <div style={{ fontStyle: "oblique" }}>칼로리</div>
+            </div>
+          </div>
+
+          <div className="TeamModeStartDistance">
+            <p>
+              {(distance / 1000).toFixed(2)} <br />
+              <span style={{ fontSize: "25px" }}>킬로미터</span>
+            </p>
+          </div>
         </>
       )}
     </div>

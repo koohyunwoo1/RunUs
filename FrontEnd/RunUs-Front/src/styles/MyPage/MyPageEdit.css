@@ -2,12 +2,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  
 
   /* gap: 20px; */
   width: 100%;
   margin: 0 auto;
-  margin-top: 90px;
+  margin-top: 30px;
   min-height: 100px;
 }
 
@@ -23,7 +22,6 @@
   width: 300px;
   /* max-width: 400px; */
   margin-top: 40px;
- 
 }
 
 .MyPageEditForm div {
@@ -31,7 +29,7 @@
 }
 
 .memberEditDiv {
-  margin : 15px 0px;
+  margin: 15px 0px;
 }
 
 .MyPageEditLabel {
@@ -40,7 +38,7 @@
   font-weight: bold;
 }
 
-.MyPageEdit h1{
+.MyPageEdit h1 {
   font-size: 30px;
 }
 
@@ -64,4 +62,17 @@
 
 .MyPageEditButton {
   margin-top: 50px;
+}
+
+.MyPageBackButton {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start; /* 왼쪽 정렬 */
+  margin-bottom: 20px; /* 버튼과 다른 내용 사이의 여백 */
+}
+
+.back-button {
+  margin-top: 5px;
+  margin-left: 5px;
+  padding-left: 20px;
 }
