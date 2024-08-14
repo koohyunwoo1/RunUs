@@ -34,8 +34,9 @@
   margin-top: 20px;
   display: flex;
   flex-direction: row;
-  gap: 180px;
+  gap: 60px;
   margin-left: 20px;
+  backdrop-filter: blur(100px);
 }
 
 .TeamModeStartDistance {

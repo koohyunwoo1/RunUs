@@ -39,19 +39,25 @@ const MapComponent = ({ positions, roomOwnerId }) => {
 
         const position = new window.kakao.maps.LatLng(latitude, longitude);
 
-        // 마커 생성
-        const marker = new window.kakao.maps.Marker({
-          position: position,
-          map: map.current,
-        });
-
         // 방장이면 오버레이 배경색 빨간색, 아니면 흰색
         const isOwner = userId === String(roomOwnerId); // Convert roomOwnerId to string for comparison
-        const backgroundColor = isOwner ? "red" : "white";
+        const backgroundColor = isOwner ? "#4ee2ec" : "black"; // 방장: 빨간색, 일반 사용자: 흰색
 
+        // 커스텀 오버레이 생성
         const overlay = new window.kakao.maps.CustomOverlay({
           position: position,
-          content: `<div style="background: ${backgroundColor}; padding: 5px; border: 1px solid black; border-radius: 5px;">${nickname}</div>`,
+          content: `
+            <div style="
+              background: ${backgroundColor}; 
+              width: 20px;
+              height: 20px;
+              border-radius: 50%;
+              border: 1px solid black;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            ">
+            </div>`,
           xAnchor: 0.5,
           yAnchor: 1.5,
         });
@@ -60,7 +66,7 @@ const MapComponent = ({ positions, roomOwnerId }) => {
         overlay.setMap(map.current);
 
         // 사용자별로 최신 위치 마커와 오버레이를 저장
-        markers.current[userId] = marker;
+        markers.current[userId] = overlay; // 마커는 실제로 오버레이로 대체됩니다.
         overlays.current[userId] = overlay;
       });
 
