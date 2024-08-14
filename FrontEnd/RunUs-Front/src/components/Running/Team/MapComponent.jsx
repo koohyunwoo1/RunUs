@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react";
 
 const MapComponent = ({ positions, roomOwnerId }) => {
   const mapContainer = useRef(null);
@@ -12,7 +12,7 @@ const MapComponent = ({ positions, roomOwnerId }) => {
         // 지도를 생성합니다.
         map.current = new window.kakao.maps.Map(mapContainer.current, {
           center: new window.kakao.maps.LatLng(37.5665, 126.978), // 기본 위치 (서울)
-          level: 5, // 줌 레벨
+          level: 1, // 줌 레벨
         });
       }
     }
@@ -21,15 +21,17 @@ const MapComponent = ({ positions, roomOwnerId }) => {
   useEffect(() => {
     if (map.current && positions) {
       // 기존 마커와 오버레이를 모두 삭제합니다.
-      Object.values(markers.current).forEach(marker => marker.setMap(null));
-      Object.values(overlays.current).forEach(overlay => overlay.setMap(null));
+      Object.values(markers.current).forEach((marker) => marker.setMap(null));
+      Object.values(overlays.current).forEach((overlay) =>
+        overlay.setMap(null)
+      );
       markers.current = {};
       overlays.current = {};
 
       // 새로운 마커와 오버레이를 추가합니다.
-      Object.keys(positions).forEach(userId => {
+      Object.keys(positions).forEach((userId) => {
         const { latitude, longitude, nickname } = positions[userId];
-        
+
         // 닉네임이 null이면 마커와 오버레이를 생성하지 않습니다.
         if (nickname === null) {
           return;
@@ -45,7 +47,7 @@ const MapComponent = ({ positions, roomOwnerId }) => {
 
         // 방장이면 오버레이 배경색 빨간색, 아니면 흰색
         const isOwner = userId === String(roomOwnerId); // Convert roomOwnerId to string for comparison
-        const backgroundColor = isOwner ? 'red' : 'white';
+        const backgroundColor = isOwner ? "red" : "white";
 
         const overlay = new window.kakao.maps.CustomOverlay({
           position: position,
@@ -65,17 +67,17 @@ const MapComponent = ({ positions, roomOwnerId }) => {
       // 지도의 중앙 위치를 사용자의 첫 번째 위치로 이동합니다 (옵션).
       const firstPosition = Object.values(positions)[0];
       if (firstPosition) {
-        map.current.setCenter(new window.kakao.maps.LatLng(firstPosition.latitude, firstPosition.longitude));
+        map.current.setCenter(
+          new window.kakao.maps.LatLng(
+            firstPosition.latitude,
+            firstPosition.longitude
+          )
+        );
       }
     }
   }, [positions, roomOwnerId]);
 
-  return (
-    <div
-      ref={mapContainer}
-      style={{ width: '100%', height: '400px' }}
-    />
-  );
+  return <div ref={mapContainer} style={{ width: "100%", height: "100vh" }} />;
 };
 
 export default MapComponent;
