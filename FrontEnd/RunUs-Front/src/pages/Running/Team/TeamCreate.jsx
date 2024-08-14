@@ -36,7 +36,11 @@ const TeamPage = () => {
   const [calories, setCalories] = useState(0);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [time, setTime] = useState(0);
-  const latestLocation = useRef({ latitude: null, longitude: null, distance: null });
+  const latestLocation = useRef({
+    latitude: null,
+    longitude: null,
+    distance: null,
+  });
 
   useEffect(() => {
     const handleSuccess = (position) => {
@@ -143,16 +147,11 @@ const TeamPage = () => {
               ...prevPositions,
               [userId]: { nickname: displayName, latitude, longitude, userId },
             }));
-
-            // setUserNames((prevUserNames) =>
-            //   prevUserNames.map((user) =>
-            //     user.name === sender ? { ...user, distance } : user
-            //   )
-            // );
           } else if (receivedData.type === "START") {
             setIsRunning(true);
             setIsRunningStarted(true);
             setCountdownFinished(true);
+            // setIsCountdownVisible(true);
           } else if (receivedData.type === "QUIT") {
             setIsRunning(false);
           } else if (receivedData.type === "DISTANCE") {
@@ -177,8 +176,6 @@ const TeamPage = () => {
           }
         });
 
-
-       
         WebSocketManager.on("close", () => {
           console.log("WebSocket connection closed");
           setIsWebSocketConnected(false);
@@ -226,15 +223,6 @@ const TeamPage = () => {
               userId: userData.userId,
             },
           }));
-
-          // 사용자 목록 업데이트
-          // setUserNames((prevUserNames) =>
-          //   prevUserNames.map((user) =>
-          //     user.name === userData.nickname
-          //       ? { ...user, distance: `${distance.toFixed(2)} km` }
-          //       : user
-          //   )
-          // );
         }
       }, 5000); // 5초 간격으로 실행
     }
@@ -254,8 +242,6 @@ const TeamPage = () => {
   };
 
   const handleStartButtonClick = () => {
-    setIsCountdownVisible(true); // Show countdown
-    setCountdownFinished(false); // Reset countdown finished state
     const startMessage = {
       type: "START",
       roomId: waitingRoomId,
@@ -269,16 +255,19 @@ const TeamPage = () => {
       WebSocketManager.ws.readyState === WebSocket.OPEN
     ) {
       WebSocketManager.send(startMessage);
+
       setIsWebSocketConnected(true);
       setIsRunningStarted(true);
       setIsRunning(true);
+      setIsCountdownVisible(true);
+      setCountdownFinished(false);
+      setTimeout(() => {
+        setIsCountdownVisible(false);
+        setCountdownFinished(true);
+      }, 3000); // 3초 후에 실제 실행
     } else {
       console.warn("WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.");
     }
-    setTimeout(() => {
-      setIsCountdownVisible(false);
-      setCountdownFinished(true); // Countdown is finished
-    }, 3000); // 3초 후에 실제 실행
   };
 
   const handleQuit = () => {
@@ -293,7 +282,7 @@ const TeamPage = () => {
         message: "방장이 종료 버튼을 눌렀습니다.",
         userId: userData.userId,
       };
-  
+
       WebSocketManager.send(stopMessage);
       setIsRunning(false);
     } else {
@@ -329,55 +318,6 @@ const TeamPage = () => {
 
   const isRoomOwner =
     roomOwnerId == Number(localStorage.getItem("userId").trim());
-
-  useEffect(() => {
-    let intervalId;
-
-    if (isRunning && isWebSocketConnected) {
-      intervalId = setInterval(() => {
-        const { latitude, longitude, distance } = latestLocation.current;
-        if (latitude !== null && longitude !== null) {
-          const locationMessage = {
-            type: "LOCATION",
-            roomId: waitingRoomId,
-            sender: userData.nickname,
-            message: "",
-            userId: userData.userId,
-            longitude,
-            latitude,
-            distance,
-          };
-          WebSocketManager.send(locationMessage);
-
-          // 자신의 위치 업데이트
-          setUserPositions((prevPositions) => ({
-            ...prevPositions,
-            [userData.userId]: {
-              nickname: userData.nickname,
-              latitude,
-              longitude,
-              userId: userData.userId,
-            },
-          }));
-
-          // 사용자 목록 업데이트
-          // setUserNames((prevUserNames) =>
-          //   prevUserNames.map((user) =>
-          //     user.name === userData.nickname
-          //       ? { ...user, distance: `${distance.toFixed(2)} km` }
-          //       : user
-          //   )
-          // );
-        }
-      }, 5000); // 5초 간격으로 실행
-    }
-
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [isRunning, isWebSocketConnected, waitingRoomId, userData]);
 
   return (
     <div>

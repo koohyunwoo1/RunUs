@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
+// 커스텀 아이콘 설정
 const customIcon = new L.DivIcon({
   className: "custom-icon",
   html: `
@@ -25,18 +26,92 @@ const customIcon = new L.DivIcon({
 const MapView = () => {
   const [position, setPosition] = useState(null);
   const [audio] = useState(new Audio("/sounds/HereMe.mp3")); // public 디렉토리 내의 절대 경로 사용
+  const prevLocation = useRef({
+    latitude: null,
+    longitude: null,
+    timestamp: null,
+    speed: null,
+  }); // 이전 위치 정보
 
   useEffect(() => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
+      const handleSuccess = (position) => {
+        const { latitude, longitude, speed } = position.coords;
+        const currentTime = Date.now();
+
+        if (
+          prevLocation.current.latitude !== null &&
+          prevLocation.current.longitude !== null
+        ) {
+          const timeElapsed =
+            (currentTime - prevLocation.current.timestamp) / 1000; // 초 단위로 변환
+          const maxPossibleDistance =
+            (prevLocation.current.speed || 0) * timeElapsed;
+          const dist = calculateDistance(
+            prevLocation.current.latitude,
+            prevLocation.current.longitude,
+            latitude,
+            longitude
+          );
+
+          if (dist > maxPossibleDistance) {
+            const correctedLocation = correctLocation(
+              prevLocation.current.latitude,
+              prevLocation.current.longitude,
+              latitude,
+              longitude,
+              maxPossibleDistance
+            );
+            setPosition([
+              correctedLocation.latitude,
+              correctedLocation.longitude,
+            ]);
+            prevLocation.current = {
+              ...correctedLocation,
+              timestamp: currentTime,
+              speed,
+            };
+          } else {
+            setPosition([latitude, longitude]);
+            prevLocation.current = {
+              latitude,
+              longitude,
+              timestamp: currentTime,
+              speed,
+            };
+          }
+        } else {
           setPosition([latitude, longitude]);
-        },
-        (error) => {
-          console.error(error);
+          prevLocation.current = {
+            latitude,
+            longitude,
+            timestamp: currentTime,
+            speed,
+          };
         }
+      };
+
+      const handleError = (error) => {
+        console.error("Geolocation error:", error);
+      };
+
+      const options = {
+        enableHighAccuracy: true,
+        maximumAge: 0,
+      };
+
+      navigator.geolocation.getCurrentPosition(
+        handleSuccess,
+        handleError,
+        options
       );
+      const watchId = navigator.geolocation.watchPosition(
+        handleSuccess,
+        handleError,
+        options
+      );
+
+      return () => navigator.geolocation.clearWatch(watchId);
     } else {
       console.error("Geolocation is not supported by this browser.");
     }
@@ -50,6 +125,30 @@ const MapView = () => {
     } else {
       console.error("Audio file not loaded");
     }
+  };
+
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371e3;
+    const rad = Math.PI / 180;
+    const φ1 = lat1 * rad;
+    const φ2 = lat2 * rad;
+    const Δφ = (lat2 - lat1) * rad;
+    const Δλ = (lon2 - lon1) * rad;
+
+    const a =
+      Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+      Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c;
+  };
+
+  const correctLocation = (lat1, lon1, lat2, lon2, maxDist) => {
+    const dist = calculateDistance(lat1, lon1, lat2, lon2);
+    const ratio = maxDist / dist;
+    const correctedLat = lat1 + (lat2 - lat1) * ratio;
+    const correctedLon = lon1 + (lon2 - lon1) * ratio;
+    return { latitude: correctedLat, longitude: correctedLon };
   };
 
   if (!position) return null;
