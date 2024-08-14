@@ -191,10 +191,11 @@ const CommentSection = ({ articleId, tierColor }) => {
           ) : (
             <div className="comment-container">
               <div className="comment-container2">
-                <p>
+                <div className="tier-name-box">
                   <p className={`color-box-comment ${commentTier.color}`}>{commentTier.color.slice(5, 6).toUpperCase()}</p> {/* 티어 색상 클래스 적용 */}
-                  <strong>{comment.nickname}</strong> <span className="date">{formatDate(comment.createdAt)}</span>
-                </p>
+                  <strong className="comment-nickname">{comment.nickname}</strong> 
+                  <span className="date">{formatDate(comment.createdAt)}</span>
+                </div>
               </div>
               <p>{comment.content}</p>
               {userData.userId === comment.userId && (

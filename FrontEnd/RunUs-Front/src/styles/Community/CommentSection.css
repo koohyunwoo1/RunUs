@@ -3,18 +3,6 @@
   /* padding: 20px; */
 }
 
-/* 사각형 스타일 */
-.color-box-comment {
-  width: 26px; /* 사각형 너비 */
-  height: 26px; /* 사각형 높이 */
-  display: flex; /* 내부 요소들을 정렬 */
-  align-items: center; /* 세로 중앙 정렬 */
-  justify-content: center; /* 가로 중앙 정렬 */
-  color: white; /* 텍스트 색상 */
-  font-size: 14px; /* 텍스트 크기 */
-  border-radius: 50px; /* 모서리 둥글게 */
-  font-family: VitroCore;
-}
 
 .comment-section h3 {
   margin: 0 0 20px 0;
@@ -151,12 +139,6 @@
   background-color: #1b65bf;
 } */
 
-.date {
-  margin-left: 10px;
-  font-size: 12px;
-  color: #666;
-}
-
 .nested-comment {
   margin-left: 20px;
   position: relative;
@@ -174,4 +156,32 @@
 .nested-comment .reply-button {
   margin-left: 0; /* 들여쓰기를 줄임 */
   margin-right: 40px; /* 메뉴 버튼과의 간격을 확보 */
+}
+
+/* 사각형 스타일 */
+.color-box-comment {
+  width: 26px; /* 사각형 너비 */
+  height: 26px; /* 사각형 높이 */
+  display: flex; /* 내부 요소들을 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
+  justify-content: center; /* 가로 중앙 정렬 */
+  color: white; /* 텍스트 색상 */
+  font-size: 14px; /* 텍스트 크기 */
+  border-radius: 50px; /* 모서리 둥글게 */
+  font-family: VitroCore;
+}
+
+.date {
+  margin-left: 10px;
+  font-size: 12px;
+  color: #666;
+}
+
+.tier-name-box {
+  display: flex;
+  align-items: center;
+}
+
+.comment-nickname {
+  margin-left: 8px;
 }
