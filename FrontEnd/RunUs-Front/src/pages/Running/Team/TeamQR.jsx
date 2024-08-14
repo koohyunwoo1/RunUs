@@ -4,6 +4,11 @@ import "../../../styles/Running/Team/TeamQR.css";
 import TabBar from "../../../components/common/TabBar";
 import { UserContext } from "../../../hooks/UserContext";
 
+// 뒤로가기 버튼 생성
+import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+
 // 사용자 정의 훅: QR 코드 스캐닝
 export const useCustomZxing = (onDecodeResult) => {
   const [reader, setReader] = useState(null);
@@ -69,6 +74,8 @@ export const TeamQR = () => {
     handleScan(result);
   });
 
+  const navigate = useNavigate(); // useNavigate 훅 초기화
+
   const handleScan = (result) => {
     if (result && result.text) {
       const resultData = result.text;
@@ -124,10 +131,6 @@ export const TeamQR = () => {
     };
   };
 
-  const handleError = (err) => {
-    console.error(err);
-  };
-
   const isValidURL = (url) => {
     try {
       new URL(url);
@@ -150,9 +153,19 @@ export const TeamQR = () => {
 
   return (
     <div>
+      <div className="header-container">
+        {/* 뒤로가기 버튼 */}
+        <button
+          onClick={() => navigate(-1)} // 버튼 클릭 시 이전 페이지로 이동
+          className="back-button"
+        >
+          <FontAwesomeIcon icon={faArrowLeft} size="lg" />
+        </button>
+        <h3 className="header-title">QR 스캔</h3>
+      </div>
       <TabBar />
       <div className="qr-reader-container">
-        <video ref={ref} autoPlay style={{ height: "400px", width: "300px" }} />
+        <video ref={ref} autoPlay style={{ height: "400px", width: "300px", borderRadius: "10px" }} />
       </div>
     </div>
   );

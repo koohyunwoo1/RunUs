@@ -168,7 +168,7 @@ const TeamPage = () => {
             setUserNames((prevUserNames) =>
               prevUserNames.map((user) =>
                 user.name == nickname
-                  ? { ...user, distance: `${distance.toFixed(2)} km` }
+                  ? { ...user, distance: `${distance.toFixed(2)} ` }
                   : user
               )
             );
@@ -336,7 +336,10 @@ const TeamPage = () => {
             </button>
           </div>
           <div>
+          {!isRunning && (
             <TeamSaying />
+            )}
+            
           </div>
           <div>
             <TeamUserList userNames={userNames} />
@@ -350,17 +353,17 @@ const TeamPage = () => {
                 시작
               </button>
             )}
-            {isRunning && isRoomOwner && (
-              <button onClick={handleQuit} className="TeamCreateButton">
-                Quit
-              </button>
-            )}
+            
             {!isRunning && (
               <button onClick={handleModalToggle} className="TeamCreateButton">
                 QR코드
               </button>
             )}
+           
           </div>
+          {isRunning && (
+              <MapComponent positions={userPositions} roomOwnerId={roomOwnerId} />
+            )}
           <Modal
             isOpen={modalIsOpen}
             onRequestClose={handleModalToggle}
@@ -374,6 +377,9 @@ const TeamPage = () => {
               style={{ cursor: "pointer", width: "300px", height: "300px" }}
             />
           </Modal>
+
+
+         
           {countdownFinished && isRunning && (
             <Running
               distance={distance}
@@ -386,6 +392,15 @@ const TeamPage = () => {
               isRunningStarted={isRunningStarted}
             />
           )}
+
+            {isRunning && isRoomOwner && (
+              <div className="TeamCreateButtonContainer">
+              <button onClick={handleQuit} className="TeamCreateButton2">
+                Quit
+              </button>
+            </div>
+            )}
+        
         </div>
       )}
     </div>

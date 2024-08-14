@@ -8,7 +8,9 @@ const TeamUserList = ({ userNames }) => {
       <div className="user-list">
         {userNames.map((user, index) => (
           <div className="user-card" key={index}>
-            <span className="user-nickname">{user.name}</span>
+            <span className="user-nickname">
+              {user.name} - {user.distance}m
+            </span>
           </div>
         ))}
       </div>
