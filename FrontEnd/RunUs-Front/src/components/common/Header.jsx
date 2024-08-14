@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../../styles/Common/Header.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faTimes, faArrowLeft } from "@fortawesome/free-solid-svg-icons"; // 왼쪽 화살표 아이콘 import
 import logo from "../../assets/Logo.png";
 import dodbogi from "../../assets/dodbogi.png";
 
@@ -27,7 +27,7 @@ const Header = ({ onSearch, searchValue, setSearchValue }) => {
   };
 
   const handleBackClick = () => {
-    navigate(-1); // Go back to the previous page
+    navigate(-1); // 이전 페이지로 돌아가기
   };
 
   return (
@@ -37,6 +37,12 @@ const Header = ({ onSearch, searchValue, setSearchValue }) => {
           {location.pathname === "/article-create" ? (
             <FontAwesomeIcon
               icon={faTimes}
+              className="header-X-button"
+              onClick={handleBackClick}
+            />
+          ) : location.pathname.startsWith("/article-detail") ? (
+            <FontAwesomeIcon
+              icon={faArrowLeft}
               className="header-back-arrow"
               onClick={handleBackClick}
             />

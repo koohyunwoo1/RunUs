@@ -157,8 +157,3 @@
 .comment-submit-button:hover {
   background-color: #218838; /* 댓글 작성 버튼 호버 색상 */
 }
-
-.back-button {
-  margin-top: 5px;
-  margin-left: 5px;
-}
