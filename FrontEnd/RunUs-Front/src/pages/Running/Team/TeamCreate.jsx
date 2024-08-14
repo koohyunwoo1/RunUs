@@ -15,7 +15,7 @@ import Running from "../Running";
 import CountDown from "../../Running/Team/CountDown";
 import Swal from "sweetalert2";
 import "../../../styles/Home/LoginHomeCustomSwal.css";
-
+import { faStop, faPlay } from "@fortawesome/free-solid-svg-icons";
 Modal.setAppElement("#root");
 
 const TeamCreate = () => {
@@ -346,16 +346,16 @@ const TeamCreate = () => {
                       positions={userPositions}
                       roomOwnerId={roomOwnerId}
                     />
-                    <div className="TeamCreateButtonContainer">
-                      {isRoomOwner && (
-                        <button
-                          onClick={handleQuit}
-                          className="TeamCreateButton2"
-                        >
-                          나가기
-                        </button>
-                      )}
-                    </div>
+                  </div>
+                  <div className="TeamCreateButtonContainer">
+                    {isRoomOwner && (
+                      <button
+                        onClick={handleQuit}
+                        className="TeamCreateButton2"
+                      >
+                        <FontAwesomeIcon icon={faStop} size="2x" />
+                      </button>
+                    )}
                   </div>
                   <div className="TeamCreateRunning">
                     {countdownFinished && (
@@ -397,7 +397,7 @@ const TeamCreate = () => {
                       onClick={handleStartButtonClick}
                       className="TeamCreateButton"
                     >
-                      시작
+                      <FontAwesomeIcon icon={faPlay} size="2x" />
                     </button>
                   )}
                   {!isRunning && (

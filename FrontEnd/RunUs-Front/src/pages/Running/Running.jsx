@@ -200,13 +200,12 @@ const Running = ({
               </h1>
               <div style={{ fontStyle: "oblique" }}>칼로리</div>
             </div>
-          </div>
-
-          <div className="TeamModeStartDistance">
-            <p>
-              {(distance / 1000).toFixed(2)} <br />
-              <span style={{ fontSize: "25px" }}>킬로미터</span>
-            </p>
+            <div>
+              <h1 style={{ fontSize: "30px" }}>
+                {(distance / 1000).toFixed(2)} <br />
+              </h1>
+              <span style={{ fontStyle: "oblique" }}>킬로미터</span>
+            </div>
           </div>
         </>
       )}
