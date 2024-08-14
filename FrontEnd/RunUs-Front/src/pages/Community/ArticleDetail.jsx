@@ -6,8 +6,6 @@ import CommentSection from "../../components/Community/CommentSection";
 import Button from "../../components/common/Button";
 import { UserContext } from "../../hooks/UserContext";
 import TabBar from "../../components/common/TabBar";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import Header from "../../components/common/Header";
 import "../../styles/MyPage/MyPageTier.css";
 
@@ -122,9 +120,6 @@ const ArticleDetail = () => {
     <div style={{ paddingTop: "60px", paddingBottom: "60px" }}>
       <Header />
       <div className="article-detail-container">
-        <a onClick={() => nav("/article-home")} className="back-button">
-          <FontAwesomeIcon icon={faArrowLeft} size="md" />
-        </a>
         <div className="author">
           <div className={`color-box ${currentTier.color}`}>{currentTier.color.slice(5, 6).toUpperCase()}</div>
           <div className="text-info">
