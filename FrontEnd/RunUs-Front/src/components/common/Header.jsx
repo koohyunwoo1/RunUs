@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../../styles/Common/Header.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import logo from "../../assets/Logo.png";
 import dodbogi from "../../assets/dodbogi.png";
 
@@ -24,15 +26,32 @@ const Header = ({ onSearch, searchValue, setSearchValue }) => {
     }
   };
 
+  const handleBackClick = () => {
+    navigate(-1); // Go back to the previous page
+  };
+
   return (
     <>
       <div className="header2">
-        <img
-          src={logo}
-          alt="Logo"
-          className="Header-logo"
-          onClick={handleLogoClick}
-        />
+        <div className="header-left">
+          {location.pathname === "/article-create" ? (
+            <FontAwesomeIcon
+              icon={faTimes}
+              className="header-back-arrow"
+              onClick={handleBackClick}
+            />
+          ) : (
+            <img
+              src={logo}
+              alt="Logo"
+              className="Header-logo"
+              onClick={handleLogoClick}
+            />
+          )}
+        </div>
+        {location.pathname === "/article-create" && (
+          <span className="header-title">글쓰기</span>
+        )}
         {location.pathname === "/article-home" && (
           <button onClick={toggleSearch} className="header-search-toggle">
             <img
