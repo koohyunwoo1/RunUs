@@ -88,8 +88,8 @@
   );
   -webkit-mask-image: radial-gradient(
     circle,
-    rgba(0, 0, 0, 0.7) 100%,
-    rgba(0, 0, 0, 0) 100%
+    rgba(0, 0, 0, 1) 1%,
+    rgba(0, 0, 0, 0.3) 60%
   );
   z-index: 0;
 }
