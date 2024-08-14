@@ -12,19 +12,52 @@
   background-color: white;
 }
 
+.header-left {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  left: 15px;
+}
+
 .Header-logo {
   width: 60px;
   height: 60px;
   cursor: pointer;
-  margin-left: 10px; /* 왼쪽 여백 */
+  margin-left: -5px;
+}
+
+.header-X-button {
+  font-size: 20px;
+  cursor: pointer;
+  margin-left: 3px;
+}
+
+.header-back-arrow {
+  cursor: pointer;
+  font-size: 15px;
+  margin-left: 5px;
+}
+
+.header-back-arrow:hover {
+  color: #007bff;
+}
+
+.header-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .header-search-toggle {
   border: none;
   background: none;
-  margin-left: auto;
-  padding-right: 15px; /* 오른쪽 여백 */
+  padding-right: 15px;
   cursor: pointer;
+  position: absolute;
+  right: 10px;
 }
 
 .header-search-icon {
@@ -34,7 +67,7 @@
 }
 
 .header-search-toggle:hover .header-search-icon {
-  transform: scale(1.2); /* 아이콘 확대 효과 */
+  transform: scale(1.2);
 }
 
 .header-search-container {
@@ -42,7 +75,7 @@
   top: 60px;
   left: 0;
   width: 100%;
-  padding: 15px 0; /* 검색창 주위에 여백 추가 */
+  padding: 15px 0;
   background-color: #ffffff;
   display: flex;
   justify-content: center;
@@ -60,8 +93,8 @@
 .header-search-form {
   display: flex;
   align-items: center;
-  width: 80%; /* 검색창 넓이 설정 */
-  max-width: 600px; /* 최대 넓이 제한 */
+  width: 80%;
+  max-width: 600px;
   background: white;
   border-radius: 30px;
   padding: 5px 10px;
@@ -69,9 +102,9 @@
 }
 
 .header-search-input {
-  flex: 1; /* 입력 필드가 가능한 공간을 모두 차지하도록 설정 */
-  height: 40px; /* 높이 조정 */
-  padding: 10px 15px; /* 내부 여백 설정 */
+  flex: 1;
+  height: 40px;
+  padding: 10px 15px;
   border: none;
   border-radius: 30px;
   font-size: 16px;
@@ -80,20 +113,20 @@
 
 .header-search-button {
   border: none;
-  background-color: #007bff; /* 버튼 색상 */
+  background-color: #007bff;
   color: white;
-  padding: 10px 20px; /* 버튼 내부 여백 설정 */
+  padding: 10px 20px;
   margin-left: 10px;
   border-radius: 20px;
   cursor: pointer;
-  font-size: 16px; /* 글자 크기 */
-  line-height: normal; /* 텍스트가 위아래로 흐르는 문제를 방지 */
-  display: flex; /* Flexbox 사용하여 텍스트 정렬 */
-  align-items: center; /* 수직 정렬을 중앙으로 설정 */
-  justify-content: center; /* 수평 정렬을 중앙으로 설정 */
+  font-size: 16px;
+  line-height: normal;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: background-color 0.3s ease;
 }
 
 .header-search-button:hover {
-  background-color: #0056b3; /* 버튼 호버 색상 */
+  background-color: #0056b3;
 }
