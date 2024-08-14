@@ -12,11 +12,13 @@ import WebSocketManager from "./WebSocketManager";
 import MapComponent from "../../../components/Running/Team/MapComponent";
 import axios from "axios";
 import Running from "../Running";
-import SoloModeCountDown from "../Solo/SoloModeCountDown";
+import CountDown from "../../Running/Team/CountDown";
+import Swal from "sweetalert2";
+import "../../../styles/Home/LoginHomeCustomSwal.css";
 
 Modal.setAppElement("#root");
 
-const TeamPage = () => {
+const TeamCreate = () => {
   const navigate = useNavigate();
   const { id, party, roomOwnerId } = useParams();
   const { userData } = useContext(UserContext);
@@ -122,8 +124,6 @@ const TeamPage = () => {
         });
 
         WebSocketManager.on("message", (receivedData) => {
-          // console.log("Received message:", receivedData);
-
           if (receivedData.type === "USERLIST_UPDATE") {
             const messageContent = receivedData.message;
             const userList = messageContent.split("현재 방에 있는 사용자: ")[1];
@@ -150,8 +150,12 @@ const TeamPage = () => {
           } else if (receivedData.type === "START") {
             setIsRunning(true);
             setIsRunningStarted(true);
-            setCountdownFinished(true);
-            // setIsCountdownVisible(true);
+            setIsCountdownVisible(true);
+            setCountdownFinished(false);
+            setTimeout(() => {
+              setIsCountdownVisible(false);
+              setCountdownFinished(true);
+            }, 3000); // 3초 후에 실제 실행
           } else if (receivedData.type === "QUIT") {
             setIsRunning(false);
           } else if (receivedData.type === "DISTANCE") {
@@ -174,6 +178,7 @@ const TeamPage = () => {
             );
           }
         });
+
         WebSocketManager.on("close", () => {
           console.log("WebSocket connection closed");
           setIsWebSocketConnected(false);
@@ -257,34 +262,43 @@ const TeamPage = () => {
       setIsWebSocketConnected(true);
       setIsRunningStarted(true);
       setIsRunning(true);
-      setIsCountdownVisible(true);
-      setCountdownFinished(false);
-      setTimeout(() => {
-        setIsCountdownVisible(false);
-        setCountdownFinished(true);
-      }, 3000); // 3초 후에 실제 실행
     } else {
       console.warn("WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.");
     }
   };
 
-  const handleQuit = () => {
-    if (
-      WebSocketManager.ws &&
-      WebSocketManager.ws.readyState === WebSocket.OPEN
-    ) {
-      const stopMessage = {
-        type: "QUIT",
-        roomId: waitingRoomId,
-        sender: userData.nickname,
-        message: "방장이 종료 버튼을 눌렀습니다.",
-        userId: userData.userId,
-      };
+  const handleQuit = async () => {
+    const result = await Swal.fire({
+      title: "정말 종료하시겠습니까?",
+      showCancelButton: true,
+      confirmButtonText: "예, 종료합니다",
+      cancelButtonText: "아니오, 계속하기",
+      customClass: {
+        popup: "custom-swal-popup2",
+        title: "custom-swal-title2",
+        confirmButton: "swal2-confirm2 swal2-styled2",
+        cancelButton: "swal2-cancel2 swal2-styled2",
+      },
+    });
 
-      WebSocketManager.send(stopMessage);
-      setIsRunning(false);
-    } else {
-      console.warn("WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.");
+    if (result.isConfirmed) {
+      if (
+        WebSocketManager.ws &&
+        WebSocketManager.ws.readyState === WebSocket.OPEN
+      ) {
+        const stopMessage = {
+          type: "QUIT",
+          roomId: waitingRoomId,
+          sender: userData.nickname,
+          message: "방장이 종료 버튼을 눌렀습니다.",
+          userId: userData.userId,
+        };
+
+        WebSocketManager.send(stopMessage);
+        setIsRunning(false);
+      } else {
+        console.warn("WebSocket 연결이 열려있지 않거나 초기화되지 않았습니다.");
+      }
     }
   };
 
@@ -320,50 +334,84 @@ const TeamPage = () => {
   return (
     <div>
       {isCountdownVisible ? (
-        <SoloModeCountDown />
+        <CountDown />
       ) : (
-        <div className="TeamCreate">
-          <div>
-            <button
-              onClick={handleLeaveRoom}
-              style={{
-                backgroundColor: "white",
-                border: "none",
-                marginLeft: "10px",
-              }}
-            >
-              <FontAwesomeIcon icon={faArrowLeft} size="lg" />
-            </button>
-          </div>
-          <div>
-          {!isRunning && (
-            <TeamSaying />
-            )}
-            
-          </div>
-          <div>
-            <TeamUserList userNames={userNames} />
-          </div>
-          <div className="TeamCreateQR">
-            {!isRunning && isRoomOwner && (
-              <button
-                onClick={handleStartButtonClick}
-                className="TeamCreateButton"
-              >
-                시작
-              </button>
-            )}
-            
-            {!isRunning && (
-              <button onClick={handleModalToggle} className="TeamCreateButton">
-                QR코드
-              </button>
-            )}
-           
-          </div>
-          {isRunning && (
-              <MapComponent positions={userPositions} roomOwnerId={roomOwnerId} />
-            )}
+        <div>
+          {isRunning ? (
+            <>
+              {countdownFinished && (
+                <div className="TeamCreateContainer">
+                  <div className="TeamCreateMap">
+                    <MapComponent
+                      positions={userPositions}
+                      roomOwnerId={roomOwnerId}
+                    />
+                    <div className="TeamCreateButtonContainer">
+                      {isRoomOwner && (
+                        <button
+                          onClick={handleQuit}
+                          className="TeamCreateButton2"
+                        >
+                          나가기
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  <div className="TeamCreateRunning">
+                    {countdownFinished && (
+                      <Running
+                        distance={distance}
+                        setDistance={setDistance}
+                        calories={calories}
+                        setCalories={setCalories}
+                        time={time}
+                        setTime={setTime}
+                        onLocationUpdate={handleLocationUpdate}
+                        isRunningStarted={isRunningStarted}
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <div className="TeamCreate">
+                <button
+                  onClick={handleLeaveRoom}
+                  style={{
+                    backgroundColor: "white",
+                    border: "none",
+                    marginLeft: "10px",
+                  }}
+                >
+                  <FontAwesomeIcon icon={faArrowLeft} size="lg" />
+                </button>
+                {!isRunning && !isCountdownVisible && <TeamSaying />}
+                {!isRunning && !isCountdownVisible && (
+                  <TeamUserList userNames={userNames} />
+                )}
+                <div className="TeamCreateQR">
+                  {!isRunning && isRoomOwner && (
+                    <button
+                      onClick={handleStartButtonClick}
+                      className="TeamCreateButton"
+                    >
+                      시작
+                    </button>
+                  )}
+                  {!isRunning && (
+                    <button
+                      onClick={handleModalToggle}
+                      className="TeamCreateButton"
+                    >
+                      QR코드
+                    </button>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
           <Modal
             isOpen={modalIsOpen}
             onRequestClose={handleModalToggle}
@@ -377,34 +425,10 @@ const TeamPage = () => {
               style={{ cursor: "pointer", width: "300px", height: "300px" }}
             />
           </Modal>
-
-
-         
-          {countdownFinished && isRunning && (
-            <Running
-              distance={distance}
-              setDistance={setDistance}
-              calories={calories}
-              setCalories={setCalories}
-              time={time}
-              setTime={setTime}
-              onLocationUpdate={handleLocationUpdate}
-              isRunningStarted={isRunningStarted}
-            />
-          )}
-
-            {isRunning && isRoomOwner && (
-              <div className="TeamCreateButtonContainer">
-              <button onClick={handleQuit} className="TeamCreateButton2">
-                Quit
-              </button>
-            </div>
-            )}
-        
         </div>
       )}
     </div>
   );
 };
 
-export default TeamPage;
+export default TeamCreate;

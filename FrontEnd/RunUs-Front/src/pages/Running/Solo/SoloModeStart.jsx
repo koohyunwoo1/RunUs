@@ -11,6 +11,7 @@ import {
 import axios from "axios";
 import "../../../styles/Running/Solo/SoloModeStart.css";
 import { UserContext } from "../../../hooks/UserContext";
+import "../../../styles/Home/LoginHomeCustomSwal.css";
 
 const SoloModeStart = () => {
   const [time, setTime] = useState(0); // 시간 상태
@@ -144,13 +145,14 @@ const SoloModeStart = () => {
   const handleEnd = async () => {
     const result = await Swal.fire({
       title: "정말 종료하시겠습니까?",
-      icon: "warning",
       showCancelButton: true,
       confirmButtonText: "예, 종료합니다",
       cancelButtonText: "아니오, 계속하기",
       customClass: {
-        popup: "custom-swal-popup",
-        title: "custom-swal-title",
+        popup: "custom-swal-popup2",
+        title: "custom-swal-title2",
+        confirmButton: "swal2-confirm2 swal2-styled2",
+        cancelButton: "swal2-cancel2 swal2-styled2",
       },
     });
 
@@ -246,13 +248,13 @@ const SoloModeStart = () => {
         <div>
           <div className="SoloModeStartHeader">
             <div>
-              <h1 style={{ fontSize: "30px" }}>
+              <h1 style={{ fontSize: "20px" }}>
                 {formatTime(time)} <br />
               </h1>
               <div style={{ fontStyle: "oblique" }}>시간</div>
             </div>
             <div>
-              <h1 style={{ fontSize: "30px" }}>
+              <h1 style={{ fontSize: "20px" }}>
                 {parseInt(calories.toFixed(2))} <br />
               </h1>
               <div style={{ fontStyle: "oblique" }}>칼로리</div>
