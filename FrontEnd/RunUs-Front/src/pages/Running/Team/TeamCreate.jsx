@@ -165,7 +165,6 @@ const TeamPage = () => {
 
             const distanceStr = messageContent.split("의 총 이동 거리: ")[1];
             const distance = parseFloat(distanceStr.split(" km")[0]);
-
             setUserNames((prevUserNames) =>
               prevUserNames.map((user) =>
                 user.name == nickname
@@ -175,7 +174,6 @@ const TeamPage = () => {
             );
           }
         });
-
         WebSocketManager.on("close", () => {
           console.log("WebSocket connection closed");
           setIsWebSocketConnected(false);
