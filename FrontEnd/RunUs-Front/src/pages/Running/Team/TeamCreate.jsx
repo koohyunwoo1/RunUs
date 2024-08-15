@@ -342,8 +342,8 @@ const TeamCreate = () => {
               // 계산된 거리 확인용 로그
               console.log(`Distance between ${roomOwnerPosition.nickname} and ${userPosition.nickname}: ${distance} meters`);
 
-              // 거리가 100미터 이상 벌어졌을 경우 사용자 이름 추가
-              if (distance > 100) {
+              // 거리가 30미터 이상 벌어졌을 경우 사용자 이름 추가
+              if (distance > 30) {
                   usersBeyondDistance.push(userPosition.nickname);
               }
           }
@@ -352,7 +352,7 @@ const TeamCreate = () => {
       // 거리 초과 사용자 이름들을 하나의 문자열로 결합
       if (usersBeyondDistance.length > 0) {
           const combinedNames = usersBeyondDistance.join(', ');
-          const message = `${combinedNames} 님이 방장과 100m 이상 떨어졌습니다!`;
+          const message = `${combinedNames} 님이 방장과 30m 이상 떨어졌습니다!`;
           showNotification(message);
       }
   }
