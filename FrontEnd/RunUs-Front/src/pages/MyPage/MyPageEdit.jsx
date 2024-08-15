@@ -153,8 +153,8 @@ const MyPageEdit = () => {
       errors.confirmPassword = "비밀번호가 일치하지 않습니다.";
     if (!form.weight || isNaN(form.weight) || form.weight <= 0)
       errors.weight = "체중은 양의 숫자로 입력해야 합니다.";
-    if (!form.regionMajor) errors.regionMajor = "사는 지역은 필수입니다.";
-    if (!form.regionId) errors.regionId = "시/군/구는 필수입니다.";
+    // if (!form.regionMajor) errors.regionMajor = "사는 지역은 필수입니다.";
+    // if (!form.regionId) errors.regionId = "시/군/구는 필수입니다.";
     return errors;
   };
 
@@ -171,7 +171,7 @@ const MyPageEdit = () => {
           weight: parseInt(form.weight, 10),
           password: form.password,
           phoneNumber: form.phoneNumber,
-          regionId: parseInt(form.regionId, 10),
+          // regionId: parseInt(form.regionId, 10),
         });
 
         if (response.data.success) {

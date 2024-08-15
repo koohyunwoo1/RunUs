@@ -57,7 +57,10 @@ const MapComponent = ({ positions, roomOwnerId }) => {
               display: flex;
               align-items: center;
               justify-content: center;
+              font-size: 10px;
+              color: white;
             ">
+             ${nickname}
             </div>`,
           xAnchor: 0.5,
           yAnchor: 1.5,
@@ -71,7 +74,7 @@ const MapComponent = ({ positions, roomOwnerId }) => {
         overlays.current[userId] = overlay;
       });
 
-      // 지도의 중앙 위치를 사용자의 첫 번째 위치로 이동합니다 (옵션).
+      // 지도의 중앙 위치를 사용자의 첫 번째 위치로 이동합니다 (옵션). <- 이거 사용자 아이디에 따라 가야함. 
       const firstPosition = Object.values(positions)[0];
       if (firstPosition) {
         map.current.setCenter(
