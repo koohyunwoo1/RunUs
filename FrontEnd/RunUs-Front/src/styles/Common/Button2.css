@@ -4,9 +4,8 @@
   border: none;
   border-radius: 20px;
   padding: 10px 20px;
-  font-size: 18px;
-  white-space: nowrap;
-  color: white;
+  width: 70px;
+  z-index: 1;
 }
 
 .Button_image {
