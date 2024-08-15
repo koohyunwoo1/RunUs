@@ -6,6 +6,11 @@
   margin-top: 60px;
 }
 
+.TeamUserList-container {
+  display: flex;
+  justify-content: center;
+}
+
 .user-list {
   display: flex;
   flex-direction: column;

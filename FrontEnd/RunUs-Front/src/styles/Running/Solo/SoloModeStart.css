@@ -4,6 +4,8 @@
   position: relative;
   padding: 20px;
   font-family: "VitroCore";
+  justify-content: center;
+  display: flex ;
 }
 
 .backButton {

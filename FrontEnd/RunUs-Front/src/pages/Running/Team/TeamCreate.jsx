@@ -43,7 +43,32 @@ const TeamCreate = () => {
     longitude: null,
     distance: null,
   });
+  const [notification, setNotification] = useState(null); // 알림 메시지 상태
+  const lastNotificationTime = useRef(null);  // 알림 제한
 
+  const isRoomOwner =
+  userData && userData.userId ? roomOwnerId == userData.userId : false;
+
+  const playAlertSound = () => {
+    const audio = new Audio('/sounds/HereMe.mp3'); // 경로를 실제 경로로 변경하세요
+    audio.play();
+  };
+
+
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const toRad = (value) => (value * Math.PI) / 180;
+    const R = 6371; // 지구 반지름 (km)
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c; // 거리 (km)
+    return distance * 1000; // 미터로 변환
+  };
+  
   useEffect(() => {
     const handleSuccess = (position) => {
       const { latitude, longitude } = position.coords;
@@ -274,6 +299,74 @@ const TeamCreate = () => {
     };
   }, [isRunning, isWebSocketConnected, waitingRoomId, userData]);
 
+
+
+  useEffect(() => {
+    console.log("useEffect triggered with:", { userPositions, isRoomOwner, isRunning, roomOwnerId });
+
+    const showNotification = (message) => {
+      setNotification(message);
+      playAlertSound(); // 소리 재생
+    
+      // 3초 후에 알림 사라지게 하기
+      setTimeout(() => {
+        setNotification(null);
+      }, 3000);
+
+      // 최근 알람 시간 갱신
+      lastNotificationTime.current = Date.now();
+    };
+
+    if (isRoomOwner && isRunning) {
+      console.log("isRoomOwner:", isRoomOwner);
+      console.log("isRunning:", isRunning);
+      const roomOwnerPosition = userPositions[roomOwnerId];  // 방장의 위치 가져오기
+      console.log("roomOwnerPosition:", roomOwnerPosition);
+      console.log("userPositions:", userPositions);
+
+      if (!roomOwnerPosition) return; // 방장의 위치가 없으면 함수 종료
+
+      // 거리 초과 사용자 이름 저장 배열
+      const usersBeyondDistance = [];
+
+      // 모든 사용자 위치를 반복문으로 조회
+      for (const userId in userPositions) {
+          // 방장의 위치를 제외한 사용자들의 위치만 비교
+          if (userId !== roomOwnerId.toString()) {
+              const userPosition = userPositions[userId];
+
+              // 방장과 다른 사용자들 사이의 거리를 계산
+              const distance = calculateDistance(
+                  roomOwnerPosition.latitude,
+                  roomOwnerPosition.longitude,
+                  userPosition.latitude,
+                  userPosition.longitude
+              );
+
+              // 계산된 거리 확인용 로그
+              console.log(`Distance between ${roomOwnerPosition.nickname} and ${userPosition.nickname}: ${distance} meters`);
+
+              // 거리가 30미터 이상 벌어졌을 경우 사용자 이름 추가
+              if (distance > 30) {
+                  usersBeyondDistance.push(userPosition.nickname);
+              }
+          }
+      }
+
+      // 거리 초과 사용자 이름들을 하나의 문자열로 결합
+      if (usersBeyondDistance.length > 0) {
+          const combinedNames = usersBeyondDistance.join(', ');
+          const message = `${combinedNames} 님이 방장과 30m 이상 떨어졌습니다!`;
+          
+          // 마지막 알람으로부터 3초 이상 지났을 때만 알람 울리기
+          const currentTime = Date.now();
+          if (!lastNotificationTime.current || (currentTime - lastNotificationTime.current > 3000)) {
+              showNotification(message);
+          }
+      }
+  }
+}, [userPositions, isRoomOwner, isRunning, roomOwnerId]);
+
   const handleLocationUpdate = (latitude, longitude, newDistance) => {
     if (newDistance !== undefined && newDistance !== null) {
       setDistance(newDistance);
@@ -365,8 +458,7 @@ const TeamCreate = () => {
 
   const teamCreatePageUrl = `https://i11e103.p.ssafy.io/team-create/${waitingRoomId}/${party}/${roomOwnerId}`;
 
-  const isRoomOwner =
-    roomOwnerId == Number(localStorage.getItem("userId").trim());
+ 
 
   return (
     <div>
@@ -383,6 +475,11 @@ const TeamCreate = () => {
                       positions={userPositions}
                       roomOwnerId={roomOwnerId}
                     />
+                    {notification && (
+                      <div className="notification">
+                        {notification}
+                      </div>
+                    )}
                   </div>
                   <div className="TeamCreateButtonContainer">
                     {isRoomOwner && (

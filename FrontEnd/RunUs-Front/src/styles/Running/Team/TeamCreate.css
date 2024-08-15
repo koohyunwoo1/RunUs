@@ -71,7 +71,9 @@
 .TeamCreateButtonContainer {
   position: absolute;
   top: 10px;
-  right: 10px;
+  /* right: 10px; */
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 2;
   margin-top: 700px;
   margin-right: 130px;
@@ -106,3 +108,17 @@
   border: none;
   border-radius: 60px;
 }
+
+.notification {
+  position: absolute; /* 또는 fixed, 필요에 따라 조정 */
+  top: 10px; /* 원하는 위치에 맞게 조정 */
+  left: 50%; /* 부모 요소의 가로 중앙으로 위치 */
+  transform: translateX(-50%); /* 자신의 너비의 절반만큼 왼쪽으로 이동 */
+  background-color: rgba(0, 0, 0, 0.8); /* 배경색을 어둡게 해서 가독성 증가 */
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  z-index: 1000; /* MapComponent보다 높은 z-index 값으로 설정 */
+  white-space: nowrap; /* 내용이 너무 길어질 경우 줄 바꿈 방지 */
+}
+
