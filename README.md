@@ -58,8 +58,49 @@ Run-Us는 사용자가 지역 기반 커뮤니티에서 러닝 메이트를 모�
 <br />
 
 ## 📱 서비스 화면
+### Web Browser
 <table>
 <tr><img src="./resource/project.gif"></tr>
+</table>
+
+### PWA Mobile App
+<table>
+   <tr>
+      <th>로그인 화면</th>
+      <th>로그아웃 화면</th>
+      <th>회원 정보 수정</th>
+      <th>리포트 화면</th>
+   </tr>
+   <tr>
+      <td><img src="./resource/01 로그인.gif"></td>
+      <td><img src="./resource/02 로그아웃.gif"></td>
+      <td><img src="./resource/03 회원 정보 수정.gif"></td>
+      <td><img src="./resource/07 리포트 화면.gif"></td>
+   </tr>
+   <tr>
+      <th>게시판 목록</th>
+      <th>댓글 작성</th>
+      <th>게시글 작성</th>
+      <th>답글 작성</th>
+   </tr>
+   <tr>
+      <td><img src="./resource/04 - 1 게시판 목록.gif"></td>
+      <td><img src="./resource/04 - 2 댓글.gif"></td>
+      <td><img src="./resource/04 - 3 게시글 작성.gif"></td>
+      <td><img src="./resource/04 - 3 답글.gif"></td>
+   </tr>
+   <tr>
+      <th>솔로 모드</th>
+      <th>방장 화면</th>
+      <th>팀원 화면</th>
+      <th>알람</th>
+   </tr>
+   <tr>
+      <td><img src="./resource/05 솔로모드.gif"></td>
+      <td><img src="./resource/06-1 방장.gif"></td>
+      <td><img src="./resource/06-2 팀원.gif"></td>
+      <td><img src="./resource/06-3 알람.gif"></td>
+   </tr>
 </table>
 <br /><br /><br />
 
@@ -353,13 +394,13 @@ Run-Us는 사용자가 지역 기반 커뮤니티에서 러닝 메이트를 모�
 ## 🛠 배포 자동화
 - **Jenkins**: CI/CD 파이프라인을 통해 코드 빌드, 테스트, 배포 자동화를 관리합니다.
 - **Docker**: 애플리케이션의 환경 설정을 컨테이너화하여 일관성 있는 배포 환경을 제공합니다.
-### 모니터링
-- **Prometheus**: 프로메테우스 설명.
-- **Grafana**: 그라파나 설명.
+## 💻 모니터링
+- **Prometheus**: 애플리케이션 및 인프라의 실시간 모니터링과 경고를 위한 오픈소스 도구입니다.
+- **Grafana**: 데이터 시각화를 통해 모니터링 데이터를 효과적으로 분석하고 대시보드를 제공하는 오픈소스 도구입니다.
 
 ## 👥 역할 별 담당자
-|                             FE/BE                              |                             BE/FE                              |                               BE/FE                               |                               FE                               |                               BE                               |                               BE                               |                               FE                               |
+|FE/BE|BE/FE|BE/FE|FE|BE|Infra/BE|FE|
 | :------------------------------------------------------------: | :------------------------------------------------------------: | :------------------------------------------------------------: | :------------------------------------------------------------: | :------------------------------------------------------------: | :------------------------------------------------------------: | :------------------------------------------------------------: |
-|                           **김구태**                           |                           **박재현**                           |                           **최민**                             |                           **구현우**                           |                           **이형준**                           |                           **윤지호**                           |                           **박지원**                           |
+|**김구태**|**박재현**|**최민**|**구현우**|**이형준**|**윤지호**|**박지원**|
 | <img src="./resource/김구태.png" style="height: 70px"> | <img src="./resource/박재현.png" style="height: 70px"> | <img src="./resource/최민.png" style="height: 70px"> | <img src="./resource/구현우.png" style="height: 70px"> | <img src="./resource/이형준.png" style="height: 70px"> | <img src="./resource/윤지호.png" style="height: 70px"> | <img src="./resource/박지원.png" style="height: 70px"> |
-|               BackEnd/FrontEnd                |                            BackEnd/FrontEnd                             |                            BackEnd/FrontEnd                             |                            FrontEnd                            |                            BackEnd                             |                            Infra                             |                            FrontEnd                            |
+|BackEnd/FrontEnd|BackEnd/FrontEnd|BackEnd/FrontEnd|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FrontEnd&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BackEnd&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;Infra/BackEnd&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FrontEnd&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|
