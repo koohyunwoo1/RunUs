@@ -6,7 +6,6 @@ const MapComponent = ({ positions, roomOwnerId }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const markers = useRef({}); // 사용자별로 최신 위치 마커를 저장
-  console.log(markers);
   const overlays = useRef({}); // 사용자별로 오버레이를 저장
 
   useEffect(() => {
