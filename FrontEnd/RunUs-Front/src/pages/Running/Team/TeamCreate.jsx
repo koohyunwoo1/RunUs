@@ -158,25 +158,26 @@ const TeamCreate = () => {
             }, 3000); // 3초 후에 실제 실행
           } else if (receivedData.type === "QUIT") {
             setIsRunning(false);
-          } else if (receivedData.type === "DISTANCE") {
-            const messageContent = receivedData.message;
-            let nickname;
-            if (messageContent.includes("(방장)")) {
-              nickname = messageContent.split("(방장)의 총 이동 거리: ")[0];
-            } else {
-              nickname = messageContent.split("의 총 이동 거리: ")[0];
-            }
+           } 
+          //else if (receivedData.type === "DISTANCE") {
+          //   const messageContent = receivedData.message;
+          //   let nickname;
+          //   if (messageContent.includes("(방장)")) {
+          //     nickname = messageContent.split("(방장)의 총 이동 거리: ")[0];
+          //   } else {
+          //     nickname = messageContent.split("의 총 이동 거리: ")[0];
+          //   }
 
-            const distanceStr = messageContent.split("의 총 이동 거리: ")[1];
-            const distance = parseFloat(distanceStr.split(" km")[0]);
-            setUserNames((prevUserNames) =>
-              prevUserNames.map((user) =>
-                user.name == nickname
-                  ? { ...user, distance: `${distance.toFixed(2)} ` }
-                  : user
-              )
-            );
-          }
+          //   const distanceStr = messageContent.split("의 총 이동 거리: ")[1];
+          //   const distance = parseFloat(distanceStr.split(" km")[0]);
+          //   setUserNames((prevUserNames) =>
+          //     prevUserNames.map((user) =>
+          //       user.name == nickname
+          //         ? { ...user, distance: `${distance.toFixed(2)} ` }
+          //         : user
+          //     )
+          //   );
+          // }
         });
 
         WebSocketManager.on("close", () => {
@@ -199,8 +200,52 @@ const TeamCreate = () => {
 
   useEffect(() => {
     let intervalId;
-
+    let watchId;
+  
     if (isRunning && isWebSocketConnected) {
+      // Geolocation 감시 시작
+      watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          //const newDistance = calculateDistance(latitude, longitude); // 거리 계산 함수 필요
+  
+          latestLocation.current = { latitude, longitude,};
+  
+          const locationMessage = {
+            type: "LOCATION",
+            roomId: waitingRoomId,
+            sender: userData.nickname,
+            message: "",
+            userId: userData.userId,
+            longitude,
+            latitude,
+           
+          };
+          WebSocketManager.send(locationMessage);
+  
+          // 자신의 위치 업데이트
+          setUserPositions((prevPositions) => ({
+            ...prevPositions,
+            [userData.userId]: {
+              nickname: userData.nickname,
+              latitude,
+              longitude,
+              userId: userData.userId,
+            },
+          }));
+  
+        },
+        (error) => {
+          console.error("Geolocation error:", error);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0
+        }
+      );
+  
+      // 5초마다 위치 정보 전송 (필요한 경우)
       intervalId = setInterval(() => {
         const { latitude, longitude, distance } = latestLocation.current;
         if (latitude !== null && longitude !== null) {
@@ -215,24 +260,16 @@ const TeamCreate = () => {
             distance,
           };
           WebSocketManager.send(locationMessage);
-
-          // 자신의 위치 업데이트
-          setUserPositions((prevPositions) => ({
-            ...prevPositions,
-            [userData.userId]: {
-              nickname: userData.nickname,
-              latitude,
-              longitude,
-              userId: userData.userId,
-            },
-          }));
         }
-      }, 5000); // 5초 간격으로 실행
+      }, 5000);
     }
-
+  
     return () => {
       if (intervalId) {
         clearInterval(intervalId);
+      }
+      if (watchId) {
+        navigator.geolocation.clearWatch(watchId);
       }
     };
   }, [isRunning, isWebSocketConnected, waitingRoomId, userData]);
