@@ -13,6 +13,7 @@
   flex-direction: row;
   overflow-x: auto;
   gap: 15px;
+  justify-content: center;
 }
 
 .WeatherForecast2 {

@@ -3,13 +3,15 @@ import "../../../styles/Running/Team/TeamUserList.css";
 
 const TeamUserList = ({ userNames }) => {
   return (
-    <div className="TeamUserList">
-      <div className="user-list">
-        {userNames.map((user, index) => (
-          <div className="user-card" key={index}>
-            <span className="user-nickname">{user.name}</span>
-          </div>
-        ))}
+    <div className="TeamUserList-container">
+      <div className="TeamUserList">
+        <div className="user-list">
+          {userNames.map((user, index) => (
+            <div className="user-card" key={index}>
+              <span className="user-nickname">{user.name}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
