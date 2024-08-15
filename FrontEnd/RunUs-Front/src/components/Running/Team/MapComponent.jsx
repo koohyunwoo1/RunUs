@@ -4,6 +4,7 @@ const MapComponent = ({ positions, roomOwnerId }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const markers = useRef({}); // 사용자별로 최신 위치 마커를 저장
+  console.log(markers);
   const overlays = useRef({}); // 사용자별로 오버레이를 저장
 
   useEffect(() => {
@@ -52,7 +53,7 @@ const MapComponent = ({ positions, roomOwnerId }) => {
               width: 20px;
               height: 20px;
               border-radius: 50%;
-              border: 1px solid black;
+              border: 2px solid black;
               display: flex;
               align-items: center;
               justify-content: center;
