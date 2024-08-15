@@ -1,6 +1,8 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useContext } from "react";
+import { UserContext } from "../../../hooks/UserContext"
 
 const MapComponent = ({ positions, roomOwnerId }) => {
+  const { userData } = useContext(UserContext);
   const mapContainer = useRef(null);
   const map = useRef(null);
   const markers = useRef({}); // 사용자별로 최신 위치 마커를 저장
@@ -79,18 +81,19 @@ const MapComponent = ({ positions, roomOwnerId }) => {
         overlays.current[userId] = overlay;
       });
 
-      // 지도의 중앙 위치를 사용자의 첫 번째 위치로 이동합니다 (옵션). <- 이거 사용자 아이디에 따라 가야함. 
-      const firstPosition = Object.values(positions)[0];
-      if (firstPosition) {
+      const userPosition = Object.values(positions).find(
+        (pos) => pos.nickname === userData?.nickname
+      );
+      if (userPosition) {
         map.current.setCenter(
           new window.kakao.maps.LatLng(
-            firstPosition.latitude,
-            firstPosition.longitude
+            userPosition.latitude,
+            userPosition.longitude
           )
         );
       }
     }
-  }, [positions, roomOwnerId]);
+  }, [positions, roomOwnerId, userData]);
 
   return <div ref={mapContainer} style={{ width: "100%", height: "100vh" }} />;
 };
