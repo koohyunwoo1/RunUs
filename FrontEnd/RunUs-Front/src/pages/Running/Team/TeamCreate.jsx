@@ -139,13 +139,13 @@ const TeamCreate = () => {
             alert("방장이 방을 종료했습니다. 방을 나가겠습니다.");
             navigate("/report-home");
           } else if (receivedData.type === "LOCATION") {
-            const { sender, distance, longitude, latitude, userId } =
+            const { sender, longitude, latitude, userId } =
               receivedData;
-            const displayName = userId === roomOwnerId ? `${sender}` : sender;
+           // const displayName = userId === roomOwnerId ? `${sender}` : sender;
 
             setUserPositions((prevPositions) => ({
               ...prevPositions,
-              [userId]: { nickname: displayName, latitude, longitude, userId },
+              [userId]: { nickname: sender, latitude, longitude, userId },
             }));
           } else if (receivedData.type === "START") {
             setIsRunning(true);
