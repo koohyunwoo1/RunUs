@@ -3,6 +3,9 @@ package runus.runus.auth.service;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import runus.runus.api.DuplicateException;
+import runus.runus.api.InvalidDataException;
+import runus.runus.api.NotFoundElementException;
 import runus.runus.user.dto.UserDto;
 import runus.runus.user.entity.User;
 import runus.runus.user.repository.UserRepository;
@@ -20,20 +23,40 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public UserDto signup(UserDto userDto) {
+        // DTO 필드 null 체크
+        if (userDto.getEmail() == null) {
+            throw new InvalidDataException("이메일은 필수 입력 항목입니다.");
+        }
+        if (userDto.getNickname() == null) {
+            throw new InvalidDataException("닉네임은 필수 입력 항목입니다.");
+        }
+        if (userDto.getPassword() == null) {
+            throw new InvalidDataException("비밀번호는 필수 입력 항목입니다.");
+        }
+        if (userDto.getPhoneNumber() == null) {
+            throw new InvalidDataException("전화번호는 필수 입력 항목입니다.");
+        }
+        if (userDto.getWeight() == null) {
+            throw new InvalidDataException("체중은 필수 입력 항목입니다.");
+        }
+        if (userDto.getRegionId() == null) {
+            throw new InvalidDataException("지역 ID는 필수 입력 항목입니다.");
+        }
+
         // 이메일 중복 체크
         if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
-            throw new RuntimeException("이미 존재하는 이메일입니다.");
+            throw new DuplicateException("이미 존재하는 이메일입니다.");
         }
 
         User user = new User();
         user.setNickname(userDto.getNickname());
         user.setEmail(userDto.getEmail());
-        user.setEmailDomain(userDto.getEmailDomain()); //
         user.setPassword(userDto.getPassword()); // 실제로는 비밀번호를 암호화해야 합니다
         user.setPhoneNumber(userDto.getPhoneNumber());
         user.setWeight(userDto.getWeight());
         user.setRegionId(userDto.getRegionId());
         user.setRegisteredAt(LocalDateTime.now());
+        user.setExp(0);
         user.setTierId(1);
 
         System.out.println("AuthServiceImpl"+user);
@@ -46,14 +69,14 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public User signin(String email, String password) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundElementException("계정 정보가 없습니다."));
 
         if (password.equals(user.getPassword())) {
             httpSession.setAttribute("user", user);
             System.out.println("로그인 성공");
             return user;
         } else {
-            throw new RuntimeException("Invalid password");
+            throw new InvalidDataException("패스워드가 일치하지 않습니다.");
         }
     }
 

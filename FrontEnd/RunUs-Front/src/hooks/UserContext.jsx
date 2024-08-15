@@ -1,16 +1,6 @@
 import React, { createContext, useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
-import "../styles/Common/CustomSwal.css";
-
-// fcm setteing
-import {
-  requestPermissionAndGetToken,
-  sendTokenToServer,
-  deleteTokenFromServer,
-} from "./fcm";
-// fcm setting end
 
 const UserContext = createContext();
 
@@ -44,45 +34,11 @@ const UserProvider = ({ children }) => {
         localStorage.setItem("AuthToken", response.data.token);
         localStorage.setItem("userId", response.data.data.userId);
         localStorage.setItem("userData", JSON.stringify(data));
-        console.log("Logged in userData:", data); // 로그인 후 userData 확인
-
-        // fcm code
-        // FCM 토큰 요청 및 서버로 전송
-        const fcmToken = await requestPermissionAndGetToken(
-          response.data.data.userId
-        );
-        if (fcmToken) {
-          console.log("FCM token obtained and sent to server");
-        } else {
-          console.log("Failed to obtain or send FCM token");
-        }
-        // fcm code end
       } else {
-        setError(
-          response.data.message || "이메일 또는 비밀번호가 일치하지 않습니다."
-        );
-        Swal.fire({
-          icon: "error",
-          title: "로그인 실패",
-          text: "이메일 또는 비밀번호가 일치하지 않습니다.",
-          customClass: {
-            popup: "custom-swal-popup",
-            title: "custom-swal-title",
-            confirmButton: "custom-swal-confirm-button",
-          },
-        });
+        setError(response.data.message || "이메일 또는 비밀번호가 일치하지 않습니다.");
       }
     } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "로그인 실패",
-        text: "이메일 또는 비밀번호가 일치하지 않습니다.",
-        customClass: {
-          popup: "custom-swal-popup",
-          title: "custom-swal-title",
-          confirmButton: "custom-swal-confirm-button",
-        },
-      });
+      console.error(error);
     }
   };
 
@@ -90,13 +46,8 @@ const UserProvider = ({ children }) => {
     try {
       const response = await axios.post("/api/v1/signout");
       if (response.data.success) {
-        // fcm code
-        await deleteTokenFromServer(userId);
-        // fcm code end
-
         localStorage.removeItem("AuthToken");
         localStorage.removeItem("userId");
-        localStorage.removeItem("userData");
         setUserData(null);
         setUserId(null);
         setRoomUsers([]);
@@ -139,15 +90,13 @@ const UserProvider = ({ children }) => {
   let reconnectAttempts = 0;
 
   const initializeWebSocket = (roomId) => {
-    const wsUrl = `https://i11e103.p.ssafy.io:8001/ws/chat?roomId=${roomId}`;
+    const wsUrl = `ws://localhost:8080/ws/chat?roomId=${roomId}`;
     document.getElementById("websocket-url").textContent = wsUrl;
 
     socketRef.current = new WebSocket(wsUrl);
 
     socketRef.current.onopen = () => {
-      console.log(
-        `WebSocket 연결이 열렸습니다: ${userData.username} (ID: ${userId})`
-      );
+      console.log(`WebSocket 연결이 열렸습니다: ${userData.username} (ID: ${userId})`);
       const message = {
         type: "ENTER",
         roomId: roomId,
@@ -169,9 +118,7 @@ const UserProvider = ({ children }) => {
     };
 
     socketRef.current.onclose = (event) => {
-      console.log(
-        `WebSocket 연결이 닫혔습니다. 코드: ${event.code}, 이유: ${event.reason}`
-      );
+      console.log(`WebSocket 연결이 닫혔습니다. 코드: ${event.code}, 이유: ${event.reason}`);
       if (reconnectAttempts < maxReconnectAttempts) {
         setTimeout(() => {
           console.log("재연결 시도 중...");
@@ -195,8 +142,7 @@ const UserProvider = ({ children }) => {
       const users = chatMessage.message.split(": ")[1].split(", ");
       updateUsersList(users);
     } else if (chatMessage.type === "TOTAL_DISTANCE") {
-      document.getElementById("total-distances").textContent =
-        chatMessage.message;
+      document.getElementById("total-distances").textContent = chatMessage.message;
     } else if (chatMessage.type === "LOCATION") {
       // 위치 업데이트 처리
     } else if (chatMessage.type === "START") {

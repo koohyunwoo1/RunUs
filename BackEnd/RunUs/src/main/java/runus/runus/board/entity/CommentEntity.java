@@ -22,7 +22,6 @@ public class CommentEntity {
     private int boardId;
     private Integer parentId; // 부모 댓글 ID는 NULL일 수 있습니다.
     private String content;
-    private String nickname;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
