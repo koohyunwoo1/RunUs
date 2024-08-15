@@ -43,6 +43,10 @@ const MapComponent = ({ positions, roomOwnerId }) => {
         // 방장이면 오버레이 배경색 빨간색, 아니면 흰색
         const isOwner = userId === String(roomOwnerId); // Convert roomOwnerId to string for comparison
         const backgroundColor = isOwner ? "#4ee2ec" : "black"; // 방장: 빨간색, 일반 사용자: 흰색
+        const fontColor = isOwner ? "black" : "white";
+
+        // 닉네임에서 첫 번째 단어를 추출
+        const firstWord = nickname.charAt(0);
 
         // 커스텀 오버레이 생성
         const overlay = new window.kakao.maps.CustomOverlay({
@@ -50,17 +54,18 @@ const MapComponent = ({ positions, roomOwnerId }) => {
           content: `
             <div style="
               background: ${backgroundColor}; 
-              width: 20px;
-              height: 20px;
+              width: 30px;
+              height: 30px;
               border-radius: 50%;
               border: 2px solid black;
               display: flex;
               align-items: center;
               justify-content: center;
-              font-size: 10px;
-              color: white;
+              font-size: 18px;
+              font-weight: 900;
+              color: ${fontColor};
             ">
-             ${nickname}
+            ${firstWord}
             </div>`,
           xAnchor: 0.5,
           yAnchor: 1.5,
