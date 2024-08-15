@@ -65,6 +65,7 @@ const MapComponent = ({ positions, roomOwnerId }) => {
               justify-content: center;
               font-size: 18px;
               font-weight: 900;
+              font-style: oblique;
               color: ${fontColor};
             ">
             ${firstWord}
