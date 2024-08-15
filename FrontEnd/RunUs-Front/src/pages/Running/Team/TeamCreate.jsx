@@ -44,6 +44,7 @@ const TeamCreate = () => {
     distance: null,
   });
   const [notification, setNotification] = useState(null); // 알림 메시지 상태
+  const lastNotificationTime = useRef(null);  // 알림 제한
 
   const isRoomOwner =
   userData && userData.userId ? roomOwnerId == userData.userId : false;
@@ -311,6 +312,9 @@ const TeamCreate = () => {
       setTimeout(() => {
         setNotification(null);
       }, 3000);
+
+      // 최근 알람 시간 갱신
+      lastNotificationTime.current = Date.now();
     };
 
     if (isRoomOwner && isRunning) {
@@ -353,7 +357,12 @@ const TeamCreate = () => {
       if (usersBeyondDistance.length > 0) {
           const combinedNames = usersBeyondDistance.join(', ');
           const message = `${combinedNames} 님이 방장과 30m 이상 떨어졌습니다!`;
-          showNotification(message);
+          
+          // 마지막 알람으로부터 3초 이상 지났을 때만 알람 울리기
+          const currentTime = Date.now();
+          if (!lastNotificationTime.current || (currentTime - lastNotificationTime.current > 3000)) {
+              showNotification(message);
+          }
       }
   }
 }, [userPositions, isRoomOwner, isRunning, roomOwnerId]);
