@@ -58,6 +58,7 @@ const MapComponent = ({ positions, roomOwnerId }) => {
               align-items: center;
               justify-content: center;
               font-size: 10px;
+              color: white;
             ">
              ${nickname}
             </div>`,
