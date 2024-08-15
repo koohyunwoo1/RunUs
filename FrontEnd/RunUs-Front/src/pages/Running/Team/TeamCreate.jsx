@@ -46,7 +46,7 @@ const TeamCreate = () => {
   const [notification, setNotification] = useState(null); // 알림 메시지 상태
 
   const isRoomOwner =
-  roomOwnerId == userData.userId
+  userData && userData.userId ? roomOwnerId == userData.userId : false;
 
   const playAlertSound = () => {
     const audio = new Audio('/sounds/HereMe.mp3'); // 경로를 실제 경로로 변경하세요
