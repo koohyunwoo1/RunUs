@@ -380,9 +380,17 @@ Run-Us는 사용자가 지역 기반 커뮤니티에서 러닝 메이트를 모�
 <br />
 
 ## 📄 요구사항 명세서
+### 아키텍처
+<img src = "./resource/RunUsArchitecture.png">
 
-- [아키텍처](./resource/RunUsArchitecture.png)
-- [ER Diagram](./resource/RunUsERD.png)
+---
+
+### ERD
+<img src = "./resource/RunUsERD.png">
+
+---
+
+### 포팅 매뉴얼
 - [포팅메뉴얼](./resource/portingMenual.md)
 
 <br />
