@@ -23,8 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
-
-# API KEY
+# Environment variable files
 .env
 .env.development
 .env.production
