@@ -26,3 +26,5 @@ dist-ssr
 
 # API KEY
 .env
+.env.development
+.env.production
